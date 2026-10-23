@@ -333,6 +333,9 @@ export function TheoryPracticeQuadrant({
                 <th scope="col" className="py-1 pr-3 font-medium">
                   Quadrante
                 </th>
+                <th scope="col" className="py-1 pr-3 font-medium">
+                  Marcada sei por saber
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -351,10 +354,8 @@ export function TheoryPracticeQuadrant({
                   <td className="py-1 pr-3 font-semibold tabular-nums text-fg">
                     {formatarNota(p.nota)}
                   </td>
-                  <td className="py-1 pr-3 text-fg">
-                    {ROTULO_QUADRANTE[p.quadrante]}
-                    {p.seiPorSaber && <span className="text-muted"> · sei por saber</span>}
-                  </td>
+                  <td className="py-1 pr-3 text-fg">{ROTULO_QUADRANTE[p.quadrante]}</td>
+                  <td className="py-1 pr-3 text-fg">{p.seiPorSaber ? 'Sim' : 'Não'}</td>
                 </tr>
               ))}
             </tbody>
