@@ -1,13 +1,22 @@
 import { Link, NavLink, Outlet } from 'react-router'
-import { ThemeToggle } from '../../themes'
+import { ThemeToggle, useTheme, type Tema } from '../../themes'
 
 import { NOME_APP } from './constants'
 
-const LINKS_NAV = [
+interface LinkNav {
+  to: string
+  rotulo: string
+  end: boolean
+  /** Se informado, o link só aparece nesses temas. */
+  temas?: readonly Tema[]
+}
+
+const LINKS_NAV: readonly LinkNav[] = [
   { to: '/', rotulo: 'Dashboard', end: true },
   { to: '/stacks', rotulo: 'Stacks', end: false },
+  { to: '/ficha', rotulo: 'Ficha', end: false, temas: ['rpg'] },
   { to: '/curriculo', rotulo: 'Currículo', end: false },
-] as const
+]
 
 function classeLink({ isActive }: { isActive: boolean }) {
   const base = 'block whitespace-nowrap rounded-theme px-3 py-1.5 text-sm font-medium'
@@ -18,6 +27,9 @@ function classeLink({ isActive }: { isActive: boolean }) {
 
 /** Casca do app: cabeçalho com marca, navegação principal e toggle de tema; a rota ativa vai no <main>. */
 export function AppLayout() {
+  const { tema } = useTheme()
+  const links = LINKS_NAV.filter((link) => !link.temas || link.temas.includes(tema))
+
   return (
     <div className="min-h-screen bg-bg text-fg">
       <a
@@ -38,7 +50,7 @@ export function AppLayout() {
             className="order-last -mx-1 w-full overflow-x-auto sm:order-none sm:mx-0 sm:w-auto"
           >
             <ul className="flex gap-1 px-1 sm:px-0">
-              {LINKS_NAV.map(({ to, rotulo, end }) => (
+              {links.map(({ to, rotulo, end }) => (
                 <li key={to}>
                   <NavLink to={to} end={end} className={classeLink}>
                     {rotulo}

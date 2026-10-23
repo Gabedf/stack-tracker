@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import { AppLayout } from './components/layout'
 import {
+  CharacterSheetView,
   DashboardView,
   EditStackView,
   NewStackView,
@@ -20,6 +21,7 @@ export function AppRoutes() {
         <Route path="stacks/nova" element={<NewStackView />} />
         <Route path="stacks/:id" element={<StackDetailView />} />
         <Route path="stacks/:id/editar" element={<EditStackView />} />
+        <Route path="ficha" element={<CharacterSheetView />} />
         <Route path="curriculo" element={<ResumeView />} />
         <Route path="*" element={<NotFoundView />} />
       </Route>

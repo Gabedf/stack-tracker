@@ -1,6 +1,7 @@
 export {
   IconeCertificado,
   IconeEmprego,
+  IconeFloco,
   IconeLivro,
   IconeNivel,
   IconeProjeto,

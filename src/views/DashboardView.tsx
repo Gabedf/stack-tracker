@@ -16,6 +16,7 @@ import {
 } from '../features/dashboard'
 import { useStacks } from '../features/stacks'
 import { criteriosParaUrl } from '../features/stacks/stackFiltering'
+import { useTheme } from '../themes'
 
 export interface DashboardViewProps {
   /** Data de referência para as notas (decaimento). Padrão: o momento da montagem. */
@@ -36,6 +37,20 @@ function Painel({ id, titulo, children }: { id: string; titulo: string; children
       </h2>
       {children}
     </section>
+  )
+}
+
+/** Atalho de destaque para a ficha do personagem; só aparece no tema RPG. */
+function LinkFicha() {
+  const { tema } = useTheme()
+  if (tema !== 'rpg') return null
+  return (
+    <Link
+      to="/ficha"
+      className="inline-flex items-center gap-2 rounded-theme border border-accent bg-surface px-4 py-2 font-heading font-semibold text-accent shadow-glow hover:bg-surface-2"
+    >
+      Abrir ficha do personagem →
+    </Link>
   )
 }
 
@@ -166,6 +181,7 @@ export function DashboardView({ hoje }: DashboardViewProps) {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted">Visão geral das suas stacks: notas, níveis e evolução.</p>
+        <LinkFicha />
       </div>
       {conteudo}
     </section>
