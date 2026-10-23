@@ -2,7 +2,16 @@ import { describe, expect, it } from 'vitest'
 import type { Evidencia, Stack, TipoExperiencia } from '../../domain/types'
 import { HOJE_SEED, stacksDoSeed } from '../../test/seed'
 import { normalizarTexto } from '../stacks/stackFiltering'
-import { selecionarParaCurriculo, temComprovacao, type SelecaoCurriculo } from './resumeExport'
+import {
+  MENSAGEM_CURRICULO_VAZIO,
+  escaparMarkdown,
+  formatarTempo,
+  gerarMarkdownCurriculo,
+  markdownDaSelecao,
+  selecionarParaCurriculo,
+  temComprovacao,
+  type SelecaoCurriculo,
+} from './resumeExport'
 import { DEFAULT_OPCOES_CURRICULO, resolverOpcoesCurriculo } from './resumeOptions'
 
 /*
@@ -206,5 +215,233 @@ describe('selecionarParaCurriculo com dados sintéticos', () => {
     )
     expect(selecao.grupos.map((g) => g.categoria)).toEqual(['Dados', 'Ética', 'Front'])
     expect(idsPorGrupo(selecao)['Ética']).toEqual(['beta', 'zeta', 'alfa'])
+  })
+})
+
+describe('formatarTempo', () => {
+  it.each([
+    [0, '0 meses'],
+    [1, '1 mês'],
+    [2, '2 meses'],
+    [11, '11 meses'],
+    [12, '1 ano'],
+    [13, '1 ano e 1 mês'],
+    [14, '1 ano e 2 meses'],
+    [24, '2 anos'],
+    [25, '2 anos e 1 mês'],
+    [27, '2 anos e 3 meses'],
+  ])('%i meses -> "%s"', (meses, esperado) => {
+    expect(formatarTempo(meses)).toBe(esperado)
+  })
+
+  it('trata negativos, frações e NaN', () => {
+    expect(formatarTempo(-3)).toBe('0 meses')
+    expect(formatarTempo(13.9)).toBe('1 ano e 1 mês')
+    expect(formatarTempo(Number.NaN)).toBe('0 meses')
+  })
+})
+
+describe('escaparMarkdown', () => {
+  it('escapa ênfase, links, código e HTML', () => {
+    expect(escaparMarkdown('*a* _b_ [c](d) `e` <f> a|b ~g~ \\')).toBe(
+      '\\*a\\* \\_b\\_ \\[c\\](d) \\`e\\` \\<f\\> a\\|b \\~g\\~ \\\\',
+    )
+  })
+
+  it('escapa marcadores de início de linha', () => {
+    expect(escaparMarkdown('# título')).toBe('\\# título')
+    expect(escaparMarkdown('> citação')).toBe('\\> citação')
+    expect(escaparMarkdown('- item')).toBe('\\- item')
+    expect(escaparMarkdown('+ item')).toBe('\\+ item')
+    expect(escaparMarkdown('2026. Ano')).toBe('2026\\. Ano')
+  })
+
+  it('preserva texto comum e junta quebras de linha e espaços', () => {
+    expect(escaparMarkdown('Node.js, C# e react-ui-kit')).toBe('Node.js, C# e react-ui-kit')
+    expect(escaparMarkdown('  linha 1\n\n  linha   2  ')).toBe('linha 1 linha 2')
+  })
+})
+
+/** Markdown padrão do seed (hoje = 23/10/2026). */
+const MARKDOWN_PADRAO_SEED = [
+  '## Competências técnicas',
+  '',
+  '### Backend',
+  '',
+  '- **Node.js** — Praticante · 1 ano e 2 meses · Projeto pessoal',
+  '  - [api-tarefas](https://git.example.com/exemplo/api-tarefas) — API REST de tarefas com autenticação JWT.',
+  '',
+  '### Frontend',
+  '',
+  '- **React** — Mestre · 3 anos · Produção',
+  '  - [Desenvolvedor frontend na Empresa Exemplo](https://empresa.example.com) — Manutenção e evolução de um painel administrativo em React.',
+  '  - [Loja Exemplo](https://loja.example.com) — E-commerce fictício com carrinho, checkout e testes de componentes.',
+  '  - [react-ui-kit](https://git.example.com/exemplo/react-ui-kit) — Biblioteca de componentes acessíveis.',
+  '  - [Certificado React Avançado](https://cursos.example.com/certificados/react-avancado) — Curso online de padrões avançados.',
+  '- **jQuery** — Praticante · 1 ano e 8 meses · Produção',
+  '  - Estágio na Agência Exemplo — Sites institucionais com jQuery e plugins.',
+  '',
+].join('\n')
+
+describe('gerarMarkdownCurriculo com o seed', () => {
+  it('gera o Markdown padrão esperado', () => {
+    expect(gerarMarkdownCurriculo(stacksDoSeed(), undefined, { hoje })).toBe(MARKDOWN_PADRAO_SEED)
+  })
+
+  it('termina com uma única newline e não deixa espaços sobrando', () => {
+    const md = gerarMarkdownCurriculo(
+      stacksDoSeed(),
+      { somenteComprovado: false, incluirSeiPorSaber: true, mostrarNota: true },
+      { hoje },
+    )
+    expect(md.endsWith('\n')).toBe(true)
+    expect(md.endsWith('\n\n')).toBe(false)
+    expect(md).not.toMatch(/[ \t]$/m)
+    expect(md).not.toMatch(/\n{3,}/)
+  })
+
+  it('mostrarNota acrescenta a nota em formato pt-BR', () => {
+    const md = gerarMarkdownCurriculo(stacksDoSeed(), { mostrarNota: true }, { hoje })
+    expect(md).toContain('- **React** — Mestre · Nota 8,4 · 3 anos · Produção\n')
+    expect(md).toContain('- **jQuery** — Praticante · Nota 4,9 · 1 ano e 8 meses · Produção\n')
+  })
+
+  it('sem nível, tempo e evidências fica só nome e tipo de experiência', () => {
+    const md = gerarMarkdownCurriculo(
+      stacksDoSeed(),
+      {
+        mostrarNivel: false,
+        mostrarTempo: false,
+        incluirEvidencias: false,
+        categorias: ['Frontend'],
+      },
+      { hoje },
+    )
+    expect(md).toBe(
+      [
+        '## Competências técnicas',
+        '',
+        '### Frontend',
+        '',
+        '- **React** — Produção',
+        '- **jQuery** — Produção',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('põe as stacks sei por saber numa seção separada, por último', () => {
+    const md = gerarMarkdownCurriculo(
+      stacksDoSeed(),
+      { somenteComprovado: false, incluirSeiPorSaber: true, incluirEvidencias: false },
+      { hoje },
+    )
+    expect(md).toBe(
+      [
+        '## Competências técnicas',
+        '',
+        '### Backend',
+        '',
+        '- **Node.js** — Praticante · 1 ano e 2 meses · Projeto pessoal',
+        '',
+        '### Dados',
+        '',
+        '- **PostgreSQL** — Aprendiz · 3 meses · Estudo',
+        '',
+        '### Frontend',
+        '',
+        '- **React** — Mestre · 3 anos · Produção',
+        '- **jQuery** — Praticante · 1 ano e 8 meses · Produção',
+        '',
+        '### Conhecimento teórico',
+        '',
+        '- **Kubernetes** — Aprendiz · Só teoria',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('usa o título informado ou omite o título vazio', () => {
+    const opcoes = { categorias: ['Backend'], incluirEvidencias: false }
+    expect(
+      gerarMarkdownCurriculo(stacksDoSeed(), { ...opcoes, titulo: 'Skills' }, { hoje }),
+    ).toMatch(/^## Skills\n\n### Backend\n/)
+    expect(gerarMarkdownCurriculo(stacksDoSeed(), { ...opcoes, titulo: '  ' }, { hoje })).toBe(
+      '### Backend\n\n- **Node.js** — Praticante · 1 ano e 2 meses · Projeto pessoal\n',
+    )
+  })
+
+  it('sem nada incluído mostra uma mensagem curta em itálico', () => {
+    const vazio = `## Competências técnicas\n\n${MENSAGEM_CURRICULO_VAZIO}\n`
+    expect(
+      gerarMarkdownCurriculo(
+        stacksDoSeed(),
+        { nivelMinimo: 'mestre', categorias: ['Dados'] },
+        { hoje },
+      ),
+    ).toBe(vazio)
+    expect(gerarMarkdownCurriculo([], {}, { hoje })).toBe(vazio)
+    expect(MENSAGEM_CURRICULO_VAZIO).toMatch(/^_[^_]+_$/)
+  })
+
+  it('markdownDaSelecao gera o mesmo resultado a partir da seleção', () => {
+    const selecao = selecionarParaCurriculo(stacksDoSeed(), {}, { hoje })
+    expect(markdownDaSelecao(selecao)).toBe(MARKDOWN_PADRAO_SEED)
+  })
+})
+
+describe('gerarMarkdownCurriculo com textos do usuário', () => {
+  it('escapa nome, categoria, título e descrição das evidências', () => {
+    const md = gerarMarkdownCurriculo(
+      [
+        fake({
+          nome: '*Node*_js',
+          categoria: '[Back]end',
+          meses: 0,
+          evidencias: [
+            {
+              titulo: 'repo [v2]',
+              url: 'https://git.example.com/a_b',
+              descricao: 'Usa **negrito**\ne <b>html</b>',
+              tipo: 'repo',
+            },
+          ],
+        }),
+      ],
+      { mostrarNivel: false },
+      { hoje },
+    )
+    expect(md).toBe(
+      [
+        '## Competências técnicas',
+        '',
+        '### \\[Back\\]end',
+        '',
+        '- **\\*Node\\*\\_js** — Projeto pessoal',
+        '  - [repo \\[v2\\]](https://git.example.com/a_b) — Usa \\*\\*negrito\\*\\* e \\<b\\>html\\</b\\>',
+        '',
+      ].join('\n'),
+    )
+  })
+
+  it('url ausente ou vazia vira texto sem link; espaço e parênteses na url são codificados', () => {
+    const md = gerarMarkdownCurriculo(
+      [
+        fake({
+          nome: 'Go',
+          evidencias: [
+            { titulo: 'Sem link', descricao: 'Interno.', tipo: 'emprego' },
+            { titulo: 'Vazio', url: '  ', descricao: '', tipo: 'projeto' },
+            { titulo: 'Wiki', url: 'https://w.example.com/Go (lang)', descricao: '', tipo: 'repo' },
+          ],
+        }),
+      ],
+      {},
+      { hoje },
+    )
+    expect(md).toContain('  - Sem link — Interno.\n')
+    expect(md).toContain('  - Vazio\n')
+    expect(md).toContain('  - [Wiki](https://w.example.com/Go%20%28lang%29)\n')
+    expect(md).not.toContain('[Sem link]')
   })
 })
