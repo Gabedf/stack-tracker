@@ -5,7 +5,7 @@ import { KnowledgeBadge } from '../components/KnowledgeBadge'
 import { useDocumentTitle } from '../components/layout'
 import { LevelBadge } from '../components/LevelBadge'
 import { calcularNota } from '../domain/scoring'
-import { HistorySummary, ScoreBreakdown, useStacks } from '../features/stacks'
+import { DimensionsEditor, HistorySummary, ScoreBreakdown, useStacks } from '../features/stacks'
 
 export interface StackDetailViewProps {
   /** Data de referência para o decaimento da nota. Padrão: agora. */
@@ -38,7 +38,7 @@ function Painel({ id, titulo, children }: { id: string; titulo: string; children
 /** Detalhe de uma stack: cabeçalho com nota e nível, edição inline e histórico. */
 export function StackDetailView({ hoje }: StackDetailViewProps) {
   const { id = '' } = useParams<{ id: string }>()
-  const { stacks, status, erro, limparErro } = useStacks()
+  const { stacks, status, erro, atualizar, limparErro } = useStacks()
   const stack = stacks.find((s) => s.id === id)
   useDocumentTitle(stack ? stack.nome : `Stack ${id}`)
 
@@ -134,6 +134,16 @@ export function StackDetailView({ hoje }: StackDetailViewProps) {
         <Painel id="composicao" titulo="Composição da nota">
           <ScoreBreakdown stack={stack} hoje={hoje} />
         </Painel>
+
+        <div className="flex flex-col gap-6">
+          <Painel id="dimensoes" titulo="Dimensões">
+            <DimensionsEditor
+              key={stack.id}
+              dimensoes={stack.dimensoes}
+              onSalvar={(dimensoes) => atualizar(stack.id, { dimensoes })}
+            />
+          </Painel>
+        </div>
       </div>
 
       <Painel id="evolucao" titulo="Evolução">
