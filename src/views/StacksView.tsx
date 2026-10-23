@@ -15,7 +15,7 @@ import {
   criteriosParaUrl,
   filtrarEOrdenar,
   type CriteriosStacks,
-} from '../features/stacks/stackFilters.ts'
+} from '../features/stacks/stackFiltering'
 
 type Visao = 'grade' | 'lista'
 
