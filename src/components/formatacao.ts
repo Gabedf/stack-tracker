@@ -1,4 +1,4 @@
-import type { Nota, TipoExperiencia } from '../domain/types'
+import type { Nota, TipoEvidencia, TipoExperiencia } from '../domain/types'
 
 const FORMATO_NOTA = new Intl.NumberFormat('pt-BR', {
   minimumFractionDigits: 1,
@@ -16,6 +16,14 @@ export const ROTULO_EXPERIENCIA: Record<TipoExperiencia, string> = {
   estudo: 'Estudo',
   projeto_pessoal: 'Projeto pessoal',
   producao: 'Produção',
+}
+
+/** Rótulo legível de cada tipo de evidência. */
+export const ROTULO_EVIDENCIA: Record<TipoEvidencia, string> = {
+  repo: 'Repositório',
+  projeto: 'Projeto',
+  emprego: 'Emprego',
+  certificado: 'Certificado',
 }
 
 /** Data ISO "AAAA-MM-DD" no formato pt-BR "DD/MM/AAAA" (sem passar por fuso horário). */
