@@ -1,0 +1,58 @@
+/*
+ * Tokens semânticos dos temas. Componentes nunca usam cores literais:
+ * usam as classes do Tailwind mapeadas em src/index.css (@theme inline),
+ * então trocar o atributo data-theme no <html> troca o visual inteiro.
+ *
+ * Contraste (WCAG AA): text e text-muted >= 4.5:1 sobre bg, surface e surface-2.
+ */
+
+:root,
+[data-theme='funcional'] {
+  color-scheme: light;
+
+  --theme-bg: #f8fafc;
+  --theme-surface: #ffffff;
+  --theme-surface-2: #f1f5f9;
+  --theme-text: #0f172a;
+  --theme-text-muted: #475569;
+  --theme-border: #cbd5e1;
+  --theme-accent: #1d4ed8;
+  --theme-accent-contrast: #ffffff;
+  --theme-success: #15803d;
+  --theme-warning: #b45309;
+  --theme-danger: #b91c1c;
+  --theme-focus: #2563eb;
+
+  --theme-radius: 0.5rem;
+  --theme-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.1);
+
+  --theme-font-base: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --theme-font-heading: var(--theme-font-base);
+}
+
+/*
+ * PROVISÓRIO: paleta mínima de pergaminho/couro só para o toggle ser visível.
+ * A etapa 16 (feat/16-rpg-tokens) substitui por rpg.css completo.
+ */
+[data-theme='rpg'] {
+  color-scheme: light;
+
+  --theme-bg: #f4e8c8;
+  --theme-surface: #fbf3dc;
+  --theme-surface-2: #ead9ad;
+  --theme-text: #2b1d0e;
+  --theme-text-muted: #5c4326;
+  --theme-border: #8b6a3e;
+  --theme-accent: #7a2e12;
+  --theme-accent-contrast: #fbf3dc;
+  --theme-success: #2f5d1e;
+  --theme-warning: #8a4b08;
+  --theme-danger: #8b1a1a;
+  --theme-focus: #a0522d;
+
+  --theme-radius: 0.25rem;
+  --theme-shadow: 0 1px 2px rgb(43 29 14 / 0.15), 0 2px 6px rgb(43 29 14 / 0.12);
+
+  --theme-font-base: Georgia, 'Times New Roman', serif;
+  --theme-font-heading: Georgia, 'Times New Roman', serif;
+}
