@@ -5,8 +5,18 @@ import type { AtualizacaoStack, NovaStack } from './stacksOperations'
 
 export type StatusStacks = 'carregando' | 'pronto' | 'erro'
 
-/** Chamado após cada escrita salva com sucesso, com o estado anterior e o salvo. */
-export type OuvinteEscrita = (antes: StacksFile, depois: StacksFile) => void
+/**
+ * De onde veio a escrita: 'usuario' (adicionar, atualizar, remover) ou
+ * 'importacao' (substituirTudo). Importar não é progresso do usuário.
+ */
+export type OrigemEscrita = 'usuario' | 'importacao'
+
+export interface InfoEscrita {
+  origem: OrigemEscrita
+}
+
+/** Chamado após cada escrita salva com sucesso, com o estado anterior, o salvo e a origem. */
+export type OuvinteEscrita = (antes: StacksFile, depois: StacksFile, info: InfoEscrita) => void
 
 export interface StacksContextValue {
   /** Stacks do último estado salvo (ou carregado) com sucesso. */
@@ -24,10 +34,17 @@ export interface StacksContextValue {
   atualizar(id: string, atualizacao: AtualizacaoStack): Promise<Stack>
   /** Remove a stack, salva e resolve com a stack removida. */
   remover(id: string): Promise<Stack>
+  /**
+   * Troca o arquivo inteiro (ex.: importação), pela mesma fila e persistência
+   * pessimista. Rejeita sem salvar se o arquivo não passar no schema; em falha
+   * do adapter mantém o estado e expõe `erro`. Resolve com o que foi salvo.
+   */
+  substituirTudo(arquivo: StacksFile): Promise<StacksFile>
   limparErro(): void
   /**
-   * Avisa `ouvinte` após cada escrita do usuário (adicionar, atualizar, remover)
-   * salva com sucesso. Carregar/recarregar não avisa. Devolve o cancelamento.
+   * Avisa `ouvinte` após cada escrita salva com sucesso, com a origem
+   * ('usuario' para adicionar/atualizar/remover, 'importacao' para
+   * substituirTudo). Carregar/recarregar não avisa. Devolve o cancelamento.
    */
   assinarEscritas(ouvinte: OuvinteEscrita): () => void
 }

@@ -4,15 +4,18 @@
  * Cada escrita calcula o próximo StacksFile a partir do último estado SALVO,
  * chama adapter.salvar e só então atualiza o estado com o que o adapter
  * devolveu. Em falha, o estado anterior é mantido e `erro` é exposto.
+ * substituirTudo (importação) usa o mesmo caminho, com origem 'importacao'.
  * Carregar e escrever passam por uma fila única: operações disparadas em
  * sequência (mesmo sem await) são aplicadas uma após a outra, na ordem.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Stack, StacksFile } from '../../domain/types'
+import { parseStacksFile } from '../../domain/schema'
 import { StorageError, type StorageAdapter } from '../../storage'
 import {
   StacksContext,
+  type OrigemEscrita,
   type OuvinteEscrita,
   type StacksContextValue,
   type StatusStacks,
@@ -92,8 +95,15 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
     [adapter, enfileirar],
   )
 
-  const escrever = useCallback(
-    (calcular: (atual: StacksFile) => ResultadoOperacao): Promise<Stack> => {
+  /**
+   * Núcleo das escritas: calcula o próximo arquivo a partir do último salvo,
+   * persiste e só então troca o estado e avisa os ouvintes.
+   */
+  const persistir = useCallback(
+    <T,>(
+      calcular: (atual: StacksFile) => { dados: StacksFile; resultado: (salvo: StacksFile) => T },
+      origem: OrigemEscrita,
+    ): Promise<T> => {
       escritasPendentesRef.current++
       setSalvando(true)
       return enfileirar(async () => {
@@ -106,7 +116,7 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
           throw falha
         }
         // Erros de uso (ex.: id inexistente) rejeitam sem tocar em `erro`.
-        const { dados: proximo, stack } = calcular(atual)
+        const { dados: proximo, resultado } = calcular(atual)
         let salvo: StacksFile
         try {
           salvo = await adapter.salvar(proximo)
@@ -120,19 +130,31 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
         setErro(null)
         for (const ouvinte of [...ouvintesRef.current]) {
           try {
-            ouvinte(atual, salvo)
+            ouvinte(atual, salvo, { origem })
           } catch {
             // Um ouvinte com defeito não desfaz uma escrita já salva.
           }
         }
-        // Prefere a versão devolvida pelo adapter (fonte da verdade).
-        return salvo.stacks.find((s) => s.id === stack.id) ?? stack
+        return resultado(salvo)
       }).finally(() => {
         escritasPendentesRef.current--
         if (escritasPendentesRef.current === 0) setSalvando(false)
       })
     },
     [adapter, enfileirar],
+  )
+
+  const escrever = useCallback(
+    (calcular: (atual: StacksFile) => ResultadoOperacao): Promise<Stack> =>
+      persistir((atual) => {
+        const { dados: proximo, stack } = calcular(atual)
+        return {
+          dados: proximo,
+          // Prefere a versão devolvida pelo adapter (fonte da verdade).
+          resultado: (salvo) => salvo.stacks.find((s) => s.id === stack.id) ?? stack,
+        }
+      }, 'usuario'),
+    [persistir],
   )
 
   const adicionar = useCallback(
@@ -149,6 +171,19 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
   const remover = useCallback(
     (id: string) => escrever((atual) => removerStack(atual, id)),
     [escrever],
+  )
+
+  const substituirTudo = useCallback(
+    (arquivo: StacksFile): Promise<StacksFile> =>
+      persistir(() => {
+        // Defesa em profundidade: nada fora do schema chega ao adapter.
+        const validado = parseStacksFile(arquivo)
+        if (!validado.ok) {
+          throw new StorageError('O arquivo importado é inválido.', validado.erros)
+        }
+        return { dados: validado.dados, resultado: (salvo) => salvo }
+      }, 'importacao'),
+    [persistir],
   )
 
   const limparErro = useCallback(() => setErro(null), [])
@@ -176,6 +211,7 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
       adicionar,
       atualizar,
       remover,
+      substituirTudo,
       limparErro,
       assinarEscritas,
     }),
@@ -188,6 +224,7 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
       adicionar,
       atualizar,
       remover,
+      substituirTudo,
       limparErro,
       assinarEscritas,
     ],
