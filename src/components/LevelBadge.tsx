@@ -1,5 +1,6 @@
 import { NIVEIS, nivelDaNota, type NivelId } from '../domain/levels'
 import type { Nota } from '../domain/types'
+import { IconeNivel } from './icons'
 
 export interface LevelBadgeProps {
   nota: Nota
@@ -16,7 +17,7 @@ const ESTILO_NIVEL: Record<NivelId, string> = {
 }
 
 /**
- * Selo do nível da nota. O nome do nível é sempre visível; os pontinhos
+ * Selo do nível da nota. O nome do nível é sempre visível; o escudo (decorativo) e os pontinhos
  * (posição do nível entre os cinco) reforçam a diferença sem depender de cor.
  */
 export function LevelBadge({ nota, className = '' }: LevelBadgeProps) {
@@ -28,6 +29,7 @@ export function LevelBadge({ nota, className = '' }: LevelBadgeProps) {
       data-nivel={nivel.id}
       className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${ESTILO_NIVEL[nivel.id]} ${className}`}
     >
+      <IconeNivel />
       <span aria-hidden="true" className="flex gap-0.5">
         {NIVEIS.map((n, i) => (
           <span

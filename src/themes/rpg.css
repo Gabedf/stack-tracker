@@ -85,6 +85,10 @@
   --theme-font-base: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
   --theme-font-heading: 'Cinzel', 'Palatino Linotype', Georgia, serif;
   --theme-heading-tracking: 0.03em;
+
+  /* Ícones: traço mais grosso e um leve preenchimento, como gravura/emblema. */
+  --theme-icon-stroke: 1.75;
+  --theme-icon-fill-opacity: 0.2;
 }
 
 /* Foco: além do contorno (index.css), um brilho dourado, como item selecionado. */

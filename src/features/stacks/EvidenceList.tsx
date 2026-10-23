@@ -1,5 +1,12 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type ReactElement } from 'react'
 import { ROTULO_EVIDENCIA } from '../../components/formatacao'
+import {
+  IconeCertificado,
+  IconeEmprego,
+  IconeProjeto,
+  IconeRepositorio,
+  type IconeProps,
+} from '../../components/icons'
 import type { Evidencia, TipoEvidencia } from '../../domain/types'
 import { EvidenceForm } from './EvidenceForm'
 
@@ -20,11 +27,11 @@ type Modo =
   | { tipo: 'removendo'; indice: number }
 
 /** Ícone decorativo de cada tipo (o rótulo em texto vem ao lado). */
-const ICONE_EVIDENCIA: Record<TipoEvidencia, string> = {
-  repo: '⑂',
-  projeto: '◆',
-  emprego: '▣',
-  certificado: '✓',
+const ICONE_EVIDENCIA: Record<TipoEvidencia, (props: IconeProps) => ReactElement> = {
+  repo: IconeRepositorio,
+  projeto: IconeProjeto,
+  emprego: IconeEmprego,
+  certificado: IconeCertificado,
 }
 
 const CLASSE_BOTAO =
@@ -33,9 +40,10 @@ const CLASSE_BOTAO_PERIGO =
   'rounded-theme border border-danger bg-surface px-3 py-1.5 text-sm font-medium text-danger hover:bg-surface-2'
 
 function TipoEvidenciaBadge({ tipo }: { tipo: TipoEvidencia }) {
+  const Icone = ICONE_EVIDENCIA[tipo]
   return (
     <span className="inline-flex items-center gap-1 rounded-full border border-border bg-surface px-2 py-0.5 text-xs font-medium text-muted">
-      <span aria-hidden="true">{ICONE_EVIDENCIA[tipo]}</span>
+      <Icone />
       {ROTULO_EVIDENCIA[tipo]}
     </span>
   )

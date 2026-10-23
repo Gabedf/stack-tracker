@@ -62,6 +62,12 @@
     letter-spacing: var(--theme-heading-tracking);
   }
 
+  /* Ícones de src/components/icons: o tema decide traço e preenchimento. */
+  .icone {
+    stroke-width: var(--theme-icon-stroke);
+    fill-opacity: var(--theme-icon-fill-opacity);
+  }
+
   :focus-visible {
     outline: 2px solid var(--theme-focus);
     outline-offset: 2px;
