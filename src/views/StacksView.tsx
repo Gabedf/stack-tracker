@@ -190,7 +190,15 @@ export function StacksView({ hoje }: StacksViewProps) {
 
   return (
     <section className="space-y-4">
-      <h1 className="text-3xl font-bold">Stacks</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-3xl font-bold">Stacks</h1>
+        <Link
+          to="/stacks/nova"
+          className="rounded-theme border border-accent bg-accent px-4 py-2 text-sm font-semibold text-accent-contrast shadow-theme hover:opacity-90"
+        >
+          Nova stack
+        </Link>
+      </div>
       {conteudo}
     </section>
   )
