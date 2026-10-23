@@ -9,7 +9,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 02 | feat/02-domain-types | concluída | 40accd3 |
 | 03 | feat/03-scoring | concluída | e90c4b6 |
 | 04 | feat/04-history | concluída | 076425a |
-| 05 | feat/05-seed-data | pendente | |
+| 05 | feat/05-seed-data | concluída | 55e340d |
 | 06 | feat/06-storage | pendente | |
 | 07 | feat/07-store | pendente | |
 | 08 | feat/08-theme-system | pendente | |
