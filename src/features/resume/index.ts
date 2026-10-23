@@ -1,4 +1,10 @@
 export { ResumeFilters, type ResumeFiltersProps } from './ResumeFilters'
+export {
+  ResumeDocument,
+  ResumePreview,
+  type ResumeDocumentProps,
+  type ResumePreviewProps,
+} from './ResumePreview'
 export { ResumeSummary, type ResumeSummaryProps } from './ResumeSummary'
 export {
   gerarMarkdownCurriculo,

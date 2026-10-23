@@ -3,7 +3,9 @@ import { Link } from 'react-router'
 import { EmptyState } from '../components/EmptyState'
 import { useDocumentTitle } from '../components/layout'
 import {
+  markdownDaSelecao,
   ResumeFilters,
+  ResumePreview,
   ResumeSummary,
   selecionarParaCurriculo,
   useOpcoesCurriculo,
@@ -31,6 +33,7 @@ export function ResumeView({ hoje }: ResumeViewProps) {
     () => selecionarParaCurriculo(stacks, opcoes, { hoje: referencia }),
     [stacks, opcoes, referencia],
   )
+  const markdown = useMemo(() => markdownDaSelecao(selecao, opcoes), [selecao, opcoes])
 
   let conteudo
   if (status === 'carregando') {
@@ -82,6 +85,7 @@ export function ResumeView({ hoje }: ResumeViewProps) {
         />
         <div className="flex min-w-0 flex-col gap-4">
           <ResumeSummary selecao={selecao} />
+          <ResumePreview selecao={selecao} opcoes={opcoes} markdown={markdown} />
         </div>
       </div>
     )
