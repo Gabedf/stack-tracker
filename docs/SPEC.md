@@ -47,8 +47,8 @@ As stacks são cadastradas pela própria aplicação; nenhum dado real é pré-r
 | 14 | feat/14-evolution-chart | gráfico de evolução por stack | usa historico; vazio tratado |
 | 15 | feat/15-dashboard | resumo, radar por categoria, quadrante teoria x prática | números batem com o seed |
 | 16 | feat/16-rpg-tokens | rpg.css (cores, fontes, bordas, ícones) via data-theme="rpg" | todo componente funciona no tema |
-| 17 | feat/17-character-sheet | CharacterSheetView: classe, nível geral, habilidades por categoria | visível no tema RPG |
-| 18 | feat/18-rpg-xp-anim | barras de XP e animação de level-up (respeita prefers-reduced-motion) | anima ao subir de nível |
+| 17 | feat/17-character-sheet | CharacterSheetView: classe, nível geral com barra de XP, radar por categoria (polígono de N lados, 3-8 categorias; acima disso vira barras) e colmeia de hexágonos (uma stack por hexágono, cor/brilho pelo nível, selo "sei por saber"; escala para qualquer quantidade); hover/foco mostra nota, dimensões e último uso; clicar numa categoria do radar destaca suas skills na colmeia | visível no tema RPG; funciona com 1 e com 20+ stacks |
+| 18 | feat/18-rpg-xp-anim | barras de XP que enchem ao entrar na tela (mostram quanto falta para o próximo nível) e efeito de level-up ("Subiu para Sênior!") ao editar uma stack que sobe de nível; respeita prefers-reduced-motion | anima ao subir de nível |
 | 19 | feat/19-resume-logic | resumeExport.ts (filtros + Markdown por categoria) + testes | por padrão só inclui o que tem evidência/prática |
 | 20 | feat/20-resume-ui | tela Currículo: filtros, preview, copiar, imprimir (CSS print) | gera o Markdown esperado |
 | 21 | feat/21-import-export | exportar/importar JSON com validação Zod e erro amigável | JSON inválido não corrompe os dados |
