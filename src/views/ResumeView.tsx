@@ -76,7 +76,7 @@ export function ResumeView({ hoje }: ResumeViewProps) {
     )
   } else {
     conteudo = (
-      <div className="grid gap-6 lg:grid-cols-[minmax(16rem,20rem)_1fr]">
+      <div className="curriculo-layout grid gap-6 lg:grid-cols-[minmax(16rem,20rem)_1fr]">
         <ResumeFilters
           opcoes={opcoes}
           categorias={categorias}
@@ -95,7 +95,7 @@ export function ResumeView({ hoje }: ResumeViewProps) {
 
   return (
     <section className="space-y-6">
-      <div className="space-y-2">
+      <div data-print="ocultar" className="space-y-2">
         <h1 className="text-3xl font-bold">Currículo</h1>
         <p className="text-muted">
           Escolha o que entra, confira o resultado e copie o Markdown, baixe o arquivo ou imprima.

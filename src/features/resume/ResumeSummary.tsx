@@ -13,7 +13,7 @@ export function ResumeSummary({ selecao, className = '' }: ResumeSummaryProps) {
   const fora = selecao.excluidas.length
 
   return (
-    <div className={`flex flex-col gap-2 text-sm ${className}`}>
+    <div data-print="ocultar" className={`flex flex-col gap-2 text-sm ${className}`}>
       <p className="font-medium text-fg">
         {incluidas} {incluidas === 1 ? 'stack incluída' : 'stacks incluídas'}, {fora} de fora
       </p>

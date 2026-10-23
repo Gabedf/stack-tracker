@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest'
  * Guarda do sistema de temas: componentes só usam tokens. Cor literal (hex,
  * rgb/hsl/oklch...), classe de paleta fixa do Tailwind (text-gray-500,
  * bg-blue-600, text-white...) ou cor nomeada em fill/stroke/color quebra a troca
- * de tema. A única pasta autorizada a ter cores é src/themes.
+ * de tema. A única pasta autorizada a ter cores é src/themes. Exceção explícita:
+ * src/print.css, e só dentro do bloco @media print (no papel é preto no branco).
  */
 
 const PALETAS =
@@ -35,6 +36,33 @@ const ARQUIVOS = import.meta.glob(['/src/**/*.{ts,tsx}', '!/src/themes/**'], {
   import: 'default',
   eager: true,
 }) as Record<string, string>
+
+const CSS = import.meta.glob(['/src/**/*.css', '!/src/themes/**'], {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>
+
+/** Único CSS fora de src/themes que pode ter cores, só dentro de @media print. */
+const CSS_IMPRESSAO = '/src/print.css'
+
+/** O CSS sem comentários e sem os blocos `@media print { ... }` (chaves balanceadas). */
+function foraDoPrint(css: string): string {
+  let resto = css.replace(/\/\*[\s\S]*?\*\//g, '')
+  const inicio = /@media\s+print\b/
+  for (let i = resto.search(inicio); i >= 0; i = resto.search(inicio)) {
+    const abre = resto.indexOf('{', i)
+    if (abre < 0) break
+    let nivel = 0
+    let fim = abre
+    for (; fim < resto.length; fim++) {
+      if (resto[fim] === '{') nivel++
+      else if (resto[fim] === '}' && --nivel === 0) break
+    }
+    resto = resto.slice(0, i) + resto.slice(fim + 1)
+  }
+  return resto
+}
 
 describe('detector de cores fixas', () => {
   it.each([
@@ -70,5 +98,33 @@ describe('código sem cores fixas (fora de src/themes)', () => {
 
   it.each(Object.entries(ARQUIVOS))('%s', (_, fonte) => {
     expect(coresFixas(fonte)).toEqual([])
+  })
+})
+
+describe('CSS sem cores fixas (fora de src/themes)', () => {
+  it('encontra o index.css e o print.css', () => {
+    expect(Object.keys(CSS)).toEqual(expect.arrayContaining(['/src/index.css', CSS_IMPRESSAO]))
+  })
+
+  it.each(Object.entries(CSS).filter(([caminho]) => caminho !== CSS_IMPRESSAO))(
+    '%s',
+    (_, fonte) => {
+      expect(coresFixas(fonte)).toEqual([])
+    },
+  )
+
+  it('print.css só tem cores dentro do @media print', () => {
+    const fonte = CSS[CSS_IMPRESSAO]
+    expect(coresFixas(fonte).length).toBeGreaterThan(0)
+    expect(foraDoPrint(fonte).trim()).toBe('')
+  })
+
+  it('foraDoPrint remove só os blocos de impressão', () => {
+    const css = [
+      'a { color: #111; }',
+      '@media print { b { color: #000; } c { color: #fff; } }',
+      'd {}',
+    ].join('\n')
+    expect(coresFixas(foraDoPrint(css))).toEqual(['cor hex: #111'])
   })
 })

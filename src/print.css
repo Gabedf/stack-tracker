@@ -1,0 +1,91 @@
+/*
+ * Impressão. Hoje só a tela Currículo é pensada para o papel: sai apenas o
+ * currículo renderizado (painel "Visualizar"), preto no branco, sem as molduras,
+ * sombras e brilhos do tema. Por isso este é o único arquivo fora de src/themes
+ * com cores literais, e todas ficam dentro do @media print (há teste).
+ *
+ * Marque com data-print="ocultar" o que não deve ir para o papel.
+ */
+
+@media print {
+  @page {
+    margin: 1.5cm;
+  }
+
+  :root,
+  html[data-theme] {
+    color-scheme: light;
+  }
+
+  /* Tudo branco e preto, sem sombra nem textura do tema. */
+  body,
+  body * {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  /* Fora do papel: cabeçalho, navegação, filtros, ações, abas, avisos. */
+  header,
+  nav,
+  a[href='#conteudo'],
+  [data-print='ocultar'],
+  .levelup-toast {
+    display: none !important;
+  }
+
+  main {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Sem a coluna de filtros, o preview ocupa a página toda. */
+  .curriculo-layout {
+    display: block !important;
+  }
+
+  /* O painel visual vai para o papel mesmo com a aba Markdown ativa. */
+  .curriculo-painel-visual,
+  .curriculo-painel-visual[hidden] {
+    display: block !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+
+  .curriculo-impressao {
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  .curriculo-impressao a {
+    text-decoration: underline;
+  }
+
+  /* No papel não dá para clicar: mostra a URL depois do texto do link. */
+  .curriculo-impressao a[href]::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.9em;
+    word-break: break-all;
+  }
+
+  /* Uma categoria não é cortada entre páginas, e o título não fica sozinho no pé. */
+  .curriculo-categoria,
+  .curriculo-impressao li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .curriculo-impressao h2,
+  .curriculo-impressao h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+}

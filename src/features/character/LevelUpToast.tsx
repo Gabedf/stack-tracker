@@ -82,6 +82,7 @@ export function LevelUpToast({
     <div
       aria-live="polite"
       data-testid="levelup-avisos"
+      data-print="ocultar"
       className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex justify-center sm:inset-x-auto sm:right-6 sm:bottom-6 sm:justify-end"
     >
       <AnimatePresence mode="wait">

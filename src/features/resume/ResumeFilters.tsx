@@ -67,6 +67,7 @@ export function ResumeFilters({
   return (
     <form
       aria-label="Filtros do currículo"
+      data-print="ocultar"
       onSubmit={(e) => e.preventDefault()}
       className={`flex flex-col gap-5 rounded-theme border border-border bg-surface p-4 shadow-theme ${className}`}
     >
