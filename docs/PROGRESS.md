@@ -20,7 +20,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 13 | feat/13-stack-detail | concluída | 124fb0d |
 | 14 | feat/14-evolution-chart | concluída | ed7875a |
 | 15 | feat/15-dashboard | concluída | 0a0552b |
-| 16 | feat/16-rpg-tokens | pendente | |
+| 16 | feat/16-rpg-tokens | concluída | 9c30dbf |
 | 17 | feat/17-character-sheet | pendente | |
 | 18 | feat/18-rpg-xp-anim | pendente | |
 | 19 | feat/19-resume-logic | pendente | |
@@ -34,3 +34,5 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 - (22) Code splitting por rota com React.lazy: o recharts levou o bundle a ~800 kB (aviso do Vite > 500 kB).
 - (22) Tooltip do gráfico de evolução não abre por teclado; os valores ficam na tabela alternativa.
 - (geral) npm audit: tinypool via Vitest 3 (só dev). A correção exige Vitest 4 e Node >= 20.19.
+- (22) Borda do tema funcional (~1.5:1) abaixo de 3:1 nos campos de formulário.
+- (futuro) Estilo visual do RPG é provisório (pergaminho); tudo isolado em src/themes/rpg.css para troca.
