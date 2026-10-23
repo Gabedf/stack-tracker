@@ -40,3 +40,4 @@ export {
 export { LevelUpProvider, type LevelUpProviderProps } from './LevelUpProvider'
 export { useLevelUps } from './useLevelUps'
 export type { AvisoLevelUp, LevelUpContextValue } from './LevelUpContext'
+export { DURACAO_AVISO_MS, LevelUpToast, type LevelUpToastProps } from './LevelUpToast'

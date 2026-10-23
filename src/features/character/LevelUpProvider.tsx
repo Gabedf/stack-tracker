@@ -1,13 +1,15 @@
 /**
  * Observa as escritas do usuário em useStacks (adicionar, atualizar, remover) e
  * enfileira os level-ups que elas causaram. Carga inicial e recarregar não
- * passam por aqui (assinarEscritas só avisa escritas salvas).
+ * passam por aqui (assinarEscritas só avisa escritas salvas). Mostra a fila com
+ * o <LevelUpToast>, um aviso por vez. Exige <StacksProvider> e <ThemeProvider>.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useStacks } from '../stacks'
 import { LevelUpContext, type AvisoLevelUp, type LevelUpContextValue } from './LevelUpContext'
 import { detectarLevelUps } from './levelUp'
+import { LevelUpToast } from './LevelUpToast'
 
 export interface LevelUpProviderProps {
   /** Data de referência (ou relógio) para as notas. Padrão: agora. */
@@ -44,5 +46,14 @@ export function LevelUpProvider({ hoje, children }: LevelUpProviderProps) {
 
   const valor = useMemo<LevelUpContextValue>(() => ({ fila, fechar }), [fila, fechar])
 
-  return <LevelUpContext.Provider value={valor}>{children}</LevelUpContext.Provider>
+  return (
+    <LevelUpContext.Provider value={valor}>
+      {children}
+      <LevelUpToast
+        aviso={fila[0] ?? null}
+        restantes={Math.max(0, fila.length - 1)}
+        onFechar={fechar}
+      />
+    </LevelUpContext.Provider>
+  )
 }

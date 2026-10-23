@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { Stack, StacksFile } from '../../domain/types'
 import type { StorageAdapter } from '../../storage'
 import { StacksProvider, useStacks } from '../stacks'
+import { ThemeProvider } from '../../themes'
 import { LevelUpProvider } from './LevelUpProvider'
 import { useLevelUps } from './useLevelUps'
 
@@ -37,9 +38,11 @@ function adapterCom(stacks: Stack[]): StorageAdapter {
 async function montar(stacks: Stack[]) {
   const adapter = adapterCom(stacks)
   const wrapper = ({ children }: { children: ReactNode }) => (
-    <StacksProvider adapter={adapter} hoje={HOJE}>
-      <LevelUpProvider hoje={HOJE}>{children}</LevelUpProvider>
-    </StacksProvider>
+    <ThemeProvider>
+      <StacksProvider adapter={adapter} hoje={HOJE}>
+        <LevelUpProvider hoje={HOJE}>{children}</LevelUpProvider>
+      </StacksProvider>
+    </ThemeProvider>
   )
   const hook = renderHook(() => ({ stacks: useStacks(), levelUps: useLevelUps() }), { wrapper })
   await waitFor(() => expect(hook.result.current.stacks.status).toBe('pronto'))
