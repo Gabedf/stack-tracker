@@ -13,6 +13,9 @@
  *   passo vertical   = 1,5 · R + espaço · √3 / 2
  */
 
+import { formatarNota } from '../../components/formatacao'
+import type { SkillDaColmeia } from './character'
+
 const RAIZ3 = Math.sqrt(3)
 const COLLATOR = new Intl.Collator('pt-BR', { sensitivity: 'base', numeric: true })
 
@@ -269,4 +272,14 @@ export function rotuloCurto(nome: string, maximo = 7): string {
   if (maiusculas.length >= 2) return maiusculas.join('').slice(0, 4)
 
   return `${limpo.slice(0, maximo - 2)}…`
+}
+
+/** Nome acessível do hexágono: "React, Mestre, nota 8,4" (+ selos). */
+export function rotuloDaSkill(
+  skill: Pick<SkillDaColmeia, 'nome' | 'nivel' | 'nota' | 'seiPorSaber' | 'esfriando'>,
+): string {
+  const partes = [skill.nome, skill.nivel.nome, `nota ${formatarNota(skill.nota)}`]
+  if (skill.seiPorSaber) partes.push('sei por saber')
+  if (skill.esfriando) partes.push('esfriando')
+  return partes.join(', ')
 }

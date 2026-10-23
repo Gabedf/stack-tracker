@@ -5,7 +5,7 @@ export interface IconeProps {
   className?: string
   /**
    * Dentro de outro SVG: posição e tamanho em unidades do SVG pai (ex.: um
-   * ícone dentro de um hexágono). Sem isso, o tamanho vem do className.
+   * ícone dentro de um hexágono). Com `tamanho`, não há classe de tamanho padrão.
    */
   x?: number
   y?: number
@@ -19,10 +19,10 @@ export interface IconeProps {
  * muda o ícone só com CSS. Os atributos abaixo são o padrão sem CSS.
  */
 function IconeBase({
-  className = 'size-3.5',
   x,
   y,
   tamanho,
+  className = tamanho == null ? 'size-3.5' : '',
   children,
 }: IconeProps & { children: ReactNode }) {
   return (

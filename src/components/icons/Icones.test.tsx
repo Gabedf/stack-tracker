@@ -48,5 +48,6 @@ describe('ícones', () => {
     expect(icone).toHaveAttribute('y', '6')
     expect(icone).toHaveAttribute('width', '12')
     expect(icone).toHaveAttribute('height', '12')
+    expect(icone).not.toHaveClass('size-3.5')
   })
 })
