@@ -1,9 +1,12 @@
 import { createContext } from 'react'
-import type { Stack } from '../../domain/types'
+import type { Stack, StacksFile } from '../../domain/types'
 import type { StorageError } from '../../storage'
 import type { AtualizacaoStack, NovaStack } from './stacksOperations'
 
 export type StatusStacks = 'carregando' | 'pronto' | 'erro'
+
+/** Chamado após cada escrita salva com sucesso, com o estado anterior e o salvo. */
+export type OuvinteEscrita = (antes: StacksFile, depois: StacksFile) => void
 
 export interface StacksContextValue {
   /** Stacks do último estado salvo (ou carregado) com sucesso. */
@@ -22,6 +25,11 @@ export interface StacksContextValue {
   /** Remove a stack, salva e resolve com a stack removida. */
   remover(id: string): Promise<Stack>
   limparErro(): void
+  /**
+   * Avisa `ouvinte` após cada escrita do usuário (adicionar, atualizar, remover)
+   * salva com sucesso. Carregar/recarregar não avisa. Devolve o cancelamento.
+   */
+  assinarEscritas(ouvinte: OuvinteEscrita): () => void
 }
 
 export const StacksContext = createContext<StacksContextValue | null>(null)

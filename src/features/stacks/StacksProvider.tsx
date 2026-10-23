@@ -11,7 +11,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Stack, StacksFile } from '../../domain/types'
 import { StorageError, type StorageAdapter } from '../../storage'
-import { StacksContext, type StacksContextValue, type StatusStacks } from './StacksContext'
+import {
+  StacksContext,
+  type OuvinteEscrita,
+  type StacksContextValue,
+  type StatusStacks,
+} from './StacksContext'
 import {
   adicionarStack,
   atualizarStack,
@@ -46,6 +51,8 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
   const dadosRef = useRef<StacksFile | null>(null)
   const filaRef = useRef<Promise<unknown>>(Promise.resolve())
   const escritasPendentesRef = useRef(0)
+  /** Quem quer saber de cada escrita salva (ex.: detecção de level-up). */
+  const ouvintesRef = useRef(new Set<OuvinteEscrita>())
 
   // Mantém o relógio atual acessível às tarefas sem recriar as operações.
   const hojeRef = useRef(hoje)
@@ -111,6 +118,13 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
         dadosRef.current = salvo
         setDados(salvo)
         setErro(null)
+        for (const ouvinte of [...ouvintesRef.current]) {
+          try {
+            ouvinte(atual, salvo)
+          } catch {
+            // Um ouvinte com defeito não desfaz uma escrita já salva.
+          }
+        }
         // Prefere a versão devolvida pelo adapter (fonte da verdade).
         return salvo.stacks.find((s) => s.id === stack.id) ?? stack
       }).finally(() => {
@@ -139,6 +153,14 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
 
   const limparErro = useCallback(() => setErro(null), [])
 
+  const assinarEscritas = useCallback((ouvinte: OuvinteEscrita) => {
+    const ouvintes = ouvintesRef.current
+    ouvintes.add(ouvinte)
+    return () => {
+      ouvintes.delete(ouvinte)
+    }
+  }, [])
+
   useEffect(() => {
     // A falha já fica exposta em `status`/`erro`.
     recarregar().catch(() => undefined)
@@ -155,8 +177,20 @@ export function StacksProvider({ adapter, hoje, children }: StacksProviderProps)
       atualizar,
       remover,
       limparErro,
+      assinarEscritas,
     }),
-    [dados, status, erro, salvando, recarregar, adicionar, atualizar, remover, limparErro],
+    [
+      dados,
+      status,
+      erro,
+      salvando,
+      recarregar,
+      adicionar,
+      atualizar,
+      remover,
+      limparErro,
+      assinarEscritas,
+    ],
   )
 
   return <StacksContext.Provider value={valor}>{children}</StacksContext.Provider>
