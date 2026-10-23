@@ -11,11 +11,7 @@ import {
   type StacksFile,
 } from './types'
 
-const textoObrigatorio = (campo: string) =>
-  z
-    .string()
-    .trim()
-    .min(1, { error: `${campo} não pode ficar vazio.` })
+const textoObrigatorio = (mensagem: string) => z.string().trim().min(1, { error: mensagem })
 
 export const NotaSchema = z
   .number()
@@ -40,7 +36,7 @@ export const ExperienciaSchema = z.object({
 })
 
 export const EvidenciaSchema = z.object({
-  titulo: textoObrigatorio('O título'),
+  titulo: textoObrigatorio('O título não pode ficar vazio.'),
   url: z
     .url({ protocol: /^https?$/, error: 'URL inválida: use um endereço http(s) completo.' })
     .optional(),
@@ -55,10 +51,10 @@ export const RegistroHistoricoSchema = z.object({
 })
 
 export const StackSchema = z.object({
-  id: textoObrigatorio('O id'),
-  nome: textoObrigatorio('O nome'),
-  categoria: textoObrigatorio('A categoria'),
-  tags: z.array(textoObrigatorio('A tag')),
+  id: textoObrigatorio('O id não pode ficar vazio.'),
+  nome: textoObrigatorio('O nome não pode ficar vazio.'),
+  categoria: textoObrigatorio('A categoria não pode ficar vazia.'),
+  tags: z.array(textoObrigatorio('A tag não pode ficar vazia.')),
   dimensoes: DimensoesSchema,
   experiencia: ExperienciaSchema,
   evidencias: z.array(EvidenciaSchema),
