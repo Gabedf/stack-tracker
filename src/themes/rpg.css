@@ -72,11 +72,33 @@
   --theme-level-4: #6b3c9c; /* épico */
   --theme-level-5: #8f4308; /* lendário */
 
-  --theme-radius: 0.25rem;
-  --theme-shadow: 0 1px 2px rgb(43 29 14 / 0.15), 0 2px 6px rgb(43 29 14 / 0.12);
+  /*
+   * Moldura de painel: borda marrom (border-border) + filete claro interno
+   * (bisel de couro) + sombra curta e projetada. Cantos quase retos.
+   */
+  --theme-radius: 0.125rem;
+  --theme-shadow:
+    inset 0 0 0 1px rgb(255 250 235 / 0.6), 0 1px 0 rgb(91 64 32 / 0.2),
+    0 3px 8px -2px rgb(43 29 14 / 0.3);
 
   /* Texto corrido numa serifada do sistema; títulos em Cinzel (capitulares romanas). */
   --theme-font-base: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
   --theme-font-heading: 'Cinzel', 'Palatino Linotype', Georgia, serif;
   --theme-heading-tracking: 0.03em;
+}
+
+/* Foco: além do contorno (index.css), um brilho dourado, como item selecionado. */
+[data-theme='rpg'] :focus-visible {
+  box-shadow: var(--theme-glow);
+}
+
+/* Realce suave em controles; só para quem não pediu menos movimento. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='rpg'] :is(a, button, input, select, textarea, summary) {
+    transition:
+      color 120ms ease-out,
+      background-color 120ms ease-out,
+      border-color 120ms ease-out,
+      box-shadow 120ms ease-out;
+  }
 }
