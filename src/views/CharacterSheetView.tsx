@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
+import { CategoryRadar } from '../components/charts/CategoryRadar'
 import { EmptyState } from '../components/EmptyState'
 import { formatarNota } from '../components/formatacao'
 import { useDocumentTitle } from '../components/layout'
@@ -7,6 +8,8 @@ import { LevelBadge } from '../components/LevelBadge'
 import {
   calcularPersonagem,
   formatarXp,
+  SkillHoneycomb,
+  skillsDaColmeia,
   XpBar,
   type HabilidadeCategoria,
   type Personagem,
@@ -147,6 +150,9 @@ export function CharacterSheetView({ hoje }: CharacterSheetViewProps) {
   const { stacks, status, erro, recarregar } = useStacks()
   const [montagem] = useState(() => new Date())
   const referencia = hoje ?? montagem
+  const [selecionada, setSelecionada] = useState<string | null>(null)
+  const alternarCategoria = (categoria: string) =>
+    setSelecionada((atual) => (atual === categoria ? null : categoria))
 
   let conteudo
   if (status === 'carregando') {
@@ -188,23 +194,58 @@ export function CharacterSheetView({ hoje }: CharacterSheetViewProps) {
     )
   } else {
     const personagem = calcularPersonagem(stacks, { hoje: referencia })
+    const { habilidades } = personagem
+    const destaque = habilidades.some((h) => h.categoria === selecionada) ? selecionada : null
 
     conteudo = (
       <div className="flex flex-col gap-6">
         <Cabecalho personagem={personagem} />
 
-        <Painel id="ficha-habilidades" titulo="Habilidades por categoria">
-          <Habilidades habilidades={personagem.habilidades} />
-        </Painel>
-
         <div className="grid gap-6 md:grid-cols-2">
           <Painel id="ficha-radar" titulo="Radar">
-            <p className="text-sm text-muted">Em breve: radar das categorias.</p>
+            <p className="text-sm text-muted">
+              Nota média por categoria. Escolha uma categoria para destacar suas skills na colmeia.
+            </p>
+            <CategoryRadar
+              itens={habilidades.map((h) => ({
+                categoria: h.categoria,
+                valor: h.notaMedia,
+                quantidade: h.quantidade,
+              }))}
+              rotuloValor="Nota média"
+              selecionada={destaque}
+              onSelecionar={alternarCategoria}
+            />
           </Painel>
-          <Painel id="ficha-colmeia" titulo="Colmeia de skills">
-            <p className="text-sm text-muted">Em breve: uma skill por hexágono.</p>
+
+          <Painel id="ficha-habilidades" titulo="Habilidades por categoria">
+            <Habilidades habilidades={habilidades} />
           </Painel>
         </div>
+
+        <Painel id="ficha-colmeia" titulo="Colmeia de skills">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted">
+            <p aria-live="polite">
+              {destaque ? (
+                <>
+                  Destaque: <span className="font-semibold text-fg">{destaque}</span>
+                </>
+              ) : (
+                'Uma stack por hexágono, por categoria e nota.'
+              )}
+            </p>
+            {destaque && (
+              <button type="button" onClick={() => setSelecionada(null)} className={CLASSE_BOTAO}>
+                Limpar destaque
+              </button>
+            )}
+          </div>
+          <SkillHoneycomb
+            skills={skillsDaColmeia(stacks, { hoje: referencia })}
+            ordemCategorias={habilidades.map((h) => h.categoria)}
+            categoriaSelecionada={destaque}
+          />
+        </Painel>
       </div>
     )
   }

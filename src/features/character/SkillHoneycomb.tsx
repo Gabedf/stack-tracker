@@ -20,6 +20,8 @@ export interface SkillHoneycombProps {
   skills: readonly SkillDaColmeia[]
   /** Ordem das categorias (ex.: a das habilidades); as ausentes vão ao fim. */
   ordemCategorias?: readonly string[]
+  /** Categoria em destaque (ex.: clicada no radar): as demais esmaecem. */
+  categoriaSelecionada?: string | null
 }
 
 const RAIO = 34
@@ -76,7 +78,11 @@ const COR_ROTULO = 'var(--theme-text-muted)'
 const COR_SUPERFICIE = 'var(--theme-surface)'
 /** Opacidade das stacks esfriando (o floco reforça; não é só a opacidade). */
 const OPACIDADE_ESFRIANDO = 0.6
+/** Opacidade das categorias fora do destaque. */
+const OPACIDADE_ESMAECIDA = 0.2
 const TRACEJADO_SEI_POR_SABER = '5 3'
+/** Transição suave só para quem não pediu menos movimento. */
+const TRANSICAO = 'motion-safe:transition-opacity motion-safe:duration-200'
 const COR_FOCO = 'var(--theme-focus)'
 
 /** Teclas que movem o foco entre hexágonos (roving tabindex). */
@@ -111,11 +117,18 @@ function useLargura(padrao: number) {
   return [setElemento, largura] as const
 }
 
-function Brilho({ hex }: { hex: HexPosicionado<SkillDaColmeia> }) {
+function Brilho({ hex, esmaecido }: { hex: HexPosicionado<SkillDaColmeia>; esmaecido: boolean }) {
   const { brilho } = ESTILO_NIVEL[hex.item.nivel.id]
   if (brilho === 0) return null
   return (
-    <g aria-hidden="true" fill="none" stroke={COR_BRILHO} strokeLinejoin="round">
+    <g
+      aria-hidden="true"
+      fill="none"
+      stroke={COR_BRILHO}
+      strokeLinejoin="round"
+      opacity={esmaecido ? 0 : 1}
+      className={TRANSICAO}
+    >
       <polygon
         points={pontosHexagono(hex.x, hex.y, RAIO + 4)}
         strokeWidth={3}
@@ -136,6 +149,8 @@ interface HexagonoProps {
   hex: HexPosicionado<SkillDaColmeia>
   /** id do cartão de detalhes, quando ele descreve este hexágono. */
   descritoPor?: string
+  /** Fora da categoria em destaque. */
+  esmaecido: boolean
   /** Só um hexágono fica na ordem do Tab (0); os demais, -1. */
   tabIndex: 0 | -1
   registrar: (indice: number, elemento: HTMLAnchorElement | null) => void
@@ -147,6 +162,7 @@ interface HexagonoProps {
 function Hexagono({
   hex,
   descritoPor,
+  esmaecido,
   tabIndex,
   registrar,
   onTecla,
@@ -176,8 +192,13 @@ function Hexagono({
       data-nivel={skill.nivel.id}
       data-sei-por-saber={skill.seiPorSaber || undefined}
       data-esfriando={skill.esfriando || undefined}
-      className="cursor-pointer focus-visible:outline-none"
-      style={{ opacity: skill.esfriando ? OPACIDADE_ESFRIANDO : 1, color: estilo.texto }}
+      data-dim={esmaecido || undefined}
+      className={`cursor-pointer focus-visible:outline-none ${TRANSICAO}`}
+      style={{
+        opacity:
+          (skill.esfriando ? OPACIDADE_ESFRIANDO : 1) * (esmaecido ? OPACIDADE_ESMAECIDA : 1),
+        color: estilo.texto,
+      }}
     >
       {/* Base opaca: a tinta dos níveis baixos não deixa ver o que está atrás. */}
       <polygon points={pontosHexagono(x, y, RAIO)} fill={COR_SUPERFICIE} />
@@ -362,7 +383,11 @@ function Legenda() {
  * por nota. Cor e brilho vêm do nível (tokens --theme-level-N); os selos usam
  * forma e ícone, não só cor. Cada hexágono é um link para a stack.
  */
-export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps) {
+export function SkillHoneycomb({
+  skills,
+  ordemCategorias,
+  categoriaSelecionada = null,
+}: SkillHoneycombProps) {
   const [ref, largura] = useLargura(LARGURA_PADRAO)
   const idCartao = useId()
   const [emHover, setEmHover] = useState<number | null>(null)
@@ -387,6 +412,8 @@ export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps)
 
   const naOrdemDoTab = Math.min(indiceTab, Math.max(0, layout.hexagonos.length - 1))
   const hexEmFoco = emFoco == null ? undefined : layout.hexagonos[emFoco]
+  const esmaecida = (categoria: string) =>
+    categoriaSelecionada != null && categoria !== categoriaSelecionada
 
   const registrar = (indice: number, elemento: HTMLAnchorElement | null) => {
     if (elemento) elementos.current.set(indice, elemento)
@@ -448,13 +475,20 @@ export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps)
             >
               <g>
                 {layout.hexagonos.map((hex) => (
-                  <Brilho key={hex.item.id} hex={hex} />
+                  <Brilho key={hex.item.id} hex={hex} esmaecido={esmaecida(hex.item.categoria)} />
                 ))}
               </g>
               {layout.grupos.map((grupo) => (
-                <g key={grupo.categoria} role="group" aria-label={grupo.categoria}>
+                <g
+                  key={grupo.categoria}
+                  role="group"
+                  aria-label={grupo.categoria}
+                  data-destaque={grupo.categoria === categoriaSelecionada || undefined}
+                >
                   <text
                     aria-hidden="true"
+                    opacity={esmaecida(grupo.categoria) ? OPACIDADE_ESMAECIDA * 2 : 1}
+                    className={TRANSICAO}
                     x={MARGEM}
                     y={grupo.yRotulo}
                     fill={COR_ROTULO}
@@ -470,6 +504,7 @@ export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps)
                         key={hex.item.id}
                         hex={hex}
                         descritoPor={hex === hexAtivo ? idCartao : undefined}
+                        esmaecido={esmaecida(hex.item.categoria)}
                         tabIndex={hex.indice === naOrdemDoTab ? 0 : -1}
                         registrar={registrar}
                         onTecla={aoTeclar}
