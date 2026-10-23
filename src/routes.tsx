@@ -1,6 +1,14 @@
 import { Route, Routes } from 'react-router'
 import { AppLayout } from './components/layout'
-import { DashboardView, NotFoundView, ResumeView, StackDetailView, StacksView } from './views'
+import {
+  DashboardView,
+  EditStackView,
+  NewStackView,
+  NotFoundView,
+  ResumeView,
+  StackDetailView,
+  StacksView,
+} from './views'
 
 /** Árvore de rotas do app. Fica fora do router para os testes usarem MemoryRouter. */
 export function AppRoutes() {
@@ -9,7 +17,9 @@ export function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route index element={<DashboardView />} />
         <Route path="stacks" element={<StacksView />} />
+        <Route path="stacks/nova" element={<NewStackView />} />
         <Route path="stacks/:id" element={<StackDetailView />} />
+        <Route path="stacks/:id/editar" element={<EditStackView />} />
         <Route path="curriculo" element={<ResumeView />} />
         <Route path="*" element={<NotFoundView />} />
       </Route>

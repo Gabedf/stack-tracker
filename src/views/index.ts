@@ -1,5 +1,7 @@
 export { DashboardView } from './DashboardView'
 export { StacksView } from './StacksView'
 export { StackDetailView } from './StackDetailView'
+export { NewStackView } from './NewStackView'
+export { EditStackView } from './EditStackView'
 export { ResumeView } from './ResumeView'
 export { NotFoundView } from './NotFoundView'

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
+import { EmptyState } from '../components/EmptyState'
 import { formatarNota } from '../components/formatacao'
 import { KnowledgeBadge } from '../components/KnowledgeBadge'
 import { useDocumentTitle } from '../components/layout'
@@ -7,7 +8,7 @@ import { LevelBadge } from '../components/LevelBadge'
 import { StackCard } from '../components/StackCard'
 import { calcularNota } from '../domain/scoring'
 import type { Stack } from '../domain/types'
-import { StackFilters, useStacks } from '../features/stacks'
+import { QuickAddStack, StackFilters, useStacks } from '../features/stacks'
 import {
   CRITERIOS_PADRAO,
   categoriasDisponiveis,
@@ -127,62 +128,82 @@ export function StacksView({ hoje }: StacksViewProps) {
         </button>
       </div>
     )
-  } else if (stacks.length === 0) {
-    conteudo = <p className="text-muted">Nenhuma stack cadastrada ainda.</p>
   } else {
+    const vazio = stacks.length === 0
+    // O QuickAddStack fica sempre na mesma posição: ao sair do estado vazio ele
+    // não é remontado e mantém a confirmação e o foco.
     conteudo = (
       <div className="flex flex-col gap-4">
-        <StackFilters
-          criterios={criterios}
-          categorias={categorias}
-          onChange={alterarCriterios}
-          onLimpar={limparFiltros}
-        />
-
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p aria-live="polite" className="text-sm text-muted">
-            {textoContador(visiveis.length, stacks.length)}
-          </p>
-          <div role="group" aria-label="Visualização" className="flex gap-1">
-            {VISOES.map(({ id, rotulo }) => (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={visao === id}
-                onClick={() => alterarVisao(id)}
-                className={
-                  visao === id
-                    ? 'rounded-theme border border-accent bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast'
-                    : CLASSE_BOTAO
-                }
+        {vazio && (
+          <EmptyState
+            titulo="Adicione sua primeira stack"
+            texto="O painel reúne as tecnologias que você conhece e calcula uma nota de domínio para cada uma, a partir de teoria, prática, profundidade e uso recente."
+            acao={
+              <Link
+                to="/stacks/nova"
+                className="font-medium text-accent underline underline-offset-2"
               >
-                {rotulo}
-              </button>
-            ))}
-          </div>
-        </div>
+                Prefere preencher tudo? Use o formulário completo
+              </Link>
+            }
+          />
+        )}
+        <QuickAddStack destaque={vazio} />
+        {!vazio && (
+          <>
+            <StackFilters
+              criterios={criterios}
+              categorias={categorias}
+              onChange={alterarCriterios}
+              onLimpar={limparFiltros}
+            />
 
-        {visiveis.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 rounded-theme border border-dashed border-border bg-surface p-6 text-center">
-            <p className="text-fg">Nenhuma stack corresponde aos filtros.</p>
-            <button type="button" onClick={limparFiltros} className={CLASSE_BOTAO}>
-              Limpar filtros
-            </button>
-          </div>
-        ) : visao === 'grade' ? (
-          <ul aria-label="Stacks" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {visiveis.map((stack) => (
-              <li key={stack.id} className="flex">
-                <StackCard stack={stack} hoje={referencia} className="w-full" />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <ul aria-label="Stacks" className="flex flex-col gap-2">
-            {visiveis.map((stack) => (
-              <LinhaStack key={stack.id} stack={stack} hoje={referencia} />
-            ))}
-          </ul>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p aria-live="polite" className="text-sm text-muted">
+                {textoContador(visiveis.length, stacks.length)}
+              </p>
+              <div role="group" aria-label="Visualização" className="flex gap-1">
+                {VISOES.map(({ id, rotulo }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    aria-pressed={visao === id}
+                    onClick={() => alterarVisao(id)}
+                    className={
+                      visao === id
+                        ? 'rounded-theme border border-accent bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast'
+                        : CLASSE_BOTAO
+                    }
+                  >
+                    {rotulo}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {visiveis.length === 0 ? (
+              <div className="flex flex-col items-center gap-3 rounded-theme border border-dashed border-border bg-surface p-6 text-center">
+                <p className="text-fg">Nenhuma stack corresponde aos filtros.</p>
+                <button type="button" onClick={limparFiltros} className={CLASSE_BOTAO}>
+                  Limpar filtros
+                </button>
+              </div>
+            ) : visao === 'grade' ? (
+              <ul aria-label="Stacks" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {visiveis.map((stack) => (
+                  <li key={stack.id} className="flex">
+                    <StackCard stack={stack} hoje={referencia} className="w-full" />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <ul aria-label="Stacks" className="flex flex-col gap-2">
+                {visiveis.map((stack) => (
+                  <LinhaStack key={stack.id} stack={stack} hoje={referencia} />
+                ))}
+              </ul>
+            )}
+          </>
         )}
       </div>
     )
@@ -190,7 +211,15 @@ export function StacksView({ hoje }: StacksViewProps) {
 
   return (
     <section className="space-y-4">
-      <h1 className="text-3xl font-bold">Stacks</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-3xl font-bold">Stacks</h1>
+        <Link
+          to="/stacks/nova"
+          className="rounded-theme border border-accent bg-accent px-4 py-2 text-sm font-semibold text-accent-contrast shadow-theme hover:opacity-90"
+        >
+          Nova stack
+        </Link>
+      </div>
       {conteudo}
     </section>
   )

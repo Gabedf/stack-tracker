@@ -234,9 +234,11 @@ describe('StacksView', () => {
     expect(adapter.carregar).toHaveBeenCalledTimes(2)
   })
 
-  it('sem stacks cadastradas mostra mensagem simples', async () => {
+  it('sem stacks cadastradas mostra o estado vazio', async () => {
     renderView('/stacks', new AdapterFake([]))
-    expect(await screen.findByText('Nenhuma stack cadastrada ainda.')).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { level: 2, name: 'Adicione sua primeira stack' }),
+    ).toBeInTheDocument()
     expect(screen.queryByRole('search')).not.toBeInTheDocument()
   })
 })
