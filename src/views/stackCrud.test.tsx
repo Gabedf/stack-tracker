@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import type { Stack, StacksFile } from '../domain/types'
-import { StacksProvider } from '../features/stacks'
+import { StacksProvider, useStacks } from '../features/stacks'
 import { StorageError, type StorageAdapter } from '../storage'
 import { HOJE_SEED, stacksDoSeed } from '../test/seed'
 import { EditStackView } from './EditStackView'
@@ -35,6 +35,11 @@ function Local() {
   return <span data-testid="local">{useLocation().pathname}</span>
 }
 
+/** Expõe o erro guardado no contexto (vazio quando não há). */
+function ErroContexto() {
+  return <span data-testid="erro-contexto">{useStacks().erro?.message ?? ''}</span>
+}
+
 function renderApp(rota: string, adapter = new AdapterFake(stacksDoSeed())) {
   render(
     <StacksProvider adapter={adapter} hoje={HOJE_SEED}>
@@ -46,6 +51,7 @@ function renderApp(rota: string, adapter = new AdapterFake(stacksDoSeed())) {
           <Route path="/stacks/:id/editar" element={<EditStackView hoje={HOJE_SEED} />} />
         </Routes>
         <Local />
+        <ErroContexto />
       </MemoryRouter>
     </StacksProvider>,
   )
@@ -53,6 +59,7 @@ function renderApp(rota: string, adapter = new AdapterFake(stacksDoSeed())) {
 }
 
 const local = () => screen.getByTestId('local').textContent
+const erroContexto = () => screen.getByTestId('erro-contexto')
 const campo = (rotulo: string) => screen.getByLabelText(rotulo)
 const digitar = (rotulo: string, valor: string) =>
   fireEvent.change(campo(rotulo), { target: { value: valor } })
@@ -138,6 +145,23 @@ describe('criar stack', () => {
     fireEvent.click(botao('Salvar'))
     await waitFor(() => expect(local()).toBe('/stacks/vue'))
     expect(adapter.dados.stacks).toHaveLength(6)
+  })
+
+  it('sair do formulário depois de uma falha limpa o erro do contexto', async () => {
+    const adapter = new AdapterFake(stacksDoSeed())
+    adapter.falharSalvar = new StorageError('Não foi possível salvar as stacks.')
+    renderApp('/stacks/nova', adapter)
+    await screen.findByRole('form', { name: 'Nova stack' })
+    digitar('Nome', 'Vue')
+    digitar('Categoria', 'Frontend')
+    fireEvent.click(botao('Salvar'))
+
+    await screen.findByRole('alert')
+    expect(erroContexto()).toHaveTextContent('Não foi possível salvar as stacks.')
+
+    fireEvent.click(botao('Cancelar'))
+    expect(local()).toBe('/stacks')
+    expect(erroContexto()).toBeEmptyDOMElement()
   })
 
   it('Cancelar volta para a lista sem salvar', async () => {
