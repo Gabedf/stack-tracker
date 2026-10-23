@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-// Conteúdo real de data/stacks.json como texto (sem @types/node no projeto).
-import seedTexto from '../../data/stacks.json?raw'
+// Conteúdo do seed fictício (data/seed.json) como texto.
+import seedTexto from '../../data/seed.json?raw'
 import { calcularNota, mesesDesde, seiPorSaber } from '../domain/scoring'
 import type { StacksFile } from '../domain/types'
 import { carregarStacksFile } from './stacksFileLoader'
@@ -53,7 +53,7 @@ describe('carregarStacksFile', () => {
   })
 })
 
-describe('seed data/stacks.json', () => {
+describe('seed data/seed.json', () => {
   it('passa no schema', () => {
     const resultado = carregarStacksFile(seedTexto)
     expect(resultado.ok ? [] : resultado.erros).toEqual([])
