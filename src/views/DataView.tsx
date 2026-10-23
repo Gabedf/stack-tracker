@@ -1,5 +1,5 @@
 import { useDocumentTitle } from '../components/layout'
-import { ExportSection } from '../features/data'
+import { ExportSection, ImportSection } from '../features/data'
 import { useStacks } from '../features/stacks'
 
 export interface DataViewProps {
@@ -10,7 +10,7 @@ export interface DataViewProps {
 /** Exportar e importar os dados do painel em JSON. */
 export function DataView({ hoje }: DataViewProps) {
   useDocumentTitle('Dados')
-  const { stacks, status, erro } = useStacks()
+  const { stacks, status, erro, substituirTudo } = useStacks()
 
   return (
     <section className="space-y-6">
@@ -34,6 +34,11 @@ export function DataView({ hoje }: DataViewProps) {
       )}
 
       <ExportSection stacks={stacks} desabilitado={status !== 'pronto'} hoje={hoje} />
+      <ImportSection
+        stacks={stacks}
+        onImportar={substituirTudo}
+        desabilitado={status !== 'pronto'}
+      />
     </section>
   )
 }

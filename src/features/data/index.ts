@@ -14,3 +14,5 @@ export {
   type ResultadoAnalise,
 } from './importExport'
 export { ExportSection, type ExportSectionProps } from './ExportSection'
+export { ImportSection, type ImportSectionProps } from './ImportSection'
+export { lerArquivoComoTexto } from './lerArquivo'
