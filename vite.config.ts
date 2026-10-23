@@ -10,6 +10,8 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
-    css: false,
+    // CSS não é processado nos testes, exceto importado como texto (?raw), que os
+    // testes de tema usam para comparar os tokens.
+    css: { include: [/\.css\?raw$/] },
   },
 })
