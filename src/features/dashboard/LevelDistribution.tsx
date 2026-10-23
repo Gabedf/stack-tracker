@@ -13,7 +13,7 @@ function textoStacks(qtd: number): string {
 
 /**
  * Barras horizontais finas com a quantidade de stacks por nível. Uma série só
- * (accent sobre trilho do mesmo tom) e o número sempre visível ao lado.
+ * (tokens de progresso xp-fill sobre xp-track) e o número sempre visível ao lado.
  * Faixas com stacks levam à lista filtrada pelo nível.
  */
 export function LevelDistribution({ distribuicao, total }: LevelDistributionProps) {
@@ -24,9 +24,9 @@ export function LevelDistribution({ distribuicao, total }: LevelDistributionProp
         const conteudo = (
           <>
             <span className="text-sm text-fg">{nivel.nome}</span>
-            <span aria-hidden="true" className="h-2 overflow-hidden rounded-full bg-accent/15">
+            <span aria-hidden="true" className="h-2 overflow-hidden rounded-full bg-xp-track">
               <span
-                className="block h-full rounded-full bg-accent"
+                className="block h-full rounded-full bg-xp-fill"
                 style={{ width: `${percentual}%` }}
               />
             </span>

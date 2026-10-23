@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useId, useLayoutEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { formatarNota, ROTULO_EXPERIENCIA } from '../../components/formatacao'
 import { LevelBadge } from '../../components/LevelBadge'
 import { calcularNota } from '../../domain/scoring'
@@ -75,7 +75,7 @@ export function StackForm({
   const focoPendente = useRef<CampoForm | null>(null)
 
   // Move o foco depois que as mensagens de erro já estão no DOM.
-  useEffect(() => {
+  useLayoutEffect(() => {
     const campo = focoPendente.current
     if (!campo) return
     focoPendente.current = null

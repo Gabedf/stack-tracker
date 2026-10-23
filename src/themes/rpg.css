@@ -1,0 +1,108 @@
+/*
+ * Tema RPG. Tudo o que é específico do visual RPG vive neste arquivo: trocar o
+ * estilo do tema = editar só aqui, sem tocar nos componentes. Precisa definir
+ * exatamente os mesmos --theme-* do tema funcional (tokens.css); há teste.
+ * O visual pergaminho/medieval é PROVISÓRIO; o que importa é a sensação de jogo.
+ *
+ * Contraste WCAG 2.x calculado (texto normal >= 4.5:1; foco, bordas e gráficos >= 3:1).
+ * Fundos: bg #efe2bf, surface #faf1db, surface-2 #ecdcb4,
+ * trilho accent/15 sobre surface (~#e9d3bd).
+ *
+ *   par                       bg     surface  surface-2  accent/15
+ *   text        #2b1d0e     12.69    14.53     12.04      11.30
+ *   text-muted  #5b4126      7.31     8.38      6.94       6.51
+ *   accent      #8a2c12      6.65     7.62      6.31       5.93
+ *   success     #2f5d1e      6.03     6.90      5.72       5.37
+ *   warning     #8a4b08      5.27     6.04      5.00       4.70
+ *   danger      #8b1a1a      7.21     8.26      6.84       6.42
+ *   level-1     #5e554a      5.67     6.50      5.38        -
+ *   level-2     #2f6a1f      5.09     5.83      4.83        -
+ *   level-3     #2a5a96      5.43     6.22      5.15        -
+ *   level-4     #6b3c9c      5.92     6.79      5.62        -
+ *   level-5     #8f4308      5.48     6.28      5.20        -
+ *   focus       #1f4f7a      6.63     7.60      6.29       5.91   (>= 3)
+ *   border      #8b6a3e      3.85     4.41      3.66       3.43   (>= 3)
+ *   xp-fill     #8a6410      4.17     4.77      3.95        -     (>= 3)
+ *
+ *   accent-contrast #faf1db sobre accent 7.62 e sobre danger 8.26.
+ *   xp-fill sobre xp-track #e6d3a1: 3.63. accent sobre o trilho accent/15: 5.93.
+ *
+ * Séries de gráfico (ordem nota, teoria, prática, profundidade) validadas com o
+ * validador do skill dataviz contra a surface, todos os pares: CVD pior ΔE 9.1,
+ * visão normal pior ΔE 16.0, todas >= 3:1 sobre a surface (5.35, 4.60, 3.54, 3.41).
+ */
+
+/* Cinzel (títulos): só latin, pesos usados nos headings (semibold e bold).
+   O @font-face só baixa o arquivo quando algum texto usa a fonte. */
+@import '@fontsource/cinzel/latin-600.css';
+@import '@fontsource/cinzel/latin-700.css';
+
+[data-theme='rpg'] {
+  color-scheme: light;
+
+  /* Pergaminho: o fundo é um pouco mais escuro que os painéis, que "saltam". */
+  --theme-bg: #efe2bf;
+  --theme-surface: #faf1db;
+  --theme-surface-2: #ecdcb4;
+  --theme-text: #2b1d0e;
+  --theme-text-muted: #5b4126;
+  --theme-border: #8b6a3e;
+  --theme-accent: #8a2c12;
+  --theme-accent-contrast: #faf1db;
+  --theme-success: #2f5d1e;
+  --theme-warning: #8a4b08;
+  --theme-danger: #8b1a1a;
+  /* Tinta azul: contrasta com o accent carmim, então o foco aparece até sobre botões. */
+  --theme-focus: #1f4f7a;
+
+  --theme-chart-nota: #b03a2e;
+  --theme-chart-teoria: #2f6fb5;
+  --theme-chart-pratica: #1a9070;
+  --theme-chart-profundidade: #a77b00;
+  --theme-chart-grid: #e3d0a3;
+  --theme-chart-band: #f5ead0;
+
+  /* Ficha de personagem: barra de XP dourada, brilho e cor por nível (raridade). */
+  --theme-xp-fill: #8a6410;
+  --theme-xp-track: #e6d3a1;
+  --theme-glow: 0 0 0 1px rgb(201 146 26 / 0.6), 0 0 12px 2px rgb(201 146 26 / 0.45);
+  --theme-level-1: #5e554a; /* comum */
+  --theme-level-2: #2f6a1f; /* incomum */
+  --theme-level-3: #2a5a96; /* raro */
+  --theme-level-4: #6b3c9c; /* épico */
+  --theme-level-5: #8f4308; /* lendário */
+
+  /*
+   * Moldura de painel: borda marrom (border-border) + filete claro interno
+   * (bisel de couro) + sombra curta e projetada. Cantos quase retos.
+   */
+  --theme-radius: 0.125rem;
+  --theme-shadow:
+    inset 0 0 0 1px rgb(255 250 235 / 0.6), 0 1px 0 rgb(91 64 32 / 0.2),
+    0 3px 8px -2px rgb(43 29 14 / 0.3);
+
+  /* Texto corrido numa serifada do sistema; títulos em Cinzel (capitulares romanas). */
+  --theme-font-base: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  --theme-font-heading: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+  --theme-heading-tracking: 0.03em;
+
+  /* Ícones: traço mais grosso e um leve preenchimento, como gravura/emblema. */
+  --theme-icon-stroke: 1.75;
+  --theme-icon-fill-opacity: 0.2;
+}
+
+/* Foco: além do contorno (index.css), um brilho dourado, como item selecionado. */
+[data-theme='rpg'] :focus-visible {
+  box-shadow: var(--theme-glow);
+}
+
+/* Realce suave em controles; só para quem não pediu menos movimento. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='rpg'] :is(a, button, input, select, textarea, summary) {
+    transition:
+      color 120ms ease-out,
+      background-color 120ms ease-out,
+      border-color 120ms ease-out,
+      box-shadow 120ms ease-out;
+  }
+}

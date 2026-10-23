@@ -1,11 +1,13 @@
 @import 'tailwindcss';
 @import './themes/tokens.css';
+@import './themes/rpg.css';
 
 /*
  * Expõe os tokens dos temas ao Tailwind. "inline" faz as classes usarem
  * var(--theme-*) diretamente, então elas acompanham o data-theme ativo.
  * Ex.: bg-bg, bg-surface, bg-surface-2, text-fg, text-muted, border-border,
- * text-accent, bg-accent text-accent-contrast, rounded-theme, shadow-theme, font-heading.
+ * text-accent, bg-accent text-accent-contrast, rounded-theme, shadow-theme, font-heading,
+ * bg-xp-fill, bg-xp-track, text-level-1..5, shadow-glow.
  */
 @theme inline {
   --color-bg: var(--theme-bg);
@@ -26,9 +28,17 @@
   --color-chart-profundidade: var(--theme-chart-profundidade);
   --color-chart-grid: var(--theme-chart-grid);
   --color-chart-band: var(--theme-chart-band);
+  --color-xp-fill: var(--theme-xp-fill);
+  --color-xp-track: var(--theme-xp-track);
+  --color-level-1: var(--theme-level-1);
+  --color-level-2: var(--theme-level-2);
+  --color-level-3: var(--theme-level-3);
+  --color-level-4: var(--theme-level-4);
+  --color-level-5: var(--theme-level-5);
 
   --radius-theme: var(--theme-radius);
   --shadow-theme: var(--theme-shadow);
+  --shadow-glow: var(--theme-glow);
 
   --font-sans: var(--theme-font-base);
   --font-heading: var(--theme-font-heading);
@@ -46,8 +56,16 @@
   h3,
   h4,
   h5,
-  h6 {
+  h6,
+  .font-heading {
     font-family: var(--theme-font-heading);
+    letter-spacing: var(--theme-heading-tracking);
+  }
+
+  /* Ícones de src/components/icons: o tema decide traço e preenchimento. */
+  .icone {
+    stroke-width: var(--theme-icon-stroke);
+    fill-opacity: var(--theme-icon-fill-opacity);
   }
 
   :focus-visible {
