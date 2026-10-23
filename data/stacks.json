@@ -1,0 +1,288 @@
+{
+  "versao": 1,
+  "stacks": [
+    {
+      "id": "react",
+      "nome": "React",
+      "categoria": "Frontend",
+      "tags": ["ui", "spa", "hooks"],
+      "dimensoes": {
+        "teoria": 9,
+        "pratica": 8,
+        "profundidade": 8,
+        "ultimoUso": "2026-10-09"
+      },
+      "experiencia": {
+        "tipo": "producao",
+        "meses": 36
+      },
+      "evidencias": [
+        {
+          "titulo": "Desenvolvedor frontend na Empresa Exemplo",
+          "url": "https://empresa.example.com",
+          "descricao": "Manutenção e evolução de um painel administrativo em React.",
+          "tipo": "emprego"
+        },
+        {
+          "titulo": "Loja Exemplo",
+          "url": "https://loja.example.com",
+          "descricao": "E-commerce fictício com carrinho, checkout e testes de componentes.",
+          "tipo": "projeto"
+        },
+        {
+          "titulo": "react-ui-kit",
+          "url": "https://git.example.com/exemplo/react-ui-kit",
+          "descricao": "Biblioteca de componentes acessíveis.",
+          "tipo": "repo"
+        },
+        {
+          "titulo": "Certificado React Avançado",
+          "url": "https://cursos.example.com/certificados/react-avancado",
+          "descricao": "Curso online de padrões avançados.",
+          "tipo": "certificado"
+        }
+      ],
+      "historico": [
+        {
+          "data": "2023-09-10",
+          "dimensoes": {
+            "teoria": 5,
+            "pratica": 3,
+            "profundidade": 2,
+            "ultimoUso": "2023-09-08"
+          },
+          "nota": 3.8
+        },
+        {
+          "data": "2024-03-15",
+          "dimensoes": {
+            "teoria": 6,
+            "pratica": 5,
+            "profundidade": 4,
+            "ultimoUso": "2024-03-14"
+          },
+          "nota": 5.4
+        },
+        {
+          "data": "2024-11-02",
+          "dimensoes": {
+            "teoria": 7,
+            "pratica": 7,
+            "profundidade": 5,
+            "ultimoUso": "2024-11-01"
+          },
+          "nota": 6.7
+        },
+        {
+          "data": "2025-08-20",
+          "dimensoes": {
+            "teoria": 8,
+            "pratica": 8,
+            "profundidade": 7,
+            "ultimoUso": "2025-08-19"
+          },
+          "nota": 7.9
+        },
+        {
+          "data": "2026-10-10",
+          "dimensoes": {
+            "teoria": 9,
+            "pratica": 8,
+            "profundidade": 8,
+            "ultimoUso": "2026-10-09"
+          },
+          "nota": 8.4
+        }
+      ],
+      "notas": "Stack principal do dia a dia."
+    },
+    {
+      "id": "nodejs",
+      "nome": "Node.js",
+      "categoria": "Backend",
+      "tags": ["javascript", "api", "express"],
+      "dimensoes": {
+        "teoria": 7,
+        "pratica": 6,
+        "profundidade": 5,
+        "ultimoUso": "2026-06-01"
+      },
+      "experiencia": {
+        "tipo": "projeto_pessoal",
+        "meses": 14
+      },
+      "evidencias": [
+        {
+          "titulo": "api-tarefas",
+          "url": "https://git.example.com/exemplo/api-tarefas",
+          "descricao": "API REST de tarefas com autenticação JWT.",
+          "tipo": "repo"
+        }
+      ],
+      "historico": [
+        {
+          "data": "2025-02-01",
+          "dimensoes": {
+            "teoria": 5,
+            "pratica": 2,
+            "profundidade": 2,
+            "ultimoUso": "2025-01-30"
+          },
+          "nota": 2.6
+        },
+        {
+          "data": "2025-09-12",
+          "dimensoes": {
+            "teoria": 6,
+            "pratica": 5,
+            "profundidade": 4,
+            "ultimoUso": "2025-09-10"
+          },
+          "nota": 4.6
+        },
+        {
+          "data": "2026-06-05",
+          "dimensoes": {
+            "teoria": 7,
+            "pratica": 6,
+            "profundidade": 5,
+            "ultimoUso": "2026-06-01"
+          },
+          "nota": 5.5
+        }
+      ]
+    },
+    {
+      "id": "kubernetes",
+      "nome": "Kubernetes",
+      "categoria": "DevOps",
+      "tags": ["containers", "orquestracao", "cloud"],
+      "dimensoes": {
+        "teoria": 8,
+        "pratica": 2,
+        "profundidade": 4,
+        "ultimoUso": "2026-09-15"
+      },
+      "experiencia": {
+        "tipo": "so_teoria",
+        "meses": 0
+      },
+      "evidencias": [
+        {
+          "titulo": "Certificado Fundamentos de Kubernetes",
+          "url": "https://cursos.example.com/certificados/k8s-fundamentos",
+          "descricao": "Curso teórico sobre pods, deployments e services.",
+          "tipo": "certificado"
+        }
+      ],
+      "historico": [
+        {
+          "data": "2025-04-10",
+          "dimensoes": {
+            "teoria": 4,
+            "pratica": 1,
+            "profundidade": 2,
+            "ultimoUso": "2025-04-10"
+          },
+          "nota": 2
+        },
+        {
+          "data": "2025-12-01",
+          "dimensoes": {
+            "teoria": 6,
+            "pratica": 2,
+            "profundidade": 3,
+            "ultimoUso": "2025-11-28"
+          },
+          "nota": 3.1
+        },
+        {
+          "data": "2026-09-18",
+          "dimensoes": {
+            "teoria": 8,
+            "pratica": 2,
+            "profundidade": 4,
+            "ultimoUso": "2026-09-15"
+          },
+          "nota": 3.8
+        }
+      ],
+      "notas": "Muita leitura e cursos, pouca mão na massa."
+    },
+    {
+      "id": "jquery",
+      "nome": "jQuery",
+      "categoria": "Frontend",
+      "tags": ["javascript", "dom", "legado"],
+      "dimensoes": {
+        "teoria": 7,
+        "pratica": 7,
+        "profundidade": 5,
+        "ultimoUso": "2022-02-25"
+      },
+      "experiencia": {
+        "tipo": "producao",
+        "meses": 20
+      },
+      "evidencias": [
+        {
+          "titulo": "Estágio na Agência Exemplo",
+          "descricao": "Sites institucionais com jQuery e plugins.",
+          "tipo": "emprego"
+        }
+      ],
+      "historico": [
+        {
+          "data": "2020-05-20",
+          "dimensoes": {
+            "teoria": 5,
+            "pratica": 4,
+            "profundidade": 3,
+            "ultimoUso": "2020-05-18"
+          },
+          "nota": 3.9
+        },
+        {
+          "data": "2021-06-15",
+          "dimensoes": {
+            "teoria": 6,
+            "pratica": 6,
+            "profundidade": 5,
+            "ultimoUso": "2021-06-10"
+          },
+          "nota": 5.5
+        },
+        {
+          "data": "2022-03-01",
+          "dimensoes": {
+            "teoria": 7,
+            "pratica": 7,
+            "profundidade": 5,
+            "ultimoUso": "2022-02-25"
+          },
+          "nota": 6.1
+        }
+      ],
+      "notas": "Sem uso há anos; nota sofre decaimento."
+    },
+    {
+      "id": "postgresql",
+      "nome": "PostgreSQL",
+      "categoria": "Dados",
+      "tags": ["sql", "banco-de-dados"],
+      "dimensoes": {
+        "teoria": 4,
+        "pratica": 3,
+        "profundidade": 2,
+        "ultimoUso": "2026-10-01"
+      },
+      "experiencia": {
+        "tipo": "estudo",
+        "meses": 3
+      },
+      "evidencias": [],
+      "historico": [],
+      "notas": "Recém-adicionada; ainda sem histórico."
+    }
+  ]
+}
