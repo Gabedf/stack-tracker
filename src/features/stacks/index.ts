@@ -13,3 +13,4 @@ export { DeleteStackButton, type DeleteStackButtonProps } from './DeleteStackBut
 export type { DadosStackForm } from './stackFormModel'
 export { QuickAddStack, type QuickAddStackProps } from './QuickAddStack'
 export { HistorySummary, type HistorySummaryProps } from './HistorySummary'
+export { ScoreBreakdown, type ScoreBreakdownProps } from './ScoreBreakdown'

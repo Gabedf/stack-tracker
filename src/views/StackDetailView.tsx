@@ -5,7 +5,7 @@ import { KnowledgeBadge } from '../components/KnowledgeBadge'
 import { useDocumentTitle } from '../components/layout'
 import { LevelBadge } from '../components/LevelBadge'
 import { calcularNota } from '../domain/scoring'
-import { HistorySummary, useStacks } from '../features/stacks'
+import { HistorySummary, ScoreBreakdown, useStacks } from '../features/stacks'
 
 export interface StackDetailViewProps {
   /** Data de referência para o decaimento da nota. Padrão: agora. */
@@ -129,6 +129,12 @@ export function StackDetailView({ hoje }: StackDetailViewProps) {
           </Link>
         </div>
       </header>
+
+      <div className="grid items-start gap-6 lg:grid-cols-2">
+        <Painel id="composicao" titulo="Composição da nota">
+          <ScoreBreakdown stack={stack} hoje={hoje} />
+        </Painel>
+      </div>
 
       <Painel id="evolucao" titulo="Evolução">
         <p className="rounded-theme border border-dashed border-border bg-surface-2 p-4 text-center text-sm text-muted">
