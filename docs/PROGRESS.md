@@ -12,7 +12,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 05 | feat/05-seed-data | concluída | 55e340d |
 | 06 | feat/06-storage | concluída | b12b8f8 |
 | 07 | feat/07-store | concluída | 15fa412 |
-| 08 | feat/08-theme-system | pendente | |
+| 08 | feat/08-theme-system | concluída | db9217b |
 | 09 | feat/09-app-shell | pendente | |
 | 10 | feat/10-base-components | pendente | |
 | 11 | feat/11-stack-list | pendente | |
