@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 
 export interface DeleteStackButtonProps {
   /** Nome exibido na confirmação. */
@@ -23,7 +23,7 @@ export function DeleteStackButton({ nome, onConfirm }: DeleteStackButtonProps) {
   const gatilhoRef = useRef<HTMLButtonElement>(null)
   const cancelarRef = useRef<HTMLButtonElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (confirmando) cancelarRef.current?.focus()
   }, [confirmando])
 

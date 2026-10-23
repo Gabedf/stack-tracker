@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactElement } from 'react'
+import { useId, useLayoutEffect, useRef, useState, type ReactElement } from 'react'
 import { ROTULO_EVIDENCIA } from '../../components/formatacao'
 import {
   IconeCertificado,
@@ -80,7 +80,7 @@ function ConfirmarRemocao({ titulo, onConfirmar, onCancelar }: ConfirmarRemocaoP
   const [erro, setErro] = useState<string | null>(null)
   const cancelarRef = useRef<HTMLButtonElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     cancelarRef.current?.focus()
   }, [])
 
@@ -158,7 +158,7 @@ export function EvidenceList({ evidencias, onSalvar }: EvidenceListProps) {
   const idEditar = (i: number) => `${base}-editar-${i}`
   const idRemover = (i: number) => `${base}-remover-${i}`
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const id = focoPendente.current
     if (id === null) return
     focoPendente.current = null

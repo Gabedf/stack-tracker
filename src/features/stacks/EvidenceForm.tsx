@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type FormEvent } from 'react'
+import { useId, useLayoutEffect, useState, type FormEvent } from 'react'
 import { ROTULO_EVIDENCIA } from '../../components/formatacao'
 import { EvidenciaSchema } from '../../domain/schema'
 import { TIPOS_EVIDENCIA, type Evidencia, type TipoEvidencia } from '../../domain/types'
@@ -86,7 +86,7 @@ export function EvidenceForm({ inicial, rotulo, onSalvar, onCancelar }: Evidence
   const idErro = (campo: CampoEvidencia) => `${base}-${campo}-erro`
 
   // Ao abrir, o foco vai para o primeiro campo.
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.getElementById(`${base}-titulo`)?.focus()
   }, [base])
 

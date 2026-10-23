@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
 import type { Stack } from '../../domain/types'
 import { StorageError } from '../../storage'
@@ -50,7 +50,7 @@ export function QuickAddStack({ destaque = false, className = '' }: QuickAddStac
   const idCategorias = `${base}-categorias`
 
   // Foca só depois que os campos voltaram a ficar habilitados e os erros estão no DOM.
-  useEffect(() => {
+  useLayoutEffect(() => {
     const campo = focoPendente.current
     if (!campo || ocupado) return
     focoPendente.current = null
