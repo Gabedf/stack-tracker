@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './themes/tokens.css';
 @import './themes/rpg.css';
+@import './print.css';
 
 /*
  * Expõe os tokens dos temas ao Tailwind. "inline" faz as classes usarem

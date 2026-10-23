@@ -156,7 +156,11 @@ function urlMarkdown(url: string): string {
     .replace(/[\s()<>]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0')}`)
 }
 
-function linhaStack(item: StackCurriculo, o: OpcoesCurriculo): string {
+/**
+ * Detalhes de uma stack, na ordem do currículo: nível, nota, tempo e tipo de
+ * experiência (sempre presente). Texto puro, usado no Markdown e no preview.
+ */
+export function detalhesDaStack(item: StackCurriculo, o: OpcoesCurriculo): string[] {
   const { stack } = item
   const partes: string[] = []
   if (o.mostrarNivel) partes.push(item.nivel.nome)
@@ -165,7 +169,11 @@ function linhaStack(item: StackCurriculo, o: OpcoesCurriculo): string {
     partes.push(formatarTempo(stack.experiencia.meses))
   }
   partes.push(ROTULO_EXPERIENCIA[stack.experiencia.tipo])
-  return `- **${escaparMarkdown(stack.nome)}** — ${partes.join(' · ')}`
+  return partes
+}
+
+function linhaStack(item: StackCurriculo, o: OpcoesCurriculo): string {
+  return `- **${escaparMarkdown(item.stack.nome)}** — ${detalhesDaStack(item, o).join(' · ')}`
 }
 
 function linhaEvidencia(evidencia: Stack['evidencias'][number]): string {
