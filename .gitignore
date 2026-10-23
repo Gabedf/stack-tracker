@@ -21,3 +21,6 @@ coverage/
 
 # Local context
 context.md
+
+# Dados de trabalho (reais, locais; criados a partir de data/seed.json)
+data/stacks.json
