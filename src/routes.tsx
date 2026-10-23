@@ -3,6 +3,7 @@ import { AppLayout } from './components/layout'
 import {
   CharacterSheetView,
   DashboardView,
+  DataView,
   EditStackView,
   NewStackView,
   NotFoundView,
@@ -23,6 +24,7 @@ export function AppRoutes() {
         <Route path="stacks/:id/editar" element={<EditStackView />} />
         <Route path="ficha" element={<CharacterSheetView />} />
         <Route path="curriculo" element={<ResumeView />} />
+        <Route path="dados" element={<DataView />} />
         <Route path="*" element={<NotFoundView />} />
       </Route>
     </Routes>

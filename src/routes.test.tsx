@@ -37,6 +37,7 @@ describe('rotas', () => {
     ['/', 'Dashboard', 'Dashboard · Painel de Stacks'],
     ['/stacks', 'Stacks', 'Stacks · Painel de Stacks'],
     ['/curriculo', 'Currículo', 'Currículo · Painel de Stacks'],
+    ['/dados', 'Dados', 'Dados · Painel de Stacks'],
     ['/ficha', 'Ficha do personagem', 'Ficha do personagem · Painel de Stacks'],
     ['/stacks/nova', 'Nova stack', 'Nova stack · Painel de Stacks'],
     ['/stacks/react/editar', 'Editar stack', 'Editar stack · Painel de Stacks'],
@@ -68,6 +69,19 @@ describe('rotas', () => {
       '#conteudo',
     )
     expect(screen.getByRole('main')).toHaveAttribute('id', 'conteudo')
+  })
+})
+
+describe('link de dados', () => {
+  it('fica no cabeçalho, fora da navegação principal, e abre /dados', () => {
+    renderEm('/')
+    expect(within(nav()).queryByRole('link', { name: 'Dados' })).not.toBeInTheDocument()
+    const link = within(screen.getByRole('banner')).getByRole('link', { name: 'Dados' })
+    expect(link).toHaveAttribute('href', '/dados')
+
+    fireEvent.click(link)
+    expect(h1()).toHaveTextContent('Dados')
+    expect(link).toHaveAttribute('aria-current', 'page')
   })
 })
 

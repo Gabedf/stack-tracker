@@ -25,7 +25,7 @@ function classeLink({ isActive }: { isActive: boolean }) {
     : `${base} text-muted hover:bg-surface-2 hover:text-fg`
 }
 
-/** Casca do app: cabeçalho com marca, navegação principal e toggle de tema; a rota ativa vai no <main>. */
+/** Casca do app: cabeçalho com marca, navegação principal, link de dados e toggle de tema; a rota ativa vai no <main>. */
 export function AppLayout() {
   const { tema } = useTheme()
   const links = LINKS_NAV.filter((link) => !link.temas || link.temas.includes(tema))
@@ -60,7 +60,11 @@ export function AppLayout() {
             </ul>
           </nav>
 
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            {/* Fora da nav principal: utilitário de backup/importação. */}
+            <NavLink to="/dados" title="Exportar e importar dados" className={classeLink}>
+              Dados
+            </NavLink>
             <ThemeToggle />
           </div>
         </div>
