@@ -37,3 +37,6 @@ export {
   type LevelUpPersonagem,
   type LevelUpStack,
 } from './levelUp'
+export { LevelUpProvider, type LevelUpProviderProps } from './LevelUpProvider'
+export { useLevelUps } from './useLevelUps'
+export type { AvisoLevelUp, LevelUpContextValue } from './LevelUpContext'
