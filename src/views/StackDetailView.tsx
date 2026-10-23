@@ -7,6 +7,7 @@ import { LevelBadge } from '../components/LevelBadge'
 import { calcularNota } from '../domain/scoring'
 import {
   DimensionsEditor,
+  EvolutionChart,
   EvidenceList,
   ExperienceEditor,
   HistorySummary,
@@ -170,10 +171,8 @@ export function StackDetailView({ hoje }: StackDetailViewProps) {
       </Painel>
 
       <Painel id="evolucao" titulo="Evolução">
-        <p className="rounded-theme border border-dashed border-border bg-surface-2 p-4 text-center text-sm text-muted">
-          O gráfico de evolução chega em breve.
-        </p>
-        <HistorySummary historico={stack.historico} />
+        <EvolutionChart historico={stack.historico} />
+        {stack.historico.length > 0 && <HistorySummary historico={stack.historico} />}
       </Painel>
     </section>
   )
