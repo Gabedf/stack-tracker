@@ -347,6 +347,304 @@ describe('StackDetailView', () => {
     })
   })
 
+  describe('evidências', () => {
+    const regiao = () => screen.getByRole('region', { name: 'Evidências' })
+    const itens = () =>
+      within(within(regiao()).getByRole('list', { name: 'Lista de evidências' })).getAllByRole(
+        'listitem',
+      )
+    const formNova = () => screen.getByRole('form', { name: 'Nova evidência' })
+    const notaNoCabecalho = () =>
+      screen.getByRole('heading', { level: 1 }).closest('header')!.textContent
+
+    it('lista tipo, título com link externo e descrição', async () => {
+      renderDetalhe('react')
+      await screen.findByRole('heading', { level: 1, name: 'React' })
+      const react = stackDoSeed('react')
+
+      expect(itens()).toHaveLength(react.evidencias.length)
+      const primeiro = itens()[0]
+      expect(primeiro).toHaveTextContent('Emprego')
+      expect(primeiro).toHaveTextContent(react.evidencias[0].descricao)
+      const link = within(primeiro).getByRole('link', {
+        name: 'Desenvolvedor frontend na Empresa Exemplo (abre em nova aba)',
+      })
+      expect(link).toHaveAttribute('href', 'https://empresa.example.com')
+      expect(link).toHaveAttribute('target', '_blank')
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+      expect(
+        itens().map((li) => within(li).getByRole('heading', { level: 3 }).textContent),
+      ).toEqual(react.evidencias.map((e) => `${e.titulo} (abre em nova aba)`))
+    })
+
+    it('evidência sem URL mostra o título sem link', async () => {
+      renderDetalhe('jquery')
+      await screen.findByRole('heading', { level: 1, name: 'jQuery' })
+      const [item] = itens()
+      expect(within(item).getByRole('heading', { level: 3 })).toHaveTextContent(
+        'Estágio na Agência Exemplo',
+      )
+      expect(within(item).queryByRole('link')).not.toBeInTheDocument()
+    })
+
+    it('stack sem evidências mostra o estado vazio', async () => {
+      renderDetalhe('postgresql')
+      await screen.findByRole('heading', { level: 1, name: 'PostgreSQL' })
+      expect(regiao()).toHaveTextContent('Nenhuma evidência ainda')
+      expect(regiao()).toHaveTextContent('evidências aumentam a nota')
+      expect(within(regiao()).queryByRole('list')).not.toBeInTheDocument()
+      expect(botao('Adicionar evidência', regiao())).toBeInTheDocument()
+    })
+
+    it('adicionar persiste, aparece na lista, altera a nota e gera snapshot', async () => {
+      const adapter = renderDetalhe('nodejs') as AdapterFake
+      await screen.findByRole('heading', { level: 1, name: 'Node.js' })
+      const original = stackDoSeed('nodejs')
+      const notaAntes = calcularNota(original, { hoje: HOJE_SEED })
+
+      fireEvent.click(botao('Adicionar evidência'))
+      const form = formNova()
+      expect(within(form).getByLabelText('Título')).toHaveFocus()
+      expect(botao('Salvar evidência', form)).toBeDisabled()
+
+      const nova = {
+        titulo: 'Backend na Empresa Exemplo',
+        url: 'https://empresa.example.com/vagas',
+        descricao: 'APIs Node.js em produção.',
+        tipo: 'emprego' as const,
+      }
+      fireEvent.change(within(form).getByLabelText('Título'), { target: { value: nova.titulo } })
+      fireEvent.change(within(form).getByLabelText('Tipo'), { target: { value: 'emprego' } })
+      fireEvent.change(within(form).getByLabelText('URL (opcional)'), {
+        target: { value: nova.url },
+      })
+      fireEvent.change(within(form).getByLabelText('Descrição'), {
+        target: { value: nova.descricao },
+      })
+      fireEvent.click(botao('Salvar evidência', form))
+
+      expect(await within(regiao()).findByText('Evidência adicionada.')).toHaveAttribute(
+        'role',
+        'status',
+      )
+      expect(adapter.salvar).toHaveBeenCalledTimes(1)
+      const salva = adapter.ultimaSalva('nodejs')
+      expect(salva.evidencias).toEqual([...original.evidencias, nova])
+
+      const notaDepois = calcularNota(salva, { hoje: HOJE_SEED })
+      expect(notaDepois).toBeGreaterThan(notaAntes)
+      expect(salva.historico).toHaveLength(original.historico.length + 1)
+      expect(salva.historico.at(-1)).toEqual({
+        data: '2026-10-23',
+        dimensoes: original.dimensoes,
+        nota: notaDepois,
+      })
+
+      // Formulário fecha, a lista mostra a nova evidência e a nota reage.
+      expect(screen.queryByRole('form', { name: 'Nova evidência' })).not.toBeInTheDocument()
+      expect(itens()).toHaveLength(2)
+      expect(
+        within(itens()[1]).getByRole('link', {
+          name: 'Backend na Empresa Exemplo (abre em nova aba)',
+        }),
+      ).toBeInTheDocument()
+      expect(itens()[1]).toHaveTextContent('Emprego')
+      expect(notaNoCabecalho()).toContain(`Nota: ${formatarNota(notaDepois)}`)
+      expect(screen.getByRole('region', { name: 'Composição da nota' })).toHaveTextContent(
+        `Nota final${formatarNota(notaDepois)} / 10`,
+      )
+      expect(botao('Adicionar evidência')).toHaveFocus()
+    })
+
+    it('valida título vazio e URL inválida sem gravar', async () => {
+      const adapter = renderDetalhe('nodejs') as AdapterFake
+      await screen.findByRole('heading', { level: 1, name: 'Node.js' })
+      fireEvent.click(botao('Adicionar evidência'))
+      const form = formNova()
+      const titulo = within(form).getByLabelText('Título')
+      const url = within(form).getByLabelText('URL (opcional)')
+
+      // Erro só aparece depois de sair do campo.
+      fireEvent.change(titulo, { target: { value: '   ' } })
+      expect(titulo).not.toHaveAttribute('aria-invalid')
+      fireEvent.blur(titulo)
+      expect(titulo).toHaveAttribute('aria-invalid', 'true')
+      expect(titulo).toHaveAccessibleDescription('O título não pode ficar vazio.')
+
+      fireEvent.change(url, { target: { value: 'nao-e-url' } })
+      fireEvent.blur(url)
+      expect(url).toHaveAttribute('aria-invalid', 'true')
+      expect(url).toHaveAccessibleDescription(
+        expect.stringContaining('URL inválida: use um endereço http(s) completo.'),
+      )
+
+      // Tentar salvar foca o primeiro campo inválido e não grava.
+      fireEvent.click(botao('Salvar evidência', form))
+      expect(titulo).toHaveFocus()
+      fireEvent.change(titulo, { target: { value: 'api-tarefas v2' } })
+      expect(titulo).not.toHaveAttribute('aria-invalid')
+      fireEvent.click(botao('Salvar evidência', form))
+      expect(url).toHaveFocus()
+      expect(adapter.salvar).not.toHaveBeenCalled()
+
+      // URL corrigida (ou vazia) libera o salvar.
+      fireEvent.change(url, { target: { value: 'ftp://exemplo.com' } })
+      expect(url).toHaveAttribute('aria-invalid', 'true')
+      fireEvent.change(url, { target: { value: '' } })
+      expect(url).not.toHaveAttribute('aria-invalid')
+      fireEvent.click(botao('Salvar evidência', form))
+      expect(await within(regiao()).findByText('Evidência adicionada.')).toBeInTheDocument()
+      expect(adapter.ultimaSalva('nodejs').evidencias.at(-1)).toEqual({
+        titulo: 'api-tarefas v2',
+        descricao: '',
+        tipo: 'repo',
+      })
+    })
+
+    it('Cancelar fecha o formulário sem gravar e devolve o foco', async () => {
+      const adapter = renderDetalhe('nodejs') as AdapterFake
+      await screen.findByRole('heading', { level: 1, name: 'Node.js' })
+      fireEvent.click(botao('Adicionar evidência'))
+      fireEvent.change(within(formNova()).getByLabelText('Título'), {
+        target: { value: 'Rascunho' },
+      })
+      fireEvent.click(botao('Cancelar', formNova()))
+
+      expect(screen.queryByRole('form', { name: 'Nova evidência' })).not.toBeInTheDocument()
+      expect(botao('Adicionar evidência')).toHaveFocus()
+      expect(itens()).toHaveLength(1)
+      expect(adapter.salvar).not.toHaveBeenCalled()
+    })
+
+    it('editar persiste a evidência alterada', async () => {
+      const adapter = renderDetalhe('react') as AdapterFake
+      await screen.findByRole('heading', { level: 1, name: 'React' })
+      const original = stackDoSeed('react')
+
+      fireEvent.click(botao('Editar evidência Loja Exemplo'))
+      const form = screen.getByRole('form', { name: 'Editar evidência Loja Exemplo' })
+      expect(within(form).getByLabelText('Título')).toHaveValue('Loja Exemplo')
+      expect(within(form).getByLabelText('Tipo')).toHaveValue('projeto')
+      expect(within(form).getByLabelText('URL (opcional)')).toHaveValue('https://loja.example.com')
+
+      fireEvent.change(within(form).getByLabelText('Título'), {
+        target: { value: 'Loja Exemplo 2.0' },
+      })
+      fireEvent.change(within(form).getByLabelText('URL (opcional)'), { target: { value: '' } })
+      fireEvent.change(within(form).getByLabelText('Descrição'), {
+        target: { value: 'Reescrita com React 19.' },
+      })
+      fireEvent.click(botao('Salvar evidência', form))
+
+      expect(await within(regiao()).findByText('Evidência atualizada.')).toHaveAttribute(
+        'role',
+        'status',
+      )
+      expect(adapter.salvar).toHaveBeenCalledTimes(1)
+      const salva = adapter.ultimaSalva('react')
+      expect(salva.evidencias).toEqual([
+        original.evidencias[0],
+        { titulo: 'Loja Exemplo 2.0', descricao: 'Reescrita com React 19.', tipo: 'projeto' },
+        ...original.evidencias.slice(2),
+      ])
+      expect(within(itens()[1]).getByRole('heading', { level: 3 })).toHaveTextContent(
+        'Loja Exemplo 2.0',
+      )
+      expect(within(itens()[1]).queryByRole('link')).not.toBeInTheDocument()
+      expect(botao('Editar evidência Loja Exemplo 2.0')).toHaveFocus()
+    })
+
+    it('remover pede confirmação; cancelar não remove e confirmar persiste', async () => {
+      const adapter = renderDetalhe('react') as AdapterFake
+      await screen.findByRole('heading', { level: 1, name: 'React' })
+      const original = stackDoSeed('react')
+      const titulo = original.evidencias[0].titulo
+      const nomeRemover = `Remover evidência ${titulo}`
+
+      fireEvent.click(botao(nomeRemover))
+      let confirmacao = screen.getByRole('group', { name: `Remover “${titulo}”?` })
+      expect(botao(nomeRemover)).toHaveAttribute('aria-expanded', 'true')
+      expect(botao('Cancelar remoção', confirmacao)).toHaveFocus()
+
+      fireEvent.click(botao('Cancelar remoção', confirmacao))
+      expect(screen.queryByRole('group')).not.toBeInTheDocument()
+      expect(botao(nomeRemover)).toHaveFocus()
+      expect(itens()).toHaveLength(4)
+
+      // Esc também cancela.
+      fireEvent.click(botao(nomeRemover))
+      fireEvent.keyDown(screen.getByRole('group'), { key: 'Escape' })
+      expect(screen.queryByRole('group')).not.toBeInTheDocument()
+      expect(adapter.salvar).not.toHaveBeenCalled()
+
+      fireEvent.click(botao(nomeRemover))
+      confirmacao = screen.getByRole('group', { name: `Remover “${titulo}”?` })
+      fireEvent.click(botao('Confirmar remoção', confirmacao))
+
+      expect(await within(regiao()).findByText('Evidência removida.')).toHaveAttribute(
+        'role',
+        'status',
+      )
+      expect(adapter.salvar).toHaveBeenCalledTimes(1)
+      const salva = adapter.ultimaSalva('react')
+      expect(salva.evidencias).toEqual(original.evidencias.slice(1))
+      // Sem o emprego, os pontos de evidência caem e a nota muda: novo snapshot.
+      const notaDepois = calcularNota(salva, { hoje: HOJE_SEED })
+      expect(notaDepois).toBeLessThan(calcularNota(original, { hoje: HOJE_SEED }))
+      expect(salva.historico).toHaveLength(original.historico.length + 1)
+      expect(salva.historico.at(-1)!.nota).toBe(notaDepois)
+
+      expect(itens()).toHaveLength(3)
+      expect(within(regiao()).queryByText(titulo)).not.toBeInTheDocument()
+      expect(notaNoCabecalho()).toContain(`Nota: ${formatarNota(notaDepois)}`)
+      expect(botao('Adicionar evidência')).toHaveFocus()
+    })
+
+    it('falha do adapter ao adicionar mostra alerta e mantém o formulário', async () => {
+      const adapter = new AdapterFake()
+      adapter.falharSalvar = new StorageError('Não foi possível salvar as stacks.', ['disco cheio'])
+      renderDetalhe('nodejs', adapter)
+      await screen.findByRole('heading', { level: 1, name: 'Node.js' })
+
+      fireEvent.click(botao('Adicionar evidência'))
+      fireEvent.change(within(formNova()).getByLabelText('Título'), {
+        target: { value: 'Nova lib' },
+      })
+      fireEvent.click(botao('Salvar evidência', formNova()))
+
+      const alerta = await within(formNova()).findByRole('alert')
+      expect(alerta).toHaveTextContent('Não foi possível salvar as stacks.')
+      expect(alerta).toHaveTextContent('disco cheio')
+      expect(within(formNova()).getByLabelText('Título')).toHaveValue('Nova lib')
+      expect(itens()).toHaveLength(1)
+      expect(adapter.dados.stacks.find((s) => s.id === 'nodejs')!.evidencias).toHaveLength(1)
+
+      // Nova tentativa depois que o problema some.
+      adapter.falharSalvar = null
+      fireEvent.click(botao('Salvar evidência', formNova()))
+      expect(await within(regiao()).findByText('Evidência adicionada.')).toBeInTheDocument()
+      expect(adapter.dados.stacks.find((s) => s.id === 'nodejs')!.evidencias).toHaveLength(2)
+    })
+
+    it('falha do adapter ao remover mostra alerta e mantém a confirmação', async () => {
+      const adapter = new AdapterFake()
+      adapter.falharSalvar = new StorageError('Não foi possível salvar as stacks.')
+      renderDetalhe('nodejs', adapter)
+      await screen.findByRole('heading', { level: 1, name: 'Node.js' })
+
+      fireEvent.click(botao('Remover evidência api-tarefas'))
+      fireEvent.click(botao('Confirmar remoção'))
+
+      const confirmacao = screen.getByRole('group', { name: 'Remover “api-tarefas”?' })
+      expect(await within(confirmacao).findByRole('alert')).toHaveTextContent(
+        'Não foi possível salvar as stacks.',
+      )
+      expect(botao('Confirmar remoção', confirmacao)).toBeEnabled()
+      expect(itens()).toHaveLength(1)
+      expect(adapter.dados.stacks.find((s) => s.id === 'nodejs')!.evidencias).toHaveLength(1)
+    })
+  })
+
   describe('estados', () => {
     it('mostra carregando enquanto os dados não chegam', () => {
       renderDetalhe('react', { carregar: () => new Promise(() => {}), salvar: vi.fn() })
