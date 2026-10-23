@@ -14,7 +14,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 07 | feat/07-store | concluída | 15fa412 |
 | 08 | feat/08-theme-system | concluída | db9217b |
 | 09 | feat/09-app-shell | concluída | a570c66 |
-| 10 | feat/10-base-components | pendente | |
+| 10 | feat/10-base-components | concluída | 85e922c |
 | 11 | feat/11-stack-list | pendente | |
 | 12 | feat/12-stack-form | pendente | |
 | 13 | feat/13-stack-detail | pendente | |
