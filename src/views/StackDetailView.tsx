@@ -5,7 +5,13 @@ import { KnowledgeBadge } from '../components/KnowledgeBadge'
 import { useDocumentTitle } from '../components/layout'
 import { LevelBadge } from '../components/LevelBadge'
 import { calcularNota } from '../domain/scoring'
-import { DimensionsEditor, HistorySummary, ScoreBreakdown, useStacks } from '../features/stacks'
+import {
+  DimensionsEditor,
+  ExperienceEditor,
+  HistorySummary,
+  ScoreBreakdown,
+  useStacks,
+} from '../features/stacks'
 
 export interface StackDetailViewProps {
   /** Data de referência para o decaimento da nota. Padrão: agora. */
@@ -141,6 +147,14 @@ export function StackDetailView({ hoje }: StackDetailViewProps) {
               key={stack.id}
               dimensoes={stack.dimensoes}
               onSalvar={(dimensoes) => atualizar(stack.id, { dimensoes })}
+            />
+          </Painel>
+
+          <Painel id="experiencia" titulo="Experiência">
+            <ExperienceEditor
+              key={stack.id}
+              experiencia={stack.experiencia}
+              onSalvar={(experiencia) => atualizar(stack.id, { experiencia })}
             />
           </Painel>
         </div>
