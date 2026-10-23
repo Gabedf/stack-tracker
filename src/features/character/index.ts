@@ -1,0 +1,26 @@
+export {
+  MARGEM_MULTICLASSE,
+  NIVEL_MINIMO_COM_STACKS,
+  XP_BASE_NIVEL,
+  XP_POR_PONTO_DE_NOTA,
+  calcularPersonagem,
+  classeDoPersonagem,
+  habilidadesPorCategoria,
+  nivelDoXp,
+  progressoDoXp,
+  xpDaNota,
+  xpParaNivel,
+  type ClassePersonagem,
+  type HabilidadeCategoria,
+  type Personagem,
+  type ProgressoXp,
+  type TipoClasse,
+} from './character'
+export {
+  CLASSES_POR_CATEGORIA,
+  CLASSE_RECRUTA,
+  classeGenerica,
+  classeMulticlasse,
+  nomeDaClasse,
+  normalizarCategoria,
+} from './classes'
