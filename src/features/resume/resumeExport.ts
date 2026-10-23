@@ -3,11 +3,14 @@
  *
  * `selecionarParaCurriculo` aplica os filtros e agrupa por categoria; as
  * stacks deixadas de fora vêm com o motivo, para a UI explicar o filtro.
+ * `gerarMarkdownCurriculo` transforma a seleção em Markdown: "##" de título,
+ * uma "###" por categoria e um item por stack, com as evidências como sub-itens.
  */
 
 import { NIVEIS, nivelDaNota, type Nivel } from '../../domain/levels'
 import { calcularNota, seiPorSaber } from '../../domain/scoring'
 import type { Nota, Stack } from '../../domain/types'
+import { ROTULO_EXPERIENCIA, formatarNota } from '../../components/formatacao'
 import { temPraticaReal } from '../stacks/stackFiltering'
 import { resolverOpcoesCurriculo, type OpcoesCurriculo } from './resumeOptions'
 
@@ -113,4 +116,98 @@ export function selecionarParaCurriculo(
     .map(([categoria, itens]) => ({ categoria, stacks: itens.sort(compararItens) }))
 
   return { grupos, conhecimentoTeorico: conhecimentoTeorico.sort(compararItens), excluidas }
+}
+
+/* ---------- Markdown ---------- */
+
+export const TITULO_CONHECIMENTO_TEORICO = 'Conhecimento teórico'
+export const MENSAGEM_CURRICULO_VAZIO = '_Nenhuma stack atende aos filtros escolhidos._'
+
+/** Tempo de experiência em pt-BR: "8 meses", "1 ano", "2 anos e 1 mês". */
+export function formatarTempo(meses: number): string {
+  const total = Number.isFinite(meses) ? Math.max(0, Math.floor(meses)) : 0
+  const anos = Math.floor(total / 12)
+  const resto = total % 12
+  const textoAnos = anos === 1 ? '1 ano' : `${anos} anos`
+  const textoMeses = resto === 1 ? '1 mês' : `${resto} meses`
+  if (anos === 0) return textoMeses
+  if (resto === 0) return textoAnos
+  return `${textoAnos} e ${textoMeses}`
+}
+
+/**
+ * Escapa texto do usuário para Markdown: junta espaços e quebras de linha,
+ * escapa caracteres de ênfase/link/código/HTML e marcadores de início de
+ * linha (título, citação, lista).
+ */
+export function escaparMarkdown(texto: string): string {
+  return texto
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[\\`*_{}[\]<>|~]/g, '\\$&')
+    .replace(/^([#>+=-])/, '\\$1')
+    .replace(/^(\d+)([.)])/, '$1\\$2')
+}
+
+/** URL pronta para `[texto](url)`: sem espaços, parênteses ou sinais de menor/maior soltos. */
+function urlMarkdown(url: string): string {
+  return url
+    .trim()
+    .replace(/[\s()<>]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0')}`)
+}
+
+function linhaStack(item: StackCurriculo, o: OpcoesCurriculo): string {
+  const { stack } = item
+  const partes: string[] = []
+  if (o.mostrarNivel) partes.push(item.nivel.nome)
+  if (o.mostrarNota) partes.push(`Nota ${formatarNota(item.nota)}`)
+  if (o.mostrarTempo && stack.experiencia.meses > 0) {
+    partes.push(formatarTempo(stack.experiencia.meses))
+  }
+  partes.push(ROTULO_EXPERIENCIA[stack.experiencia.tipo])
+  return `- **${escaparMarkdown(stack.nome)}** — ${partes.join(' · ')}`
+}
+
+function linhaEvidencia(evidencia: Stack['evidencias'][number]): string {
+  const titulo = escaparMarkdown(evidencia.titulo)
+  const url = evidencia.url ? urlMarkdown(evidencia.url) : ''
+  const rotulo = url ? `[${titulo || escaparMarkdown(url)}](${url})` : titulo
+  const descricao = escaparMarkdown(evidencia.descricao)
+  return `  - ${[rotulo, descricao].filter(Boolean).join(' — ')}`
+}
+
+function blocoSecao(titulo: string, itens: StackCurriculo[], o: OpcoesCurriculo): string {
+  const linhas = itens.flatMap((item) => [
+    linhaStack(item, o),
+    ...(o.incluirEvidencias ? item.stack.evidencias.map(linhaEvidencia) : []),
+  ])
+  return `### ${escaparMarkdown(titulo)}\n\n${linhas.join('\n')}`
+}
+
+/** Markdown de uma seleção já feita (evita recalcular quando a UI também mostra as excluídas). */
+export function markdownDaSelecao(
+  selecao: SelecaoCurriculo,
+  opcoes: Partial<OpcoesCurriculo> = {},
+): string {
+  const o = resolverOpcoesCurriculo(opcoes)
+  const blocos: string[] = []
+  const titulo = escaparMarkdown(o.titulo)
+  if (titulo) blocos.push(`## ${titulo}`)
+
+  const secoes = selecao.grupos.map((g) => blocoSecao(g.categoria, g.stacks, o))
+  if (selecao.conhecimentoTeorico.length > 0) {
+    secoes.push(blocoSecao(TITULO_CONHECIMENTO_TEORICO, selecao.conhecimentoTeorico, o))
+  }
+  blocos.push(...(secoes.length > 0 ? secoes : [MENSAGEM_CURRICULO_VAZIO]))
+
+  return `${blocos.join('\n\n')}\n`
+}
+
+/** Currículo em Markdown, com newline final única. */
+export function gerarMarkdownCurriculo(
+  stacks: readonly Stack[],
+  opcoes: Partial<OpcoesCurriculo> = {},
+  calculo: OpcoesCalculoCurriculo = {},
+): string {
+  return markdownDaSelecao(selecionarParaCurriculo(stacks, opcoes, calculo), opcoes)
 }
