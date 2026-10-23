@@ -1,1 +1,51 @@
 @import 'tailwindcss';
+@import './themes/tokens.css';
+
+/*
+ * Expõe os tokens dos temas ao Tailwind. "inline" faz as classes usarem
+ * var(--theme-*) diretamente, então elas acompanham o data-theme ativo.
+ * Ex.: bg-bg, bg-surface, bg-surface-2, text-fg, text-muted, border-border,
+ * text-accent, bg-accent text-accent-contrast, rounded-theme, shadow-theme, font-heading.
+ */
+@theme inline {
+  --color-bg: var(--theme-bg);
+  --color-surface: var(--theme-surface);
+  --color-surface-2: var(--theme-surface-2);
+  --color-fg: var(--theme-text);
+  --color-muted: var(--theme-text-muted);
+  --color-border: var(--theme-border);
+  --color-accent: var(--theme-accent);
+  --color-accent-contrast: var(--theme-accent-contrast);
+  --color-success: var(--theme-success);
+  --color-warning: var(--theme-warning);
+  --color-danger: var(--theme-danger);
+  --color-focus: var(--theme-focus);
+
+  --radius-theme: var(--theme-radius);
+  --shadow-theme: var(--theme-shadow);
+
+  --font-sans: var(--theme-font-base);
+  --font-heading: var(--theme-font-heading);
+}
+
+@layer base {
+  body {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    font-family: var(--theme-font-base);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--theme-font-heading);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: 2px;
+  }
+}
