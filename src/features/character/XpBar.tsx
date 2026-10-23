@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useMenosMovimento } from '../../components/motion'
 import type { ProgressoXp } from './character'
@@ -47,7 +47,7 @@ export function XpBar({ progresso, rotulo, compacta = false, className = '' }: X
         aria-valuetext={`${formatarXp(xp)} XP, ${faltam}`}
         className={`w-full overflow-hidden rounded-full bg-xp-track ${compacta ? 'h-1.5' : 'h-3'}`}
       >
-        <motion.div
+        <m.div
           // Novo nível: a barra recomeça do zero e enche até o novo valor.
           key={nivel}
           data-testid="xp-preenchimento"

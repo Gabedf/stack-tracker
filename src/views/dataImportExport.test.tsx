@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { MotionConfig } from 'framer-motion'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { MotionProvider } from '../components/motion'
 import type { Stack, StacksFile } from '../domain/types'
 import { LevelUpProvider } from '../features/character'
 import { TAMANHO_MAXIMO_BYTES } from '../features/data'
@@ -50,7 +50,7 @@ function renderDados(adapter = new AdapterFake(stacksDoSeed())) {
   render(
     <ThemeProvider>
       <StacksProvider adapter={adapter} hoje={HOJE_SEED}>
-        <MotionConfig reducedMotion="always">
+        <MotionProvider reducedMotion="always">
           <LevelUpProvider hoje={HOJE_SEED}>
             <MemoryRouter initialEntries={['/dados']}>
               <Routes>
@@ -61,7 +61,7 @@ function renderDados(adapter = new AdapterFake(stacksDoSeed())) {
               <IdsNoPainel />
             </MemoryRouter>
           </LevelUpProvider>
-        </MotionConfig>
+        </MotionProvider>
       </StacksProvider>
     </ThemeProvider>,
   )
