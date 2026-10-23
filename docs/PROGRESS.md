@@ -24,7 +24,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 17 | feat/17-character-sheet | concluída | 3dda39e |
 | 18 | feat/18-rpg-xp-anim | concluída | 1f152de |
 | 19 | feat/19-resume-logic | concluída | 4f2f377 |
-| 20 | feat/20-resume-ui | pendente | |
+| 20 | feat/20-resume-ui | concluída | e5b67f2 |
 | 21 | feat/21-import-export | pendente | |
 | 22 | feat/22-polish-a11y | pendente | |
 | 23 | chore/23-docs-final | pendente | |
