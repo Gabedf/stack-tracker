@@ -120,6 +120,11 @@ describe('adicionarStack', () => {
     expect(dados.stacks).toHaveLength(1)
     expect(parseStacksFile(proximo).ok).toBe(true)
   })
+
+  it('não gera ids reservados por rotas (ex.: "nova")', () => {
+    const { stack } = adicionarStack(arquivo(), { nome: 'Nova', categoria: 'X' }, { hoje: HOJE })
+    expect(stack.id).toBe('nova-2')
+  })
 })
 
 describe('atualizarStack', () => {

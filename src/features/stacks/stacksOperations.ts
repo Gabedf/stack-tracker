@@ -107,16 +107,15 @@ export function criarStack(
   return registrarSnapshot(stack, { hoje })
 }
 
+/** Ids que colidiriam com rotas fixas (ex.: /stacks/nova). */
+export const IDS_RESERVADOS: readonly string[] = ['nova']
+
 export function adicionarStack(
   dados: StacksFile,
   nova: NovaStack,
   opcoes: OpcoesOperacao = {},
 ): ResultadoOperacao {
-  const stack = criarStack(
-    nova,
-    dados.stacks.map((s) => s.id),
-    opcoes,
-  )
+  const stack = criarStack(nova, [...dados.stacks.map((s) => s.id), ...IDS_RESERVADOS], opcoes)
   return { dados: { ...dados, stacks: [...dados.stacks, stack] }, stack }
 }
 
