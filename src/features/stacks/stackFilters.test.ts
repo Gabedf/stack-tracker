@@ -10,7 +10,7 @@ import {
   normalizarTexto,
   temFiltroAtivo,
   type CriteriosStacks,
-} from './stackFilters'
+} from './stackFilters.ts'
 
 const HOJE = new Date(2026, 9, 23)
 

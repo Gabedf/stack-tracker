@@ -7,7 +7,7 @@ import {
   TODOS_NIVEIS,
   type CriteriosStacks,
   type Ordenacao,
-} from './stackFilters'
+} from './stackFilters.ts'
 
 export interface StackFiltersProps {
   criterios: CriteriosStacks
