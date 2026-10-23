@@ -5,11 +5,13 @@
       "id": "react",
       "nome": "React",
       "categoria": "Frontend",
-      "tags": [
-        "ui",
-        "spa",
-        "hooks"
-      ],
+      "tags": ["ui", "spa", "hooks"],
+      "dimensoes": {
+        "teoria": 9,
+        "pratica": 8,
+        "profundidade": 8,
+        "ultimoUso": "2026-10-09"
+      },
       "experiencia": {
         "tipo": "producao",
         "meses": 36
@@ -40,12 +42,6 @@
           "tipo": "certificado"
         }
       ],
-      "dimensoes": {
-        "teoria": 9,
-        "pratica": 8,
-        "profundidade": 8,
-        "ultimoUso": "2026-10-09"
-      },
       "historico": [
         {
           "data": "2023-09-10",
@@ -104,11 +100,13 @@
       "id": "nodejs",
       "nome": "Node.js",
       "categoria": "Backend",
-      "tags": [
-        "javascript",
-        "api",
-        "express"
-      ],
+      "tags": ["javascript", "api", "express"],
+      "dimensoes": {
+        "teoria": 7,
+        "pratica": 6,
+        "profundidade": 5,
+        "ultimoUso": "2026-06-01"
+      },
       "experiencia": {
         "tipo": "projeto_pessoal",
         "meses": 14
@@ -121,12 +119,6 @@
           "tipo": "repo"
         }
       ],
-      "dimensoes": {
-        "teoria": 7,
-        "pratica": 6,
-        "profundidade": 5,
-        "ultimoUso": "2026-06-01"
-      },
       "historico": [
         {
           "data": "2025-02-01",
@@ -164,11 +156,13 @@
       "id": "kubernetes",
       "nome": "Kubernetes",
       "categoria": "DevOps",
-      "tags": [
-        "containers",
-        "orquestracao",
-        "cloud"
-      ],
+      "tags": ["containers", "orquestracao", "cloud"],
+      "dimensoes": {
+        "teoria": 8,
+        "pratica": 2,
+        "profundidade": 4,
+        "ultimoUso": "2026-09-15"
+      },
       "experiencia": {
         "tipo": "so_teoria",
         "meses": 0
@@ -181,12 +175,6 @@
           "tipo": "certificado"
         }
       ],
-      "dimensoes": {
-        "teoria": 8,
-        "pratica": 2,
-        "profundidade": 4,
-        "ultimoUso": "2026-09-15"
-      },
       "historico": [
         {
           "data": "2025-04-10",
@@ -225,11 +213,13 @@
       "id": "jquery",
       "nome": "jQuery",
       "categoria": "Frontend",
-      "tags": [
-        "javascript",
-        "dom",
-        "legado"
-      ],
+      "tags": ["javascript", "dom", "legado"],
+      "dimensoes": {
+        "teoria": 7,
+        "pratica": 7,
+        "profundidade": 5,
+        "ultimoUso": "2022-02-25"
+      },
       "experiencia": {
         "tipo": "producao",
         "meses": 20
@@ -241,12 +231,6 @@
           "tipo": "emprego"
         }
       ],
-      "dimensoes": {
-        "teoria": 7,
-        "pratica": 7,
-        "profundidade": 5,
-        "ultimoUso": "2022-02-25"
-      },
       "historico": [
         {
           "data": "2020-05-20",
@@ -285,10 +269,7 @@
       "id": "postgresql",
       "nome": "PostgreSQL",
       "categoria": "Dados",
-      "tags": [
-        "sql",
-        "banco-de-dados"
-      ],
+      "tags": ["sql", "banco-de-dados"],
       "dimensoes": {
         "teoria": 4,
         "pratica": 3,
