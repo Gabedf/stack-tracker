@@ -24,3 +24,5 @@ export {
   nomeDaClasse,
   normalizarCategoria,
 } from './classes'
+export { XpBar, type XpBarProps } from './XpBar'
+export { formatarXp, textoFaltam } from './xpText'
