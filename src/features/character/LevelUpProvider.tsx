@@ -1,7 +1,8 @@
 /**
  * Observa as escritas do usuário em useStacks (adicionar, atualizar, remover) e
  * enfileira os level-ups que elas causaram. Carga inicial e recarregar não
- * passam por aqui (assinarEscritas só avisa escritas salvas). Mostra a fila com
+ * passam por aqui (assinarEscritas só avisa escritas salvas) e importações
+ * (origem 'importacao') são ignoradas. Mostra a fila com
  * o <LevelUpToast>, um aviso por vez. Exige <StacksProvider> e <ThemeProvider>.
  */
 
@@ -29,7 +30,9 @@ export function LevelUpProvider({ hoje, children }: LevelUpProviderProps) {
 
   useEffect(
     () =>
-      assinarEscritas((antes, depois) => {
+      assinarEscritas((antes, depois, { origem }) => {
+        // Importar dados não é progresso do usuário: sem avisos.
+        if (origem !== 'usuario') return
         const h = hojeRef.current
         const data = typeof h === 'function' ? h() : (h ?? new Date())
         const eventos = detectarLevelUps(antes, depois, { hoje: data })

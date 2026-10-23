@@ -99,4 +99,29 @@ describe('LevelUpProvider', () => {
     })
     expect(result.current.levelUps.fila).toEqual([])
   })
+
+  it('importação (substituirTudo) não gera aviso, mesmo subindo de nível', async () => {
+    const { result } = await montar([stack('a', 5), stack('b', 5)])
+    await act(async () => {
+      await result.current.stacks.substituirTudo({
+        versao: 1,
+        stacks: [stack('a', 10), stack('b', 10), stack('c', 10)],
+      })
+    })
+    expect(result.current.stacks.stacks.map((s) => s.id)).toEqual(['a', 'b', 'c'])
+    expect(result.current.levelUps.fila).toEqual([])
+
+    // Escritas do usuário depois da importação seguem avisando.
+    await act(async () => {
+      await result.current.stacks.atualizar('a', {
+        dimensoes: { teoria: 0, pratica: 0, profundidade: 0 },
+      })
+    })
+    await act(async () => {
+      await result.current.stacks.atualizar('a', {
+        dimensoes: { teoria: 10, pratica: 10, profundidade: 10 },
+      })
+    })
+    expect(result.current.levelUps.fila.length).toBeGreaterThan(0)
+  })
 })

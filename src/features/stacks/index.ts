@@ -1,7 +1,13 @@
 export { StacksProvider, type StacksProviderProps } from './StacksProvider'
 export { StackFilters, type StackFiltersProps } from './StackFilters'
 export { useStacks } from './useStacks'
-export type { OuvinteEscrita, StacksContextValue, StatusStacks } from './StacksContext'
+export type {
+  InfoEscrita,
+  OrigemEscrita,
+  OuvinteEscrita,
+  StacksContextValue,
+  StatusStacks,
+} from './StacksContext'
 export {
   OperacaoStacksError,
   type AtualizacaoStack,

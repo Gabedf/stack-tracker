@@ -297,9 +297,10 @@ describe('StacksProvider / useStacks', () => {
       await result.current.atualizar('react', { dimensoes: { pratica: 9 } })
     })
     expect(ouvinte).toHaveBeenCalledTimes(1)
-    const [antes, depois] = ouvinte.mock.calls[0] as [StacksFile, StacksFile]
+    const [antes, depois, info] = ouvinte.mock.calls[0] as [StacksFile, StacksFile, unknown]
     expect(antes.stacks[0].dimensoes.pratica).toBe(5)
     expect(depois.stacks[0].dimensoes.pratica).toBe(9)
+    expect(info).toEqual({ origem: 'usuario' })
 
     adapter.falharSalvar = new StorageError('Disco cheio')
     await act(async () => {
@@ -313,6 +314,64 @@ describe('StacksProvider / useStacks', () => {
       await result.current.remover('react')
     })
     expect(ouvinte).toHaveBeenCalledTimes(1)
+  })
+
+  it('substituirTudo troca o arquivo inteiro e avisa com origem importacao', async () => {
+    const adapter = new AdapterFake([stackInicial()])
+    const { result } = await montarPronto(adapter)
+    const ouvinte = vi.fn()
+    act(() => {
+      result.current.assinarEscritas(ouvinte)
+    })
+    const vue = criarStack({ nome: 'Vue', categoria: 'Front' }, [], { hoje: HOJE })
+
+    let salvo: StacksFile | undefined
+    await act(async () => {
+      salvo = await result.current.substituirTudo({ versao: 1, stacks: [vue] })
+    })
+
+    expect(adapter.salvar).toHaveBeenCalledTimes(1)
+    expect(adapter.salvar).toHaveBeenCalledWith({ versao: 1, stacks: [vue] })
+    expect(salvo).toEqual({ versao: 1, stacks: [vue] })
+    expect(result.current.stacks.map((s) => s.id)).toEqual(['vue'])
+    expect(ouvinte).toHaveBeenCalledTimes(1)
+    expect(ouvinte.mock.calls[0][2]).toEqual({ origem: 'importacao' })
+  })
+
+  it('substituirTudo com arquivo fora do schema rejeita sem salvar', async () => {
+    const adapter = new AdapterFake([stackInicial()])
+    const { result } = await montarPronto(adapter)
+    const invalido = { versao: 1, stacks: [{ id: '' }] } as unknown as StacksFile
+
+    await act(async () => {
+      await expect(result.current.substituirTudo(invalido)).rejects.toMatchObject({
+        name: 'StorageError',
+        message: 'O arquivo importado é inválido.',
+      })
+    })
+
+    expect(adapter.salvar).not.toHaveBeenCalled()
+    expect(result.current.stacks.map((s) => s.id)).toEqual(['react'])
+  })
+
+  it('substituirTudo com falha no adapter mantém o estado e expõe erro', async () => {
+    const adapter = new AdapterFake([stackInicial()])
+    const { result } = await montarPronto(adapter)
+    const ouvinte = vi.fn()
+    act(() => {
+      result.current.assinarEscritas(ouvinte)
+    })
+    adapter.falharSalvar = new StorageError('Disco cheio')
+
+    await act(async () => {
+      await result.current.substituirTudo({ versao: 1, stacks: [] }).catch(() => {})
+    })
+
+    expect(adapter.salvar).toHaveBeenCalledTimes(1)
+    expect(result.current.stacks.map((s) => s.id)).toEqual(['react'])
+    expect(result.current.erro?.message).toBe('Disco cheio')
+    expect(result.current.salvando).toBe(false)
+    expect(ouvinte).not.toHaveBeenCalled()
   })
 
   it('lança erro claro quando usado fora do provider', () => {
