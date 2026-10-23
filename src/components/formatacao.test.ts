@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { TIPOS_EXPERIENCIA } from '../domain/types'
-import { ROTULO_EXPERIENCIA, formatarNota } from './formatacao'
+import { ROTULO_EXPERIENCIA, formatarData, formatarNota } from './formatacao'
 
 describe('formatarNota', () => {
   it.each([
@@ -17,5 +17,15 @@ describe('formatarNota', () => {
 describe('ROTULO_EXPERIENCIA', () => {
   it('tem rótulo para todo tipo de experiência', () => {
     for (const tipo of TIPOS_EXPERIENCIA) expect(ROTULO_EXPERIENCIA[tipo]).toBeTruthy()
+  })
+})
+
+describe('formatarData', () => {
+  it('converte AAAA-MM-DD para DD/MM/AAAA', () => {
+    expect(formatarData('2026-10-09')).toBe('09/10/2026')
+  })
+
+  it('devolve o texto original se não for uma data ISO', () => {
+    expect(formatarData('ontem')).toBe('ontem')
   })
 })
