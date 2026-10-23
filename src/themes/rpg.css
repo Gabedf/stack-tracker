@@ -31,6 +31,12 @@
  * validador do skill dataviz contra a surface, todos os pares: CVD pior ΔE 9.1,
  * visão normal pior ΔE 16.0, todas >= 3:1 sobre a surface (5.35, 4.60, 3.54, 3.41).
  */
+
+/* Cinzel (títulos): só latin, pesos usados nos headings (semibold e bold).
+   O @font-face só baixa o arquivo quando algum texto usa a fonte. */
+@import '@fontsource/cinzel/latin-600.css';
+@import '@fontsource/cinzel/latin-700.css';
+
 [data-theme='rpg'] {
   color-scheme: light;
 
@@ -69,6 +75,8 @@
   --theme-radius: 0.25rem;
   --theme-shadow: 0 1px 2px rgb(43 29 14 / 0.15), 0 2px 6px rgb(43 29 14 / 0.12);
 
-  --theme-font-base: Georgia, 'Times New Roman', serif;
-  --theme-font-heading: Georgia, 'Times New Roman', serif;
+  /* Texto corrido numa serifada do sistema; títulos em Cinzel (capitulares romanas). */
+  --theme-font-base: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  --theme-font-heading: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+  --theme-heading-tracking: 0.03em;
 }

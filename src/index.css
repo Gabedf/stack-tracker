@@ -56,8 +56,10 @@
   h3,
   h4,
   h5,
-  h6 {
+  h6,
+  .font-heading {
     font-family: var(--theme-font-heading);
+    letter-spacing: var(--theme-heading-tracking);
   }
 
   :focus-visible {

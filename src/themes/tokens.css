@@ -55,4 +55,5 @@
 
   --theme-font-base: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --theme-font-heading: var(--theme-font-base);
+  --theme-heading-tracking: normal;
 }
