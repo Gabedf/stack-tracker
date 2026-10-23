@@ -4,7 +4,13 @@ import { EmptyState } from '../components/EmptyState'
 import { formatarNota } from '../components/formatacao'
 import { useDocumentTitle } from '../components/layout'
 import { LevelBadge } from '../components/LevelBadge'
-import { calcularResumo, LevelDistribution, StatTile } from '../features/dashboard'
+import {
+  calcularResumo,
+  CoolingStacksList,
+  LevelDistribution,
+  StatTile,
+  TopStacksList,
+} from '../features/dashboard'
 import { useStacks } from '../features/stacks'
 import { criteriosParaUrl } from '../features/stacks/stackFiltering'
 
@@ -143,6 +149,14 @@ export function DashboardView({ hoje }: DashboardViewProps) {
           <Painel id="dashboard-niveis" titulo="Distribuição por nível">
             <LevelDistribution distribuicao={resumo.distribuicaoPorNivel} total={resumo.total} />
           </Painel>
+          <div className="flex flex-col gap-6">
+            <Painel id="dashboard-top" titulo="Top 3">
+              <TopStacksList itens={resumo.top} />
+            </Painel>
+            <Painel id="dashboard-esfriando" titulo="Esfriando">
+              <CoolingStacksList itens={resumo.esfriando} />
+            </Painel>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
