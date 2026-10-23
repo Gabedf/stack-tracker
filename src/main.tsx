@@ -4,13 +4,16 @@ import './index.css'
 import App from './App.tsx'
 import { StacksProvider } from './features/stacks'
 import { JsonFileAdapter } from './storage'
+import { ThemeProvider } from './themes'
 
 const adapter = new JsonFileAdapter()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <StacksProvider adapter={adapter}>
-      <App />
-    </StacksProvider>
+    <ThemeProvider>
+      <StacksProvider adapter={adapter}>
+        <App />
+      </StacksProvider>
+    </ThemeProvider>
   </StrictMode>,
 )
