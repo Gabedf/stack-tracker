@@ -7,7 +7,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 00 | chore/00-bootstrap | concluída | 31e854f |
 | 01 | chore/01-scaffold | concluída | 0451f53 |
 | 02 | feat/02-domain-types | concluída | 40accd3 |
-| 03 | feat/03-scoring | pendente | |
+| 03 | feat/03-scoring | concluída | e90c4b6 |
 | 04 | feat/04-history | pendente | |
 | 05 | feat/05-seed-data | pendente | |
 | 06 | feat/06-storage | pendente | |
