@@ -18,9 +18,10 @@ function limitar(valor: Nota): Nota {
 }
 
 /**
- * Meter de 0 a 10. Preenchimento no accent e trilho num tom claro do mesmo
- * accent, então funciona em qualquer tema. O texto visível é redundante com
- * o meter (aria-label + aria-valuetext) e fica oculto para leitores de tela.
+ * Meter de 0 a 10. Preenchimento e trilho vêm dos tokens de barra de progresso
+ * (xp-fill / xp-track, contraste >= 3:1 entre si em todo tema). O texto visível
+ * é redundante com o meter (aria-label + aria-valuetext) e fica oculto para
+ * leitores de tela.
  */
 export function ScoreBar({ valor, rotulo, compacta = false, className = '' }: ScoreBarProps) {
   const v = limitar(valor)
@@ -35,9 +36,9 @@ export function ScoreBar({ valor, rotulo, compacta = false, className = '' }: Sc
       aria-valuemax={NOTA_MAXIMA}
       aria-valuenow={v}
       aria-valuetext={`${texto} de ${NOTA_MAXIMA}`}
-      className={`w-full overflow-hidden rounded-full bg-accent/15 ${compacta ? 'h-1.5' : 'h-2.5'}`}
+      className={`w-full overflow-hidden rounded-full bg-xp-track ${compacta ? 'h-1.5' : 'h-2.5'}`}
     >
-      <div className="h-full rounded-full bg-accent" style={{ width: `${percentual}%` }} />
+      <div className="h-full rounded-full bg-xp-fill" style={{ width: `${percentual}%` }} />
     </div>
   )
 
