@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { EstadoEnvio } from './useInlineEdit'
 
 export interface InlineEditControlsProps {
@@ -8,6 +9,8 @@ export interface InlineEditControlsProps {
   /** Rascunho inválido: bloqueia o salvar (o motivo aparece junto ao campo). */
   invalido?: boolean
   onDesfazer(): void
+  /** Ações extras exibidas após o Desfazer (ex.: botão Cancelar). */
+  acoesExtras?: ReactNode
 }
 
 const CLASSE_BOTAO_PRIMARIO =
@@ -25,6 +28,7 @@ export function InlineEditControls({
   alterado,
   invalido = false,
   onDesfazer,
+  acoesExtras,
 }: InlineEditControlsProps) {
   const salvando = envio.tipo === 'salvando'
 
@@ -63,6 +67,7 @@ export function InlineEditControls({
         >
           Desfazer
         </button>
+        {acoesExtras}
         {/* Sempre no DOM para o aria-live anunciar a mudança de texto. */}
         <p role="status" aria-live="polite" className="text-sm font-medium text-success">
           {envio.tipo === 'sucesso' ? envio.mensagem : ''}
