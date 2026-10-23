@@ -1,15 +1,25 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
+import { StacksProvider } from './features/stacks'
 import { AppRoutes } from './routes'
+import type { StorageAdapter } from './storage'
 import { ThemeProvider } from './themes'
+
+/** Adapter que nunca termina de carregar: as rotas aqui não dependem dos dados. */
+const adapterPendente: StorageAdapter = {
+  carregar: () => new Promise(() => {}),
+  salvar: () => new Promise(() => {}),
+}
 
 function renderEm(rota: string) {
   return render(
     <ThemeProvider>
-      <MemoryRouter initialEntries={[rota]}>
-        <AppRoutes />
-      </MemoryRouter>
+      <StacksProvider adapter={adapterPendente}>
+        <MemoryRouter initialEntries={[rota]}>
+          <AppRoutes />
+        </MemoryRouter>
+      </StacksProvider>
     </ThemeProvider>,
   )
 }
