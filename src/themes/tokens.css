@@ -5,7 +5,8 @@
  * Este arquivo define o tema funcional (padrão); o tema RPG fica em rpg.css e
  * precisa definir exatamente os mesmos --theme-* (há teste para isso).
  *
- * Contraste (WCAG AA): text e text-muted >= 4.5:1 sobre bg, surface e surface-2.
+ * Contraste (WCAG AA): text, text-muted e level-1..5 >= 4.5:1 sobre bg, surface e
+ * surface-2 (level-1 #475569: 7.24 / 7.58 / 6.92); xp-fill sobre xp-track 5.49.
  *
  * Séries de gráfico (--theme-chart-*): ordem fixa nota, teoria, prática,
  * profundidade, validada com o validador do skill dataviz contra a surface de
@@ -38,6 +39,16 @@
   --theme-chart-profundidade: #eda100;
   --theme-chart-grid: #e2e8f0;
   --theme-chart-band: #f8fafc;
+
+  /* Ficha de personagem: no tema funcional, sóbrios (accent e escala neutra -> fria). */
+  --theme-xp-fill: #1d4ed8;
+  --theme-xp-track: #dbeafe;
+  --theme-glow: 0 0 0 3px rgb(37 99 235 / 0.25);
+  --theme-level-1: #475569;
+  --theme-level-2: #0f766e;
+  --theme-level-3: #1d4ed8;
+  --theme-level-4: #6d28d9;
+  --theme-level-5: #9a3412;
 
   --theme-radius: 0.5rem;
   --theme-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.1);
