@@ -7,6 +7,7 @@ import { LevelBadge } from '../components/LevelBadge'
 import { calcularNota } from '../domain/scoring'
 import {
   DimensionsEditor,
+  EvidenceList,
   ExperienceEditor,
   HistorySummary,
   ScoreBreakdown,
@@ -159,6 +160,14 @@ export function StackDetailView({ hoje }: StackDetailViewProps) {
           </Painel>
         </div>
       </div>
+
+      <Painel id="evidencias" titulo="Evidências">
+        <EvidenceList
+          key={stack.id}
+          evidencias={stack.evidencias}
+          onSalvar={(evidencias) => atualizar(stack.id, { evidencias })}
+        />
+      </Painel>
 
       <Painel id="evolucao" titulo="Evolução">
         <p className="rounded-theme border border-dashed border-border bg-surface-2 p-4 text-center text-sm text-muted">
