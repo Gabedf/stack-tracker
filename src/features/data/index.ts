@@ -13,3 +13,4 @@ export {
   type PreviaImportacao,
   type ResultadoAnalise,
 } from './importExport'
+export { ExportSection, type ExportSectionProps } from './ExportSection'
