@@ -7,6 +7,7 @@ import {
   habilidadesPorCategoria,
   nivelDoXp,
   progressoDoXp,
+  skillsDaColmeia,
   xpDaNota,
   xpParaNivel,
 } from './character'
@@ -242,5 +243,33 @@ describe('casos de borda', () => {
       { hoje },
     )
     expect(personagem.classe.nome).toBe('Multiclasse: Backend / Frontend')
+  })
+})
+
+describe('skills da colmeia', () => {
+  it('nota, nível, dimensões e selos de cada stack do seed', () => {
+    const skills = skillsDaColmeia(stacksDoSeed(), { hoje })
+    expect(skills.map((s) => [s.id, s.nota, s.nivel.nome, s.seiPorSaber, s.esfriando])).toEqual([
+      ['react', 8.4, 'Mestre', false, false],
+      ['nodejs', 5.5, 'Praticante', false, false],
+      ['kubernetes', 3.8, 'Aprendiz', true, false],
+      ['jquery', 4.9, 'Praticante', false, true],
+      ['postgresql', 2.6, 'Aprendiz', false, false],
+    ])
+    const [react] = skills
+    expect(react).toMatchObject({
+      nome: 'React',
+      categoria: 'Frontend',
+      teoria: 9,
+      pratica: 8,
+      profundidade: 8,
+      ultimoUso: '2026-10-09',
+      perda: 0,
+    })
+    expect(skills[3].perda).toBeCloseTo(0.2)
+  })
+
+  it('sem stacks, lista vazia', () => {
+    expect(skillsDaColmeia([], { hoje })).toEqual([])
   })
 })

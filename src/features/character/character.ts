@@ -7,8 +7,8 @@
  */
 
 import { nivelDaNota, type Nivel } from '../../domain/levels'
-import { calcularNota } from '../../domain/scoring'
-import type { Nota, Stack } from '../../domain/types'
+import { calcularNota, detalharNota, seiPorSaber } from '../../domain/scoring'
+import type { DataISO, Nota, Stack } from '../../domain/types'
 import {
   calcularResumo,
   estatisticasPorCategoria,
@@ -54,6 +54,24 @@ export interface ClassePersonagem {
 export interface HabilidadeCategoria extends EstatisticaCategoria, ProgressoXp {
   /** Soma das notas da categoria (1 casa). */
   somaNotas: Nota
+}
+
+/** Uma stack como hexágono da colmeia (ver honeycombLayout). */
+export interface SkillDaColmeia {
+  id: string
+  nome: string
+  categoria: string
+  nota: Nota
+  nivel: Nivel
+  teoria: Nota
+  pratica: Nota
+  profundidade: Nota
+  ultimoUso: DataISO
+  seiPorSaber: boolean
+  /** Perdendo nota por falta de uso (decaimento ativo). */
+  esfriando: boolean
+  /** Fração da nota perdida pelo decaimento (0-1). */
+  perda: number
 }
 
 export interface Personagem {
@@ -152,6 +170,31 @@ export function habilidadesPorCategoria(
       }
     })
     .sort((a, b) => b.xp - a.xp || COLLATOR.compare(a.categoria, b.categoria))
+}
+
+/** Dados de cada stack para a colmeia, na ordem recebida (o layout ordena). */
+export function skillsDaColmeia(
+  stacks: readonly Stack[],
+  { hoje = new Date() }: OpcoesDashboard = {},
+): SkillDaColmeia[] {
+  return stacks.map((stack) => {
+    const detalhe = detalharNota(stack, { hoje })
+    const { teoria, pratica, profundidade, ultimoUso } = stack.dimensoes
+    return {
+      id: stack.id,
+      nome: stack.nome,
+      categoria: stack.categoria,
+      nota: detalhe.nota,
+      nivel: nivelDaNota(detalhe.nota),
+      teoria,
+      pratica,
+      profundidade,
+      ultimoUso,
+      seiPorSaber: seiPorSaber(stack),
+      esfriando: detalhe.fatorDecaimento < 1,
+      perda: 1 - detalhe.fatorDecaimento,
+    }
+  })
 }
 
 /** Ficha completa do personagem. */

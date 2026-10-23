@@ -8,12 +8,14 @@ export {
   habilidadesPorCategoria,
   nivelDoXp,
   progressoDoXp,
+  skillsDaColmeia,
   xpDaNota,
   xpParaNivel,
   type ClassePersonagem,
   type HabilidadeCategoria,
   type Personagem,
   type ProgressoXp,
+  type SkillDaColmeia,
   type TipoClasse,
 } from './character'
 export {
