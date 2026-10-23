@@ -4,6 +4,13 @@
  * então trocar o atributo data-theme no <html> troca o visual inteiro.
  *
  * Contraste (WCAG AA): text e text-muted >= 4.5:1 sobre bg, surface e surface-2.
+ *
+ * Séries de gráfico (--theme-chart-*): ordem fixa nota, teoria, prática,
+ * profundidade, validada com o validador do skill dataviz contra a surface de
+ * cada tema, em todos os pares (as séries ligam/desligam, então qualquer par
+ * pode ficar vizinho). Algumas ficam abaixo de 3:1 sobre a surface e a separação
+ * para daltonismo fica na faixa 6-8: por isso todo gráfico traz legenda, marcador
+ * de forma própria por série e alternativa em tabela. A cor nunca é o único canal.
  */
 
 :root,
@@ -22,6 +29,13 @@
   --theme-warning: #b45309;
   --theme-danger: #b91c1c;
   --theme-focus: #2563eb;
+
+  --theme-chart-nota: #2a78d6;
+  --theme-chart-teoria: #e34948;
+  --theme-chart-pratica: #1baf7a;
+  --theme-chart-profundidade: #eda100;
+  --theme-chart-grid: #e2e8f0;
+  --theme-chart-band: #f8fafc;
 
   --theme-radius: 0.5rem;
   --theme-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.1);
@@ -49,6 +63,13 @@
   --theme-warning: #8a4b08;
   --theme-danger: #8b1a1a;
   --theme-focus: #a0522d;
+
+  --theme-chart-nota: #a8432a;
+  --theme-chart-teoria: #2f6f9f;
+  --theme-chart-pratica: #b8860b;
+  --theme-chart-profundidade: #9b6fc4;
+  --theme-chart-grid: #e6d3a6;
+  --theme-chart-band: #f4e8c8;
 
   --theme-radius: 0.25rem;
   --theme-shadow: 0 1px 2px rgb(43 29 14 / 0.15), 0 2px 6px rgb(43 29 14 / 0.12);

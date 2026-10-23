@@ -18,3 +18,4 @@ export { DimensionsEditor, type DimensionsEditorProps } from './DimensionsEditor
 export { ExperienceEditor, type ExperienceEditorProps } from './ExperienceEditor'
 export { EvidenceList, type EvidenceListProps } from './EvidenceList'
 export { EvidenceForm, type EvidenceFormProps } from './EvidenceForm'
+export { EvolutionChart, type EvolutionChartProps } from './EvolutionChart'

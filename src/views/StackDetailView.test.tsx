@@ -567,14 +567,14 @@ describe('StackDetailView', () => {
       expect(botao('Cancelar remoção', confirmacao)).toHaveFocus()
 
       fireEvent.click(botao('Cancelar remoção', confirmacao))
-      expect(screen.queryByRole('group')).not.toBeInTheDocument()
+      expect(screen.queryByRole('group', { name: /^Remover “/ })).not.toBeInTheDocument()
       expect(botao(nomeRemover)).toHaveFocus()
       expect(itens()).toHaveLength(4)
 
       // Esc também cancela.
       fireEvent.click(botao(nomeRemover))
-      fireEvent.keyDown(screen.getByRole('group'), { key: 'Escape' })
-      expect(screen.queryByRole('group')).not.toBeInTheDocument()
+      fireEvent.keyDown(screen.getByRole('group', { name: /^Remover “/ }), { key: 'Escape' })
+      expect(screen.queryByRole('group', { name: /^Remover “/ })).not.toBeInTheDocument()
       expect(adapter.salvar).not.toHaveBeenCalled()
 
       fireEvent.click(botao(nomeRemover))

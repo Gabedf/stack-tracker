@@ -20,6 +20,12 @@
   --color-warning: var(--theme-warning);
   --color-danger: var(--theme-danger);
   --color-focus: var(--theme-focus);
+  --color-chart-nota: var(--theme-chart-nota);
+  --color-chart-teoria: var(--theme-chart-teoria);
+  --color-chart-pratica: var(--theme-chart-pratica);
+  --color-chart-profundidade: var(--theme-chart-profundidade);
+  --color-chart-grid: var(--theme-chart-grid);
+  --color-chart-band: var(--theme-chart-band);
 
   --radius-theme: var(--theme-radius);
   --shadow-theme: var(--theme-shadow);
