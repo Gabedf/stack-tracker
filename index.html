@@ -1,9 +1,23 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="funcional">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Painel de Stacks</title>
+    <script>
+      // Aplica o tema salvo antes do React montar, evitando flash do tema padrão.
+      // Mantenha a chave e a lista em sincronia com src/themes/themes.ts.
+      ;(function () {
+        try {
+          var tema = localStorage.getItem('painel-stacks:tema')
+          if (tema === 'funcional' || tema === 'rpg') {
+            document.documentElement.setAttribute('data-theme', tema)
+          }
+        } catch (e) {
+          // storage inacessível: fica o tema padrão do atributo acima
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
