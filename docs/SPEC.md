@@ -13,6 +13,8 @@ As stacks são cadastradas pela própria aplicação; nenhum dado real é pré-r
 - Persistência: o navegador não grava em disco. Plugin do Vite (server/jsonStoragePlugin.ts)
   expõe GET/PUT /api/stacks que lê/grava data/stacks.json. O front usa a interface StorageAdapter
   (JsonFileAdapter agora; ApiAdapter/Supabase no futuro sem mexer na UI), pois o app poderá virar produto.
+  Dados reais não vão para o git: o seed fictício fica em data/seed.json (versionado);
+  data/stacks.json é o arquivo de trabalho, ignorado pelo git, criado a partir do seed se não existir.
 - Modelo (src/domain/types.ts): Stack { id, nome, categoria, tags[],
   dimensoes{teoria 0-10, pratica 0-10, profundidade 0-10, ultimoUso: data},
   experiencia{tipo: so_teoria|estudo|projeto_pessoal|producao, meses},
@@ -32,7 +34,7 @@ As stacks são cadastradas pela própria aplicação; nenhum dado real é pré-r
 | 02 | feat/02-domain-types | types.ts + schema.ts (Zod) + testes | JSON inválido é rejeitado |
 | 03 | feat/03-scoring | scoring.ts + levels.ts + testes (limites, decaimento, "sei por saber") | casos limite cobertos |
 | 04 | feat/04-history | history.ts (snapshot só se nota/dimensões mudarem) + testes | não duplica snapshot idêntico |
-| 05 | feat/05-seed-data | data/stacks.json com 4-5 stacks FICTÍCIAS de exemplo + loader validado | seed passa no schema |
+| 05 | feat/05-seed-data | data/seed.json (versionado) com 4-5 stacks FICTÍCIAS de exemplo + loader validado; data/stacks.json (ignorado pelo git) é criado a partir dele | seed passa no schema |
 | 06 | feat/06-storage | StorageAdapter, JsonFileAdapter, plugin Vite GET/PUT /api/stacks + teste | PUT altera o arquivo, GET devolve |
 | 07 | feat/07-store | hook/contexto useStacks (load, add, update, remove, salva com snapshot) | testes com adapter fake |
 | 08 | feat/08-theme-system | tokens CSS, ThemeProvider, data-theme, toggle, persistência em localStorage | alterna e persiste |
