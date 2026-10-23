@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { cloneElement, type ReactElement } from 'react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
 import type { StacksFile } from '../domain/types'
 import { StacksProvider } from '../features/stacks'
@@ -18,6 +18,9 @@ vi.mock('recharts', async (importOriginal) => {
       cloneElement(children, { width: 480, height: 300 } as { width: number }),
   }
 })
+
+// As views são React.lazy: pré-carrega o Dashboard antes dos testes.
+beforeAll(() => import('../views/DashboardView'))
 
 function adapterComSeed(): StorageAdapter {
   return {
@@ -48,7 +51,9 @@ describe('tema RPG', () => {
     renderApp()
 
     expect(document.documentElement).toHaveAttribute('data-theme', 'rpg')
-    expect(screen.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Dashboard' }, { timeout: 3000 }),
+    ).toBeInTheDocument()
     expect(
       await screen.findByRole('region', { name: 'Distribuição por nível' }),
     ).toBeInTheDocument()
