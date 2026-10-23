@@ -37,6 +37,8 @@ describe('rotas', () => {
     ['/', 'Dashboard', 'Dashboard · Painel de Stacks'],
     ['/stacks', 'Stacks', 'Stacks · Painel de Stacks'],
     ['/curriculo', 'Currículo', 'Currículo · Painel de Stacks'],
+    ['/stacks/nova', 'Nova stack', 'Nova stack · Painel de Stacks'],
+    ['/stacks/react/editar', 'Editar stack', 'Editar stack · Painel de Stacks'],
   ])('%s renderiza o placeholder %s', (rota, titulo, tituloAba) => {
     renderEm(rota)
     expect(h1()).toHaveTextContent(titulo)
