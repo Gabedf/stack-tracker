@@ -22,7 +22,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 15 | feat/15-dashboard | concluída | 0a0552b |
 | 16 | feat/16-rpg-tokens | concluída | 9c30dbf |
 | 17 | feat/17-character-sheet | concluída | 3dda39e |
-| 18 | feat/18-rpg-xp-anim | pendente | |
+| 18 | feat/18-rpg-xp-anim | concluída | 1f152de |
 | 19 | feat/19-resume-logic | pendente | |
 | 20 | feat/20-resume-ui | pendente | |
 | 21 | feat/21-import-export | pendente | |
@@ -31,7 +31,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 
 ## Pendências para etapas futuras
 
-- (22) Code splitting por rota com React.lazy: o recharts levou o bundle a ~800 kB (aviso do Vite > 500 kB).
+- (22) Code splitting por rota com React.lazy: recharts + framer-motion levaram o bundle a ~1.050 kB (aviso do Vite > 500 kB).
 - (22) Tooltip do gráfico de evolução não abre por teclado; os valores ficam na tabela alternativa.
 - (geral) npm audit: tinypool via Vitest 3 (só dev). A correção exige Vitest 4 e Node >= 20.19.
 - (22) Borda do tema funcional (~1.5:1) abaixo de 3:1 nos campos de formulário.
