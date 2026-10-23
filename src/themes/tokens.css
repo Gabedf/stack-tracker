@@ -2,6 +2,8 @@
  * Tokens semânticos dos temas. Componentes nunca usam cores literais:
  * usam as classes do Tailwind mapeadas em src/index.css (@theme inline),
  * então trocar o atributo data-theme no <html> troca o visual inteiro.
+ * Este arquivo define o tema funcional (padrão); o tema RPG fica em rpg.css e
+ * precisa definir exatamente os mesmos --theme-* (há teste para isso).
  *
  * Contraste (WCAG AA): text e text-muted >= 4.5:1 sobre bg, surface e surface-2.
  *
@@ -42,38 +44,4 @@
 
   --theme-font-base: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --theme-font-heading: var(--theme-font-base);
-}
-
-/*
- * PROVISÓRIO: paleta mínima de pergaminho/couro só para o toggle ser visível.
- * A etapa 16 (feat/16-rpg-tokens) substitui por rpg.css completo.
- */
-[data-theme='rpg'] {
-  color-scheme: light;
-
-  --theme-bg: #f4e8c8;
-  --theme-surface: #fbf3dc;
-  --theme-surface-2: #ead9ad;
-  --theme-text: #2b1d0e;
-  --theme-text-muted: #5c4326;
-  --theme-border: #8b6a3e;
-  --theme-accent: #7a2e12;
-  --theme-accent-contrast: #fbf3dc;
-  --theme-success: #2f5d1e;
-  --theme-warning: #8a4b08;
-  --theme-danger: #8b1a1a;
-  --theme-focus: #a0522d;
-
-  --theme-chart-nota: #a8432a;
-  --theme-chart-teoria: #2f6f9f;
-  --theme-chart-pratica: #b8860b;
-  --theme-chart-profundidade: #9b6fc4;
-  --theme-chart-grid: #e6d3a6;
-  --theme-chart-band: #f4e8c8;
-
-  --theme-radius: 0.25rem;
-  --theme-shadow: 0 1px 2px rgb(43 29 14 / 0.15), 0 2px 6px rgb(43 29 14 / 0.12);
-
-  --theme-font-base: Georgia, 'Times New Roman', serif;
-  --theme-font-heading: Georgia, 'Times New Roman', serif;
 }
