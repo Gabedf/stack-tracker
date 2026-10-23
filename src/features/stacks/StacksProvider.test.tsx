@@ -279,6 +279,42 @@ describe('StacksProvider / useStacks', () => {
     expect(result.current.stacks.map((s) => s.id)).toEqual(['react'])
   })
 
+  it('assinarEscritas avisa só escritas salvas, com antes/depois, e cancela', async () => {
+    const adapter = new AdapterFake([stackInicial()])
+    const { result } = await montarPronto(adapter)
+    const ouvinte = vi.fn()
+    let cancelar = () => {}
+    act(() => {
+      cancelar = result.current.assinarEscritas(ouvinte)
+    })
+
+    await act(async () => {
+      await result.current.recarregar()
+    })
+    expect(ouvinte).not.toHaveBeenCalled()
+
+    await act(async () => {
+      await result.current.atualizar('react', { dimensoes: { pratica: 9 } })
+    })
+    expect(ouvinte).toHaveBeenCalledTimes(1)
+    const [antes, depois] = ouvinte.mock.calls[0] as [StacksFile, StacksFile]
+    expect(antes.stacks[0].dimensoes.pratica).toBe(5)
+    expect(depois.stacks[0].dimensoes.pratica).toBe(9)
+
+    adapter.falharSalvar = new StorageError('Disco cheio')
+    await act(async () => {
+      await result.current.atualizar('react', { dimensoes: { pratica: 1 } }).catch(() => {})
+    })
+    expect(ouvinte).toHaveBeenCalledTimes(1)
+
+    adapter.falharSalvar = null
+    cancelar()
+    await act(async () => {
+      await result.current.remover('react')
+    })
+    expect(ouvinte).toHaveBeenCalledTimes(1)
+  })
+
   it('lança erro claro quando usado fora do provider', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
     expect(() => renderHook(() => useStacks())).toThrow(

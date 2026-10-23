@@ -106,3 +106,62 @@
       box-shadow 120ms ease-out;
   }
 }
+
+/*
+ * Level-up (LevelUpToast): o aviso entra com escala pelo Framer Motion; aqui ficam
+ * o pulso de brilho dourado e as faíscas que saltam do centro. Só com movimento
+ * liberado (o componente também não renderiza as faíscas com reduced motion).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='rpg'] .levelup-toast[data-animacao='ligada'] {
+    animation: levelup-brilho 1.4s ease-out 1;
+  }
+
+  [data-theme='rpg'] .levelup-particulas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  [data-theme='rpg'] .levelup-particula {
+    --angulo: calc(var(--particula, 0) * 45deg);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.375rem;
+    height: 0.375rem;
+    margin: -0.1875rem 0 0 -0.1875rem;
+    border-radius: 9999px;
+    background-color: var(--theme-xp-fill);
+    box-shadow: var(--theme-glow);
+    opacity: 0;
+    animation: levelup-faisca 0.9s ease-out calc(var(--particula, 0) * 35ms) 1 both;
+  }
+}
+
+@keyframes levelup-brilho {
+  0% {
+    box-shadow: var(--theme-shadow);
+  }
+  35% {
+    box-shadow: var(--theme-glow), var(--theme-glow);
+  }
+  100% {
+    box-shadow: var(--theme-glow);
+  }
+}
+
+@keyframes levelup-faisca {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--angulo)) translateY(0) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angulo)) translateY(-4.5rem) scale(1);
+  }
+}
