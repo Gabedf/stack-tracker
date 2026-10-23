@@ -6,6 +6,8 @@ import type { Stack, StacksFile } from '../domain/types'
 import { StacksProvider } from '../features/stacks'
 import { StorageError, type StorageAdapter } from '../storage'
 import { HOJE_SEED, stacksDoSeed } from '../test/seed'
+import { ThemeProvider } from '../themes'
+import { CHAVE_TEMA_STORAGE } from '../themes/themes'
 import { DashboardView } from './DashboardView'
 
 // Em jsdom nada tem tamanho: o container passa largura/altura fixas aos gráficos.
@@ -41,14 +43,16 @@ function Destino() {
 
 function renderView(adapter = new AdapterFake(stacksDoSeed())) {
   render(
-    <StacksProvider adapter={adapter} hoje={HOJE_SEED}>
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path="/" element={<DashboardView hoje={HOJE_SEED} />} />
-          <Route path="/stacks" element={<Destino />} />
-        </Routes>
-      </MemoryRouter>
-    </StacksProvider>,
+    <ThemeProvider>
+      <StacksProvider adapter={adapter} hoje={HOJE_SEED}>
+        <MemoryRouter initialEntries={['/']}>
+          <Routes>
+            <Route path="/" element={<DashboardView hoje={HOJE_SEED} />} />
+            <Route path="/stacks" element={<Destino />} />
+          </Routes>
+        </MemoryRouter>
+      </StacksProvider>
+    </ThemeProvider>,
   )
   return adapter
 }
@@ -263,5 +267,24 @@ describe('DashboardView', () => {
       '/stacks/kubernetes',
       '/stacks/postgresql',
     ])
+  })
+
+  it('no tema rpg mostra o link de destaque para a ficha', async () => {
+    localStorage.setItem(CHAVE_TEMA_STORAGE, 'rpg')
+    try {
+      renderView()
+      expect(
+        await screen.findByRole('link', { name: /Abrir ficha do personagem/ }),
+      ).toHaveAttribute('href', '/ficha')
+    } finally {
+      localStorage.clear()
+    }
+  })
+
+  it('no tema funcional não mostra o link da ficha', async () => {
+    localStorage.clear()
+    renderView()
+    await esperarResumo()
+    expect(screen.queryByRole('link', { name: /Abrir ficha do personagem/ })).toBeNull()
   })
 })
