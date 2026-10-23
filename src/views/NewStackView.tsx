@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useDocumentTitle } from '../components/layout'
 import { StackForm, useStacks, type DadosStackForm } from '../features/stacks'
@@ -13,11 +14,15 @@ const CLASSE_LINK = 'font-medium text-accent underline underline-offset-2'
 /** Criação de stack: salva via `adicionar` e abre o detalhe da stack nova. */
 export function NewStackView({ hoje }: NewStackViewProps) {
   useDocumentTitle('Nova stack')
-  const { stacks, status, erro, salvando, adicionar } = useStacks()
+  const { stacks, status, erro, salvando, adicionar, limparErro } = useStacks()
   const navigate = useNavigate()
+
+  // Ao sair do formulário (cancelar ou navegar), não deixa erro antigo no contexto.
+  useEffect(() => limparErro, [limparErro])
 
   async function criar(dados: DadosStackForm) {
     const nova = await adicionar(dados)
+    limparErro()
     navigate(`/stacks/${encodeURIComponent(nova.id)}`)
   }
 

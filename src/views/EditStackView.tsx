@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { useDocumentTitle } from '../components/layout'
 import { DeleteStackButton, StackForm, useStacks, type DadosStackForm } from '../features/stacks'
@@ -13,21 +14,26 @@ const CLASSE_LINK = 'font-medium text-accent underline underline-offset-2'
 /** Edição de stack: salva via `atualizar` (mesmo id) e volta ao detalhe. */
 export function EditStackView({ hoje }: EditStackViewProps) {
   const { id = '' } = useParams<{ id: string }>()
-  const { stacks, status, erro, salvando, atualizar, remover } = useStacks()
+  const { stacks, status, erro, salvando, atualizar, remover, limparErro } = useStacks()
   const navigate = useNavigate()
   const stack = stacks.find((s) => s.id === id)
   useDocumentTitle(stack ? `Editar ${stack.nome}` : 'Editar stack')
 
   const detalhe = `/stacks/${encodeURIComponent(id)}`
 
+  // Ao sair do formulário (cancelar ou navegar), não deixa erro antigo no contexto.
+  useEffect(() => limparErro, [limparErro])
+
   async function salvar(dados: DadosStackForm) {
     // notas explícito: apagar o texto remove as notas salvas.
     await atualizar(id, { ...dados, notas: dados.notas })
+    limparErro()
     navigate(detalhe)
   }
 
   async function excluir() {
     await remover(id)
+    limparErro()
     navigate('/stacks')
   }
 
