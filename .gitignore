@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build / cache
+dist/
+coverage/
+.vite/
+
+# Logs
+*.log
+
+# Env
+.env*
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+
+# Local context
+context.md
