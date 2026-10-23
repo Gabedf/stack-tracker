@@ -71,6 +71,8 @@ class IntersectionObserverFake implements IntersectionObserver {
 }
 
 export function instalarMocksDoNavegador(): void {
+  // Testes com @vitest-environment node não têm window.
+  if (typeof window === 'undefined') return
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,
