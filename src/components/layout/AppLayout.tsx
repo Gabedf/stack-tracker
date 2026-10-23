@@ -1,7 +1,9 @@
+import { Suspense } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { ThemeToggle, useTheme, type Tema } from '../../themes'
 
 import { NOME_APP } from './constants'
+import { RouteFallback } from './RouteFallback'
 
 interface LinkNav {
   to: string
@@ -75,7 +77,9 @@ export function AppLayout() {
         tabIndex={-1}
         className="mx-auto max-w-5xl px-4 py-6 focus:outline-none sm:px-6"
       >
-        <Outlet />
+        <Suspense fallback={<RouteFallback />}>
+          <Outlet />
+        </Suspense>
       </main>
     </div>
   )
