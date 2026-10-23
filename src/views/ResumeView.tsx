@@ -3,11 +3,10 @@ import { Link } from 'react-router'
 import { EmptyState } from '../components/EmptyState'
 import { useDocumentTitle } from '../components/layout'
 import {
-  DEFAULT_OPCOES_CURRICULO,
   ResumeFilters,
   ResumeSummary,
   selecionarParaCurriculo,
-  type OpcoesCurriculo,
+  useOpcoesCurriculo,
 } from '../features/resume'
 import { useStacks } from '../features/stacks'
 import { categoriasDisponiveis } from '../features/stacks/stackFiltering'
@@ -25,7 +24,7 @@ export function ResumeView({ hoje }: ResumeViewProps) {
   const { stacks, status, erro, recarregar } = useStacks()
   const [montagem] = useState(() => new Date())
   const referencia = hoje ?? montagem
-  const [opcoes, setOpcoes] = useState<OpcoesCurriculo>(() => ({ ...DEFAULT_OPCOES_CURRICULO }))
+  const { opcoes, alterar, restaurar } = useOpcoesCurriculo()
 
   const categorias = useMemo(() => categoriasDisponiveis(stacks), [stacks])
   const selecao = useMemo(
@@ -77,8 +76,8 @@ export function ResumeView({ hoje }: ResumeViewProps) {
         <ResumeFilters
           opcoes={opcoes}
           categorias={categorias}
-          onChange={(mudancas) => setOpcoes((atual) => ({ ...atual, ...mudancas }))}
-          onRestaurar={() => setOpcoes({ ...DEFAULT_OPCOES_CURRICULO })}
+          onChange={alterar}
+          onRestaurar={restaurar}
           className="self-start"
         />
         <div className="flex min-w-0 flex-col gap-4">
