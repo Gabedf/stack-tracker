@@ -29,3 +29,11 @@ export {
 export { XpBar, type XpBarProps } from './XpBar'
 export { formatarXp, textoFaltam } from './xpText'
 export { SkillHoneycomb, type SkillHoneycombProps } from './SkillHoneycomb'
+export {
+  detectarLevelUps,
+  mensagemDoLevelUp,
+  type EstadoStacks,
+  type EventoLevelUp,
+  type LevelUpPersonagem,
+  type LevelUpStack,
+} from './levelUp'
