@@ -15,7 +15,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 08 | feat/08-theme-system | concluída | db9217b |
 | 09 | feat/09-app-shell | concluída | a570c66 |
 | 10 | feat/10-base-components | concluída | 85e922c |
-| 11 | feat/11-stack-list | pendente | |
+| 11 | feat/11-stack-list | concluída | c1c7ce8 |
 | 12 | feat/12-stack-form | pendente | |
 | 13 | feat/13-stack-detail | pendente | |
 | 14 | feat/14-evolution-chart | pendente | |
