@@ -17,3 +17,9 @@ export const ROTULO_EXPERIENCIA: Record<TipoExperiencia, string> = {
   projeto_pessoal: 'Projeto pessoal',
   producao: 'Produção',
 }
+
+/** Data ISO "AAAA-MM-DD" no formato pt-BR "DD/MM/AAAA" (sem passar por fuso horário). */
+export function formatarData(data: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(data)
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : data
+}

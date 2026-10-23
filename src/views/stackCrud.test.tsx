@@ -47,7 +47,7 @@ function renderApp(rota: string, adapter = new AdapterFake(stacksDoSeed())) {
         <Routes>
           <Route path="/stacks" element={<StacksView hoje={HOJE_SEED} />} />
           <Route path="/stacks/nova" element={<NewStackView hoje={HOJE_SEED} />} />
-          <Route path="/stacks/:id" element={<StackDetailView />} />
+          <Route path="/stacks/:id" element={<StackDetailView hoje={HOJE_SEED} />} />
           <Route path="/stacks/:id/editar" element={<EditStackView hoje={HOJE_SEED} />} />
         </Routes>
         <Local />
@@ -218,7 +218,7 @@ describe('editar stack', () => {
 
   it('o detalhe tem link para editar', async () => {
     renderApp('/stacks/react')
-    fireEvent.click(screen.getByRole('link', { name: 'Editar stack' }))
+    fireEvent.click(await screen.findByRole('link', { name: 'Editar stack' }))
     expect(await screen.findByRole('form', { name: 'Editar React' })).toBeInTheDocument()
     expect(local()).toBe('/stacks/react/editar')
   })
