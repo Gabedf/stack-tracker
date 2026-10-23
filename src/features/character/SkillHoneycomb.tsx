@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Link } from 'react-router'
-import { formatarNota } from '../../components/formatacao'
+import { formatarData, formatarNota } from '../../components/formatacao'
 import { IconeFloco, IconeLivro } from '../../components/icons'
 import { NIVEIS, type NivelId } from '../../domain/levels'
 import type { SkillDaColmeia } from './character'
@@ -11,6 +11,7 @@ import {
   rotuloCurto,
   rotuloDaSkill,
   type HexPosicionado,
+  type LayoutColmeia,
 } from './honeycombLayout'
 
 export interface SkillHoneycombProps {
@@ -114,7 +115,15 @@ function Brilho({ hex }: { hex: HexPosicionado<SkillDaColmeia> }) {
   )
 }
 
-function Hexagono({ hex }: { hex: HexPosicionado<SkillDaColmeia> }) {
+interface HexagonoProps {
+  hex: HexPosicionado<SkillDaColmeia>
+  /** id do cartão de detalhes, quando ele descreve este hexágono. */
+  descritoPor?: string
+  onAtivar: (indice: number, origem: 'hover' | 'foco') => void
+  onDesativar: (indice: number, origem: 'hover' | 'foco') => void
+}
+
+function Hexagono({ hex, descritoPor, onAtivar, onDesativar }: HexagonoProps) {
   const { item: skill, x, y } = hex
   const estilo = ESTILO_NIVEL[skill.nivel.id]
   const selos: Array<'livro' | 'floco'> = []
@@ -127,6 +136,11 @@ function Hexagono({ hex }: { hex: HexPosicionado<SkillDaColmeia> }) {
     <Link
       to={`/stacks/${encodeURIComponent(skill.id)}`}
       aria-label={rotuloDaSkill(skill)}
+      aria-describedby={descritoPor}
+      onMouseEnter={() => onAtivar(hex.indice, 'hover')}
+      onMouseLeave={() => onDesativar(hex.indice, 'hover')}
+      onFocus={() => onAtivar(hex.indice, 'foco')}
+      onBlur={() => onDesativar(hex.indice, 'foco')}
       data-nivel={skill.nivel.id}
       data-sei-por-saber={skill.seiPorSaber || undefined}
       data-esfriando={skill.esfriando || undefined}
@@ -179,6 +193,81 @@ function Hexagono({ hex }: { hex: HexPosicionado<SkillDaColmeia> }) {
         {formatarNota(skill.nota)}
       </text>
     </Link>
+  )
+}
+
+const LARGURA_CARTAO = 224
+/** Altura aproximada do cartão: decide se ele cabe acima do hexágono. */
+const ALTURA_CARTAO = 170
+const FOLGA_CARTAO = 6
+
+/**
+ * Posição do cartão relativa à colmeia: acima do hexágono se couber, senão
+ * abaixo; na horizontal, centrado no hexágono e preso às bordas da colmeia.
+ */
+function posicaoDoCartao(hex: HexPosicionado, layout: LayoutColmeia, larguraVisivel: number) {
+  const limite = Math.min(layout.largura, larguraVisivel)
+  const left = Math.max(0, Math.min(hex.x - LARGURA_CARTAO / 2, limite - LARGURA_CARTAO))
+  const acima = hex.y - layout.raio - FOLGA_CARTAO - ALTURA_CARTAO >= 0
+  return acima
+    ? { left, top: hex.y - layout.raio - FOLGA_CARTAO, transform: 'translateY(-100%)' }
+    : { left, top: hex.y + layout.raio + FOLGA_CARTAO }
+}
+
+function Detalhe({ rotulo, valor }: { rotulo: string; valor: string }) {
+  return (
+    <div className="flex justify-between gap-3">
+      <dt className="text-muted">{rotulo}</dt>
+      <dd className="font-semibold tabular-nums text-fg">{valor}</dd>
+    </div>
+  )
+}
+
+/** Cartão de detalhes do hexágono em hover ou foco (não recebe o ponteiro). */
+function CartaoSkill({
+  id,
+  skill,
+  posicao,
+}: {
+  id: string
+  skill: SkillDaColmeia
+  posicao: ReturnType<typeof posicaoDoCartao>
+}) {
+  return (
+    <div
+      id={id}
+      role="tooltip"
+      style={{ ...posicao, width: LARGURA_CARTAO }}
+      className="pointer-events-none absolute z-10 flex max-w-full flex-col gap-2 rounded-theme border border-border bg-surface p-3 text-sm text-fg shadow-theme"
+    >
+      <div>
+        <p className="font-semibold">{skill.nome}</p>
+        <p className="text-xs text-muted">{skill.categoria}</p>
+      </div>
+      <dl className="flex flex-col gap-0.5">
+        <Detalhe rotulo="Nota" valor={`${formatarNota(skill.nota)} · ${skill.nivel.nome}`} />
+        <Detalhe rotulo="Teoria" valor={formatarNota(skill.teoria)} />
+        <Detalhe rotulo="Prática" valor={formatarNota(skill.pratica)} />
+        <Detalhe rotulo="Profundidade" valor={formatarNota(skill.profundidade)} />
+        <Detalhe rotulo="Último uso" valor={formatarData(skill.ultimoUso)} />
+      </dl>
+      {(skill.seiPorSaber || skill.esfriando) && (
+        <ul className="flex flex-col gap-0.5 text-xs text-muted">
+          {skill.seiPorSaber && (
+            <li className="inline-flex items-center gap-1">
+              <IconeLivro />
+              Sei por saber
+            </li>
+          )}
+          {skill.esfriando && (
+            <li className="inline-flex items-center gap-1">
+              <IconeFloco />
+              Esfriando: −{Math.round(skill.perda * 100)}% da nota
+            </li>
+          )}
+        </ul>
+      )}
+    </div>
   )
 }
 
@@ -243,6 +332,11 @@ function Legenda() {
  */
 export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps) {
   const [ref, largura] = useLargura(LARGURA_PADRAO)
+  const idCartao = useId()
+  const [emHover, setEmHover] = useState<number | null>(null)
+  const [emFoco, setEmFoco] = useState<number | null>(null)
+  /** Esc fecha o cartão até o próximo hover ou foco. */
+  const [cartaoFechado, setCartaoFechado] = useState(false)
 
   const layout = layoutColmeia(skills, {
     largura,
@@ -252,48 +346,82 @@ export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps)
     ordemCategorias,
   })
 
+  const ativo = cartaoFechado ? null : (emHover ?? emFoco)
+  const hexAtivo = ativo == null ? undefined : layout.hexagonos[ativo]
+
+  const ativar = (indice: number, origem: 'hover' | 'foco') => {
+    setCartaoFechado(false)
+    if (origem === 'hover') setEmHover(indice)
+    else setEmFoco(indice)
+  }
+  const desativar = (indice: number, origem: 'hover' | 'foco') => {
+    const atualizar = (atual: number | null) => (atual === indice ? null : atual)
+    if (origem === 'hover') setEmHover(atualizar)
+    else setEmFoco(atualizar)
+  }
+
   return (
     <div className="flex flex-col gap-3">
-      <div ref={ref} className="relative w-full min-w-0 overflow-x-auto">
-        {skills.length === 0 ? (
-          <p className="rounded-theme border border-dashed border-border bg-surface-2 p-4 text-center text-sm text-muted">
-            Nenhuma stack para mostrar.
-          </p>
-        ) : (
-          <svg
-            role="group"
-            aria-label={`Colmeia: ${skills.length} ${skills.length === 1 ? 'stack' : 'stacks'}`}
-            width={layout.largura}
-            height={layout.altura}
-            viewBox={`0 0 ${layout.largura} ${layout.altura}`}
-            className="block"
-            data-colunas={layout.colunas}
-          >
-            <g>
-              {layout.hexagonos.map((hex) => (
-                <Brilho key={hex.item.id} hex={hex} />
-              ))}
-            </g>
-            {layout.grupos.map((grupo) => (
-              <g key={grupo.categoria} role="group" aria-label={grupo.categoria}>
-                <text
-                  aria-hidden="true"
-                  x={MARGEM}
-                  y={grupo.yRotulo}
-                  fill={COR_ROTULO}
-                  fontSize={12}
-                  fontWeight={600}
-                >
-                  {grupo.categoria}
-                </text>
-                {layout.hexagonos
-                  .filter((hex) => hex.item.categoria === grupo.categoria)
-                  .map((hex) => (
-                    <Hexagono key={hex.item.id} hex={hex} />
-                  ))}
+      <div
+        className="relative"
+        onKeyDown={(evento) => {
+          if (evento.key === 'Escape' && ativo != null) setCartaoFechado(true)
+        }}
+      >
+        <div ref={ref} className="w-full min-w-0 overflow-x-auto">
+          {skills.length === 0 ? (
+            <p className="rounded-theme border border-dashed border-border bg-surface-2 p-4 text-center text-sm text-muted">
+              Nenhuma stack para mostrar.
+            </p>
+          ) : (
+            <svg
+              role="group"
+              aria-label={`Colmeia: ${skills.length} ${skills.length === 1 ? 'stack' : 'stacks'}`}
+              width={layout.largura}
+              height={layout.altura}
+              viewBox={`0 0 ${layout.largura} ${layout.altura}`}
+              className="block"
+              data-colunas={layout.colunas}
+            >
+              <g>
+                {layout.hexagonos.map((hex) => (
+                  <Brilho key={hex.item.id} hex={hex} />
+                ))}
               </g>
-            ))}
-          </svg>
+              {layout.grupos.map((grupo) => (
+                <g key={grupo.categoria} role="group" aria-label={grupo.categoria}>
+                  <text
+                    aria-hidden="true"
+                    x={MARGEM}
+                    y={grupo.yRotulo}
+                    fill={COR_ROTULO}
+                    fontSize={12}
+                    fontWeight={600}
+                  >
+                    {grupo.categoria}
+                  </text>
+                  {layout.hexagonos
+                    .filter((hex) => hex.item.categoria === grupo.categoria)
+                    .map((hex) => (
+                      <Hexagono
+                        key={hex.item.id}
+                        hex={hex}
+                        descritoPor={hex === hexAtivo ? idCartao : undefined}
+                        onAtivar={ativar}
+                        onDesativar={desativar}
+                      />
+                    ))}
+                </g>
+              ))}
+            </svg>
+          )}
+        </div>
+        {hexAtivo && (
+          <CartaoSkill
+            id={idCartao}
+            skill={hexAtivo.item}
+            posicao={posicaoDoCartao(hexAtivo, layout, largura)}
+          />
         )}
       </div>
       <Legenda />

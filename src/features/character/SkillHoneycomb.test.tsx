@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import { nivelDaNota } from '../../domain/levels'
@@ -129,5 +129,83 @@ describe('SkillHoneycomb', () => {
   it('sem stacks, avisa', () => {
     renderColmeia({ skills: [] })
     expect(screen.getByText('Nenhuma stack para mostrar.')).toBeInTheDocument()
+  })
+})
+
+describe('SkillHoneycomb: detalhes', () => {
+  it('o foco mostra o cartão de detalhes e o liga ao hexágono', () => {
+    renderColmeia()
+    expect(screen.queryByRole('tooltip')).toBeNull()
+    const react = hexagonos()[0]
+    fireEvent.focus(react)
+
+    const cartao = screen.getByRole('tooltip')
+    expect(react).toHaveAttribute('aria-describedby', cartao.id)
+    expect(react).toHaveAccessibleDescription(/React/)
+    expect(cartao).toHaveTextContent('React')
+    expect(cartao).toHaveTextContent('Frontend')
+    expect(cartao).toHaveTextContent('Nota8,4 · Mestre')
+    expect(cartao).toHaveTextContent('Teoria9,0')
+    expect(cartao).toHaveTextContent('Prática8,0')
+    expect(cartao).toHaveTextContent('Profundidade8,0')
+    expect(cartao).toHaveTextContent('Último uso09/10/2026')
+
+    fireEvent.blur(react)
+    expect(screen.queryByRole('tooltip')).toBeNull()
+    expect(react).not.toHaveAttribute('aria-describedby')
+  })
+
+  it('o hover mostra o cartão, com prioridade sobre o foco', () => {
+    renderColmeia()
+    const [react, jquery] = hexagonos()
+    fireEvent.focus(react)
+    fireEvent.mouseEnter(jquery)
+    const cartao = screen.getByRole('tooltip')
+    expect(cartao).toHaveTextContent('jQuery')
+    expect(cartao).toHaveTextContent('Esfriando: −20% da nota')
+
+    fireEvent.mouseLeave(jquery)
+    expect(screen.getByRole('tooltip')).toHaveTextContent('React')
+  })
+
+  it('o cartão mostra o selo sei por saber', () => {
+    renderColmeia()
+    fireEvent.mouseEnter(hexagonos()[3])
+    expect(screen.getByRole('tooltip')).toHaveTextContent('Sei por saber')
+  })
+
+  it('Esc fecha o cartão até o próximo foco', () => {
+    renderColmeia()
+    const [react, jquery] = hexagonos()
+    fireEvent.focus(react)
+    fireEvent.keyDown(react, { key: 'Escape' })
+    expect(screen.queryByRole('tooltip')).toBeNull()
+    fireEvent.focus(jquery)
+    expect(screen.getByRole('tooltip')).toHaveTextContent('jQuery')
+  })
+
+  it('o cartão fica dentro da colmeia na horizontal', () => {
+    const muitas = Array.from({ length: 12 }, (_, i) => skill(i))
+    renderColmeia({ skills: muitas })
+    const links = hexagonos()
+    for (const indice of [0, 5, 6, 11]) {
+      fireEvent.mouseEnter(links[indice])
+      const cartao = screen.getByRole('tooltip')
+      const left = parseFloat(cartao.style.left)
+      expect(left).toBeGreaterThanOrEqual(0)
+      expect(left + parseFloat(cartao.style.width)).toBeLessThanOrEqual(480)
+      fireEvent.mouseLeave(links[indice])
+    }
+  })
+
+  it('na primeira linha, o cartão abre abaixo do hexágono; nas de baixo, acima', () => {
+    const muitas = Array.from({ length: 30 }, (_, i) => skill(i))
+    renderColmeia({ skills: muitas })
+    const links = hexagonos()
+    fireEvent.mouseEnter(links[0])
+    expect(screen.getByRole('tooltip').style.transform).toBe('')
+    fireEvent.mouseLeave(links[0])
+    fireEvent.mouseEnter(links[29])
+    expect(screen.getByRole('tooltip').style.transform).toBe('translateY(-100%)')
   })
 })
