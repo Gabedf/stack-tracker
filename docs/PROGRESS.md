@@ -4,7 +4,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 
 | Etapa | Branch | Status | Merge |
 |-------|--------|--------|-------|
-| 00 | chore/00-bootstrap | pendente | |
+| 00 | chore/00-bootstrap | concluída | 31e854f |
 | 01 | chore/01-scaffold | pendente | |
 | 02 | feat/02-domain-types | pendente | |
 | 03 | feat/03-scoring | pendente | |
