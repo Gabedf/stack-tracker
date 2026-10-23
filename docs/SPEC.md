@@ -9,7 +9,8 @@ As stacks são cadastradas pela própria aplicação; nenhum dado real é pré-r
 ## Especificação técnica
 - Vite + React + TypeScript; Tailwind + CSS variables (temas = tokens + uma view extra); Zod;
   Recharts (siga o skill "dataviz" nos gráficos); Framer Motion; Vitest + Testing Library;
-  ESLint + Prettier.
+  ESLint + Prettier; React Router v7 (react-router, modo declarativo com BrowserRouter; a v8 exige
+  Node >= 22).
 - Persistência: o navegador não grava em disco. Plugin do Vite (server/jsonStoragePlugin.ts)
   expõe GET/PUT /api/stacks que lê/grava data/stacks.json. O front usa a interface StorageAdapter
   (JsonFileAdapter agora; ApiAdapter/Supabase no futuro sem mexer na UI), pois o app poderá virar produto.
