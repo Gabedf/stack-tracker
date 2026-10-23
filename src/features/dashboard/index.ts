@@ -26,3 +26,4 @@ export {
   type QuadranteId,
 } from './quadrantData'
 export { TheoryPracticeQuadrant, type TheoryPracticeQuadrantProps } from './TheoryPracticeQuadrant'
+export { CategoryOverview, type CategoryOverviewProps } from './CategoryOverview'

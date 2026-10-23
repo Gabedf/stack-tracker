@@ -1,11 +1,22 @@
-import { render, screen, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { fireEvent, render, screen, within } from '@testing-library/react'
+import { cloneElement, type ReactElement } from 'react'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 import type { Stack, StacksFile } from '../domain/types'
 import { StacksProvider } from '../features/stacks'
 import { StorageError, type StorageAdapter } from '../storage'
 import { HOJE_SEED, stacksDoSeed } from '../test/seed'
 import { DashboardView } from './DashboardView'
+
+// Em jsdom nada tem tamanho: o container passa largura/altura fixas aos gráficos.
+vi.mock('recharts', async (importOriginal) => {
+  const original = await importOriginal<typeof import('recharts')>()
+  return {
+    ...original,
+    ResponsiveContainer: ({ children }: { children: ReactElement<{ width?: number }> }) =>
+      cloneElement(children, { width: 480, height: 300 } as { width: number }),
+  }
+})
 
 class AdapterFake implements StorageAdapter {
   falharCarregar: StorageError | null = null
@@ -22,11 +33,20 @@ class AdapterFake implements StorageAdapter {
   readonly salvar = vi.fn(async (dados: StacksFile) => dados)
 }
 
+/** Rota de destino que mostra a URL recebida. */
+function Destino() {
+  const { pathname, search } = useLocation()
+  return <p>Destino: {pathname + search}</p>
+}
+
 function renderView(adapter = new AdapterFake(stacksDoSeed())) {
   render(
     <StacksProvider adapter={adapter} hoje={HOJE_SEED}>
-      <MemoryRouter>
-        <DashboardView hoje={HOJE_SEED} />
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<DashboardView hoje={HOJE_SEED} />} />
+          <Route path="/stacks" element={<Destino />} />
+        </Routes>
       </MemoryRouter>
     </StacksProvider>,
   )
@@ -174,10 +194,74 @@ describe('DashboardView', () => {
     expect(regiao('Esfriando')).toHaveTextContent('Nenhuma stack perdendo nota por falta de uso.')
   })
 
-  it('reserva as seções de categoria e teoria × prática', async () => {
+  it('mostra o radar com a nota média por categoria do seed', async () => {
     renderView()
     await esperarResumo()
-    expect(regiao('Por categoria')).toHaveTextContent('Em breve')
-    expect(regiao('Teoria × prática')).toHaveTextContent('Em breve')
+
+    const secao = regiao('Por categoria')
+    expect(within(secao).getByRole('img')).toHaveAccessibleName(
+      'Nota média por categoria, de 0 a 10: Backend 5,5; Dados 2,6; DevOps 3,8; Frontend 6,7. ' +
+        'Maior: Frontend (6,7); menor: Dados (2,6).',
+    )
+    expect(secao.querySelector('[data-forma]')).toHaveAttribute('data-forma', 'radar')
+  })
+
+  it('os toggles trocam a medida do radar', async () => {
+    renderView()
+    await esperarResumo()
+
+    const secao = regiao('Por categoria')
+    const grupo = within(secao).getByRole('group', { name: 'Medida do gráfico' })
+    expect(within(grupo).getByRole('button', { name: 'Nota' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+
+    fireEvent.click(within(grupo).getByRole('button', { name: 'Prática' }))
+    expect(within(grupo).getByRole('button', { name: 'Prática' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(within(grupo).getByRole('button', { name: 'Nota' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    )
+    // Frontend: (8 + 7) / 2 = 7,5.
+    expect(within(secao).getByRole('img')).toHaveAccessibleName(
+      'Prática média por categoria, de 0 a 10: Backend 6,0; Dados 3,0; DevOps 2,0; Frontend 7,5. ' +
+        'Maior: Frontend (7,5); menor: DevOps (2,0).',
+    )
+  })
+
+  it('clicar numa categoria abre a lista filtrada por ela', async () => {
+    renderView()
+    await esperarResumo()
+
+    const categorias = within(regiao('Por categoria')).getByRole('list', { name: 'Categorias' })
+    fireEvent.click(within(categorias).getByRole('button', { name: /Frontend/ }))
+    expect(screen.getByText('Destino: /stacks?categoria=Frontend')).toBeInTheDocument()
+  })
+
+  it('mostra o quadrante teoria × prática com as 5 stacks do seed', async () => {
+    renderView()
+    await esperarResumo()
+
+    const secao = regiao('Teoria × prática')
+    expect(within(secao).getByRole('img')).toHaveAccessibleName(
+      'Teoria × prática de 5 stacks: 3 em Domínio real, 1 em Sei por saber, ' +
+        '0 em Prática intuitiva, 1 em A explorar. 1 marcada como sei por saber.',
+    )
+    const tabela = within(secao).getByRole('table')
+    expect(
+      within(tabela)
+        .getAllByRole('link')
+        .map((a) => a.getAttribute('href')),
+    ).toEqual([
+      '/stacks/jquery',
+      '/stacks/nodejs',
+      '/stacks/react',
+      '/stacks/kubernetes',
+      '/stacks/postgresql',
+    ])
   })
 })

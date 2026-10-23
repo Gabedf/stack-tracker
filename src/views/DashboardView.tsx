@@ -6,9 +6,12 @@ import { useDocumentTitle } from '../components/layout'
 import { LevelBadge } from '../components/LevelBadge'
 import {
   calcularResumo,
+  CategoryOverview,
   CoolingStacksList,
+  estatisticasPorCategoria,
   LevelDistribution,
   StatTile,
+  TheoryPracticeQuadrant,
   TopStacksList,
 } from '../features/dashboard'
 import { useStacks } from '../features/stacks'
@@ -32,21 +35,6 @@ function Painel({ id, titulo, children }: { id: string; titulo: string; children
         {titulo}
       </h2>
       {children}
-    </section>
-  )
-}
-
-/** Seção ainda sem conteúdo: o espaço fica reservado, com um aviso discreto. */
-function SecaoReservada({ id, titulo, texto }: { id: string; titulo: string; texto: string }) {
-  return (
-    <section
-      aria-labelledby={id}
-      className="flex min-h-40 flex-col gap-2 rounded-theme border border-dashed border-border bg-surface p-4"
-    >
-      <h2 id={id} className="font-heading text-lg font-semibold text-fg">
-        {titulo}
-      </h2>
-      <p className="text-sm text-muted">{texto}</p>
     </section>
   )
 }
@@ -160,16 +148,14 @@ export function DashboardView({ hoje }: DashboardViewProps) {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <SecaoReservada
-            id="dashboard-categorias"
-            titulo="Por categoria"
-            texto="Radar com a média de teoria, prática e profundidade por categoria. Em breve."
-          />
-          <SecaoReservada
-            id="dashboard-quadrante"
-            titulo="Teoria × prática"
-            texto="Quadrante comparando teoria e prática de cada stack. Em breve."
-          />
+          <Painel id="dashboard-categorias" titulo="Por categoria">
+            <CategoryOverview
+              estatisticas={estatisticasPorCategoria(stacks, { hoje: referencia })}
+            />
+          </Painel>
+          <Painel id="dashboard-quadrante" titulo="Teoria × prática">
+            <TheoryPracticeQuadrant stacks={stacks} hoje={referencia} />
+          </Painel>
         </div>
       </div>
     )
