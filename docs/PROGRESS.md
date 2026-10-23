@@ -18,7 +18,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 11 | feat/11-stack-list | concluída | c1c7ce8 |
 | 12 | feat/12-stack-form | concluída | 05998e6 |
 | 13 | feat/13-stack-detail | concluída | 124fb0d |
-| 14 | feat/14-evolution-chart | pendente | |
+| 14 | feat/14-evolution-chart | concluída | ed7875a |
 | 15 | feat/15-dashboard | pendente | |
 | 16 | feat/16-rpg-tokens | pendente | |
 | 17 | feat/17-character-sheet | pendente | |
@@ -28,3 +28,9 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 21 | feat/21-import-export | pendente | |
 | 22 | feat/22-polish-a11y | pendente | |
 | 23 | chore/23-docs-final | pendente | |
+
+## Pendências para etapas futuras
+
+- (22) Code splitting por rota com React.lazy: o recharts levou o bundle a ~800 kB (aviso do Vite > 500 kB).
+- (22) Tooltip do gráfico de evolução não abre por teclado; os valores ficam na tabela alternativa.
+- (geral) npm audit: tinypool via Vitest 3 (só dev). A correção exige Vitest 4 e Node >= 20.19.
