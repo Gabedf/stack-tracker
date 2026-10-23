@@ -19,7 +19,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 12 | feat/12-stack-form | concluída | 05998e6 |
 | 13 | feat/13-stack-detail | concluída | 124fb0d |
 | 14 | feat/14-evolution-chart | concluída | ed7875a |
-| 15 | feat/15-dashboard | pendente | |
+| 15 | feat/15-dashboard | concluída | 0a0552b |
 | 16 | feat/16-rpg-tokens | pendente | |
 | 17 | feat/17-character-sheet | pendente | |
 | 18 | feat/18-rpg-xp-anim | pendente | |
