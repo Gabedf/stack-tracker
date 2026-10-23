@@ -14,6 +14,7 @@ function copiarComTextarea(texto: string): boolean {
   document.body.appendChild(area)
   const foco = document.activeElement instanceof HTMLElement ? document.activeElement : null
   try {
+    area.focus()
     area.select()
     return typeof document.execCommand === 'function' && document.execCommand('copy')
   } catch {
