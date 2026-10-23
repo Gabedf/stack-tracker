@@ -4,6 +4,7 @@ import { EmptyState } from '../components/EmptyState'
 import { useDocumentTitle } from '../components/layout'
 import {
   markdownDaSelecao,
+  ResumeActions,
   ResumeFilters,
   ResumePreview,
   ResumeSummary,
@@ -85,6 +86,7 @@ export function ResumeView({ hoje }: ResumeViewProps) {
         />
         <div className="flex min-w-0 flex-col gap-4">
           <ResumeSummary selecao={selecao} />
+          <ResumeActions markdown={markdown} />
           <ResumePreview selecao={selecao} opcoes={opcoes} markdown={markdown} />
         </div>
       </div>
