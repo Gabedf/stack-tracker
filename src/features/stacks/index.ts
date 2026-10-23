@@ -8,3 +8,5 @@ export {
   type MudancasStack,
   type NovaStack,
 } from './stacksOperations'
+export { StackForm, type StackFormProps } from './StackForm'
+export type { DadosStackForm } from './stackFormModel'
