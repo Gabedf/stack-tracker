@@ -17,3 +17,12 @@ export {
   type CoolingStacksListProps,
   type TopStacksListProps,
 } from './StackRankings'
+export {
+  LIMIAR_QUADRANTE,
+  QUADRANTES,
+  classificarQuadrante,
+  pontosQuadrante,
+  type PontoQuadrante,
+  type QuadranteId,
+} from './quadrantData'
+export { TheoryPracticeQuadrant, type TheoryPracticeQuadrantProps } from './TheoryPracticeQuadrant'
