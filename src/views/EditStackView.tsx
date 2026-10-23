@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router'
 import { useDocumentTitle } from '../components/layout'
-import { StackForm, useStacks, type DadosStackForm } from '../features/stacks'
+import { DeleteStackButton, StackForm, useStacks, type DadosStackForm } from '../features/stacks'
 import { categoriasDisponiveis } from '../features/stacks/stackFiltering'
 
 export interface EditStackViewProps {
@@ -13,7 +13,7 @@ const CLASSE_LINK = 'font-medium text-accent underline underline-offset-2'
 /** Edição de stack: salva via `atualizar` (mesmo id) e volta ao detalhe. */
 export function EditStackView({ hoje }: EditStackViewProps) {
   const { id = '' } = useParams<{ id: string }>()
-  const { stacks, status, erro, salvando, atualizar } = useStacks()
+  const { stacks, status, erro, salvando, atualizar, remover } = useStacks()
   const navigate = useNavigate()
   const stack = stacks.find((s) => s.id === id)
   useDocumentTitle(stack ? `Editar ${stack.nome}` : 'Editar stack')
@@ -24,6 +24,11 @@ export function EditStackView({ hoje }: EditStackViewProps) {
     // notas explícito: apagar o texto remove as notas salvas.
     await atualizar(id, { ...dados, notas: dados.notas })
     navigate(detalhe)
+  }
+
+  async function excluir() {
+    await remover(id)
+    navigate('/stacks')
   }
 
   if (status === 'carregando') {
@@ -78,6 +83,15 @@ export function EditStackView({ hoje }: EditStackViewProps) {
         onSubmit={salvar}
         onCancel={() => navigate(detalhe)}
       />
+      <section
+        aria-labelledby="zona-perigo"
+        className="space-y-3 rounded-theme border border-border bg-surface-2 p-4"
+      >
+        <h2 id="zona-perigo" className="font-heading text-lg font-semibold">
+          Zona de perigo
+        </h2>
+        <DeleteStackButton nome={stack.nome} onConfirm={excluir} />
+      </section>
     </section>
   )
 }
