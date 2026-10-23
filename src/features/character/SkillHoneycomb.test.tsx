@@ -286,3 +286,34 @@ describe('SkillHoneycomb: teclado e navegação', () => {
     expect(screen.getByText('Destino: /stacks/react')).toBeInTheDocument()
   })
 })
+
+describe('SkillHoneycomb: destaque de categoria', () => {
+  it('sem categoria selecionada, nada esmaece', () => {
+    renderColmeia()
+    for (const hex of hexagonos()) expect(hex).not.toHaveAttribute('data-dim')
+  })
+
+  it('esmaece os hexágonos das outras categorias', () => {
+    renderColmeia({ categoriaSelecionada: 'Frontend' })
+    const [react, jquery, node, kubernetes, postgres] = hexagonos()
+    expect(react).not.toHaveAttribute('data-dim')
+    expect(jquery).not.toHaveAttribute('data-dim')
+    for (const hex of [node, kubernetes, postgres]) {
+      expect(hex).toHaveAttribute('data-dim', 'true')
+      expect(Number(hex.style.opacity)).toBeLessThan(0.5)
+    }
+    expect(within(colmeia()).getByRole('group', { name: 'Frontend' })).toHaveAttribute(
+      'data-destaque',
+      'true',
+    )
+    // Esfriando e esmaecido continuam distintos: o jQuery em destaque não esmaece.
+    expect(Number(jquery.style.opacity)).toBeGreaterThan(0.5)
+  })
+
+  it('o hexágono esmaecido continua focável e com detalhes', () => {
+    renderColmeia({ categoriaSelecionada: 'Frontend' })
+    const postgres = hexagonos()[4]
+    fireEvent.focus(postgres)
+    expect(screen.getByRole('tooltip')).toHaveTextContent('PostgreSQL')
+  })
+})
