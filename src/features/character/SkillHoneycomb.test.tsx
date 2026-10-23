@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import { nivelDaNota } from '../../domain/levels'
 import { HOJE_SEED, stacksDoSeed } from '../../test/seed'
@@ -207,5 +207,82 @@ describe('SkillHoneycomb: detalhes', () => {
     fireEvent.mouseLeave(links[0])
     fireEvent.mouseEnter(links[29])
     expect(screen.getByRole('tooltip').style.transform).toBe('translateY(-100%)')
+  })
+})
+
+function Destino() {
+  const { pathname } = useLocation()
+  return <p>Destino: {pathname}</p>
+}
+
+function renderComRotas(props: Partial<SkillHoneycombProps> = {}) {
+  return render(
+    <MemoryRouter initialEntries={['/ficha']}>
+      <Routes>
+        <Route
+          path="/ficha"
+          element={<SkillHoneycomb skills={skillsDoSeed()} ordemCategorias={ORDEM} {...props} />}
+        />
+        <Route path="/stacks/:id" element={<Destino />} />
+      </Routes>
+    </MemoryRouter>,
+  )
+}
+
+describe('SkillHoneycomb: teclado e navegação', () => {
+  it('só um hexágono fica na ordem do Tab (roving tabindex)', () => {
+    renderColmeia()
+    expect(hexagonos().map((h) => h.getAttribute('tabindex'))).toEqual([
+      '0',
+      '-1',
+      '-1',
+      '-1',
+      '-1',
+    ])
+    expect(colmeia()).toHaveAccessibleDescription(
+      'Setas movem entre as stacks; Enter abre a stack.',
+    )
+  })
+
+  it('setas, Home e End movem o foco e o tabindex', () => {
+    renderColmeia()
+    const links = hexagonos()
+    act(() => links[0].focus())
+    expect(screen.getByTestId('anel-foco')).toBeInTheDocument()
+
+    fireEvent.keyDown(links[0], { key: 'ArrowRight' })
+    expect(links[1]).toHaveFocus()
+    expect(links[1]).toHaveAttribute('tabindex', '0')
+    expect(links[0]).toHaveAttribute('tabindex', '-1')
+    expect(screen.getByRole('tooltip')).toHaveTextContent('jQuery')
+
+    // Frontend (linha 0) -> Backend (linha 1): o mais próximo na horizontal.
+    fireEvent.keyDown(links[1], { key: 'ArrowDown' })
+    expect(links[2]).toHaveFocus()
+    fireEvent.keyDown(links[2], { key: 'ArrowUp' })
+    expect(links[0]).toHaveFocus()
+
+    fireEvent.keyDown(links[0], { key: 'End' })
+    expect(links[4]).toHaveFocus()
+    fireEvent.keyDown(links[4], { key: 'ArrowRight' })
+    expect(links[4]).toHaveFocus()
+    fireEvent.keyDown(links[4], { key: 'Home' })
+    expect(links[0]).toHaveFocus()
+    fireEvent.keyDown(links[0], { key: 'ArrowLeft' })
+    expect(links[0]).toHaveFocus()
+  })
+
+  it('Enter abre a stack', () => {
+    renderComRotas()
+    const kubernetes = screen.getByRole('link', { name: /^Kubernetes/ })
+    act(() => kubernetes.focus())
+    fireEvent.keyDown(kubernetes, { key: 'Enter' })
+    expect(screen.getByText('Destino: /stacks/kubernetes')).toBeInTheDocument()
+  })
+
+  it('o clique abre a stack', () => {
+    renderComRotas()
+    fireEvent.click(screen.getByRole('link', { name: /^React/ }))
+    expect(screen.getByText('Destino: /stacks/react')).toBeInTheDocument()
   })
 })

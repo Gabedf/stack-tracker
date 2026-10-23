@@ -1,5 +1,5 @@
-import { useEffect, useId, useState } from 'react'
-import { Link } from 'react-router'
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { Link, useNavigate } from 'react-router'
 import { formatarData, formatarNota } from '../../components/formatacao'
 import { IconeFloco, IconeLivro } from '../../components/icons'
 import { NIVEIS, type NivelId } from '../../domain/levels'
@@ -10,6 +10,8 @@ import {
   pontosHexagono,
   rotuloCurto,
   rotuloDaSkill,
+  vizinhoNaColmeia,
+  type DirecaoColmeia,
   type HexPosicionado,
   type LayoutColmeia,
 } from './honeycombLayout'
@@ -75,6 +77,21 @@ const COR_SUPERFICIE = 'var(--theme-surface)'
 /** Opacidade das stacks esfriando (o floco reforça; não é só a opacidade). */
 const OPACIDADE_ESFRIANDO = 0.6
 const TRACEJADO_SEI_POR_SABER = '5 3'
+const COR_FOCO = 'var(--theme-focus)'
+
+/** Teclas que movem o foco entre hexágonos (roving tabindex). */
+const DIRECAO_DA_TECLA: Record<string, DirecaoColmeia> = {
+  ArrowLeft: 'esquerda',
+  ArrowRight: 'direita',
+  ArrowUp: 'cima',
+  ArrowDown: 'baixo',
+  Home: 'inicio',
+  End: 'fim',
+}
+
+function caminhoDaSkill(skill: SkillDaColmeia): string {
+  return `/stacks/${encodeURIComponent(skill.id)}`
+}
 
 /** Largura do elemento, acompanhando redimensionamentos (padrão até medir). */
 function useLargura(padrao: number) {
@@ -119,11 +136,23 @@ interface HexagonoProps {
   hex: HexPosicionado<SkillDaColmeia>
   /** id do cartão de detalhes, quando ele descreve este hexágono. */
   descritoPor?: string
+  /** Só um hexágono fica na ordem do Tab (0); os demais, -1. */
+  tabIndex: 0 | -1
+  registrar: (indice: number, elemento: HTMLAnchorElement | null) => void
+  onTecla: (indice: number, evento: KeyboardEvent<HTMLAnchorElement>) => void
   onAtivar: (indice: number, origem: 'hover' | 'foco') => void
   onDesativar: (indice: number, origem: 'hover' | 'foco') => void
 }
 
-function Hexagono({ hex, descritoPor, onAtivar, onDesativar }: HexagonoProps) {
+function Hexagono({
+  hex,
+  descritoPor,
+  tabIndex,
+  registrar,
+  onTecla,
+  onAtivar,
+  onDesativar,
+}: HexagonoProps) {
   const { item: skill, x, y } = hex
   const estilo = ESTILO_NIVEL[skill.nivel.id]
   const selos: Array<'livro' | 'floco'> = []
@@ -134,7 +163,10 @@ function Hexagono({ hex, descritoPor, onAtivar, onDesativar }: HexagonoProps) {
 
   return (
     <Link
-      to={`/stacks/${encodeURIComponent(skill.id)}`}
+      ref={(elemento) => registrar(hex.indice, elemento)}
+      to={caminhoDaSkill(skill)}
+      tabIndex={tabIndex}
+      onKeyDown={(evento) => onTecla(hex.indice, evento)}
       aria-label={rotuloDaSkill(skill)}
       aria-describedby={descritoPor}
       onMouseEnter={() => onAtivar(hex.indice, 'hover')}
@@ -337,6 +369,10 @@ export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps)
   const [emFoco, setEmFoco] = useState<number | null>(null)
   /** Esc fecha o cartão até o próximo hover ou foco. */
   const [cartaoFechado, setCartaoFechado] = useState(false)
+  const [indiceTab, setIndiceTab] = useState(0)
+  const elementos = useRef(new Map<number, HTMLAnchorElement>())
+  const navigate = useNavigate()
+  const idInstrucoes = useId()
 
   const layout = layoutColmeia(skills, {
     largura,
@@ -349,10 +385,36 @@ export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps)
   const ativo = cartaoFechado ? null : (emHover ?? emFoco)
   const hexAtivo = ativo == null ? undefined : layout.hexagonos[ativo]
 
+  const naOrdemDoTab = Math.min(indiceTab, Math.max(0, layout.hexagonos.length - 1))
+  const hexEmFoco = emFoco == null ? undefined : layout.hexagonos[emFoco]
+
+  const registrar = (indice: number, elemento: HTMLAnchorElement | null) => {
+    if (elemento) elementos.current.set(indice, elemento)
+    else elementos.current.delete(indice)
+  }
+
+  const aoTeclar = (indice: number, evento: KeyboardEvent<HTMLAnchorElement>) => {
+    if (evento.key === 'Enter') {
+      // Navega aqui (e não pelo clique sintético do navegador) para não duplicar.
+      evento.preventDefault()
+      navigate(caminhoDaSkill(layout.hexagonos[indice].item))
+      return
+    }
+    const direcao = DIRECAO_DA_TECLA[evento.key]
+    if (!direcao) return
+    evento.preventDefault()
+    const destino = vizinhoNaColmeia(layout, indice, direcao)
+    setIndiceTab(destino)
+    elementos.current.get(destino)?.focus()
+  }
+
   const ativar = (indice: number, origem: 'hover' | 'foco') => {
     setCartaoFechado(false)
     if (origem === 'hover') setEmHover(indice)
-    else setEmFoco(indice)
+    else {
+      setEmFoco(indice)
+      setIndiceTab(indice)
+    }
   }
   const desativar = (indice: number, origem: 'hover' | 'foco') => {
     const atualizar = (atual: number | null) => (atual === indice ? null : atual)
@@ -382,6 +444,7 @@ export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps)
               viewBox={`0 0 ${layout.largura} ${layout.altura}`}
               className="block"
               data-colunas={layout.colunas}
+              aria-describedby={idInstrucoes}
             >
               <g>
                 {layout.hexagonos.map((hex) => (
@@ -407,14 +470,32 @@ export function SkillHoneycomb({ skills, ordemCategorias }: SkillHoneycombProps)
                         key={hex.item.id}
                         hex={hex}
                         descritoPor={hex === hexAtivo ? idCartao : undefined}
+                        tabIndex={hex.indice === naOrdemDoTab ? 0 : -1}
+                        registrar={registrar}
+                        onTecla={aoTeclar}
                         onAtivar={ativar}
                         onDesativar={desativar}
                       />
                     ))}
                 </g>
               ))}
+              {hexEmFoco && (
+                <polygon
+                  aria-hidden="true"
+                  data-testid="anel-foco"
+                  points={pontosHexagono(hexEmFoco.x, hexEmFoco.y, RAIO + 4)}
+                  fill="none"
+                  stroke={COR_FOCO}
+                  strokeWidth={3}
+                  strokeLinejoin="round"
+                  pointerEvents="none"
+                />
+              )}
             </svg>
           )}
+          <p id={idInstrucoes} className="sr-only">
+            Setas movem entre as stacks; Enter abre a stack.
+          </p>
         </div>
         {hexAtivo && (
           <CartaoSkill
