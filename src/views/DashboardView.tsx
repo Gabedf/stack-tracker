@@ -16,7 +16,7 @@ import {
 } from '../features/dashboard'
 import { useStacks } from '../features/stacks'
 import { criteriosParaUrl } from '../features/stacks/stackFiltering'
-import { useTheme } from '../themes'
+import { ehTemaDeJogo, useTheme } from '../themes'
 
 export interface DashboardViewProps {
   /** Data de referência para as notas (decaimento). Padrão: o momento da montagem. */
@@ -40,10 +40,10 @@ function Painel({ id, titulo, children }: { id: string; titulo: string; children
   )
 }
 
-/** Atalho de destaque para a ficha do personagem; só aparece no tema RPG. */
+/** Atalho de destaque para a ficha do personagem; só aparece nos temas de jogo. */
 function LinkFicha() {
   const { tema } = useTheme()
-  if (tema !== 'rpg') return null
+  if (!ehTemaDeJogo(tema)) return null
   return (
     <Link
       to="/ficha"

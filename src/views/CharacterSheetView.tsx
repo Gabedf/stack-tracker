@@ -15,7 +15,7 @@ import {
   type Personagem,
 } from '../features/character'
 import { useStacks } from '../features/stacks'
-import { useTheme } from '../themes'
+import { ehTemaDeJogo, useTheme } from '../themes'
 
 export interface CharacterSheetViewProps {
   /** Data de referência para as notas (decaimento). Padrão: o momento da montagem. */
@@ -41,10 +41,10 @@ function Painel({ id, titulo, children }: { id: string; titulo: string; children
   )
 }
 
-/** Aviso do tema funcional: a ficha é pensada para o tema RPG. */
+/** Aviso fora dos temas de jogo: a ficha é pensada para o tema RPG. */
 function AvisoTema() {
   const { tema, setTema } = useTheme()
-  if (tema === 'rpg') return null
+  if (ehTemaDeJogo(tema)) return null
 
   return (
     <div

@@ -291,7 +291,7 @@ describe('ficha e tema', () => {
     renderFicha({ tema: 'funcional', rota: '/' })
     expect(within(nav()).queryByRole('link', { name: 'Ficha' })).toBeNull()
 
-    fireEvent.click(screen.getByRole('button', { name: /^Tema:/ }))
+    fireEvent.change(screen.getByRole('combobox', { name: 'Tema' }), { target: { value: 'rpg' } })
     const link = within(nav()).getByRole('link', { name: 'Ficha' })
     expect(link).toHaveAttribute('href', '/ficha')
     fireEvent.click(link)

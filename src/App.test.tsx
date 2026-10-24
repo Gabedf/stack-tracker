@@ -38,8 +38,8 @@ describe('App', () => {
     ).toBeInTheDocument()
   })
 
-  it('renderiza o botão de tema', () => {
+  it('renderiza o seletor de tema', () => {
     renderApp()
-    expect(screen.getByRole('button', { name: /^Tema:/ })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Tema' })).toBeInTheDocument()
   })
 })

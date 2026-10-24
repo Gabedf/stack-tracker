@@ -6,11 +6,13 @@
     <title>Painel de Stacks</title>
     <script>
       // Aplica o tema salvo antes do React montar, evitando flash do tema padrão.
-      // Mantenha a chave e a lista em sincronia com src/themes/themes.ts.
+      // Mantenha a chave e a lista em sincronia com src/themes/themes.ts
+      // (src/themes/antiFlash.test.ts falha se divergirem).
       ;(function () {
         try {
+          var temas = ['funcional', 'rpg']
           var tema = localStorage.getItem('painel-stacks:tema')
-          if (tema === 'funcional' || tema === 'rpg') {
+          if (temas.indexOf(tema) !== -1) {
             document.documentElement.setAttribute('data-theme', tema)
           }
         } catch (e) {
