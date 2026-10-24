@@ -339,7 +339,7 @@ export function StackForm({
 
         <aside
           aria-labelledby={`${base}-preview`}
-          className="flex h-fit flex-col gap-2 rounded-theme border border-border bg-surface-2 p-4 shadow-theme lg:sticky lg:top-4"
+          className="flex h-fit flex-col gap-2 rounded-theme border border-border bg-surface-2 p-4 shadow-theme painel lg:sticky lg:top-4"
         >
           <h2 id={`${base}-preview`} className="font-heading text-sm font-semibold text-muted">
             Prévia da nota
