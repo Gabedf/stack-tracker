@@ -346,6 +346,10 @@ function CartaoSkill({
         flutuante ? 'absolute z-10' : 'mt-2 w-full'
       }`}
     >
+      {/* Cabeçalho decorativo: oculto por padrão (classe hidden) e exibido só pelo tema cyber. */}
+      <p aria-hidden="true" data-tooltip-cabecalho className="hidden">
+        {'// SKILL DATA'}
+      </p>
       <div>
         <p className="font-semibold">{skill.nome}</p>
         <p className="text-xs text-muted">{skill.categoria}</p>

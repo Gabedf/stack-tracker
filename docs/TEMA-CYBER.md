@@ -101,7 +101,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 
 - [x] 27.1 XpBar estilo barra de HP do SAO (segmentada, inclinada, `LV N` em `font-mono`).
 - [x] 27.2 Colmeia neon: brilho por raridade, pulso no lendário, anel no selecionado, selo holográfico.
-- [ ] 27.3 Radar com grade ciano e polígono com `drop-shadow`; tooltip do hex com `// SKILL DATA`.
+- [x] 27.3 Radar com grade ciano e polígono com `drop-shadow`; tooltip do hex com `// SKILL DATA`.
 - [ ] 27.4 Level-up "mensagem do sistema" (`levelUp: 'sistema'`) com faixa, glitch único e riscos de luz.
 - [ ] 27.5 (opcional) Painéis materializam em sequência ao trocar de rota nos temas de jogo.
 - [x] 27.R Revisão de código somente leitura da etapa 27 (dispensada por decisão do usuário).
@@ -140,11 +140,13 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - O usuário decidiu manter só o necessário: as revisões de código 26.R e 27.R foram dispensadas (o portão de cada tarefa e a revisão final F.2 cobrem). Revisões visuais (26.V, 27.V), merges e F.1/F.2 continuam.
 - Barra de XP (27.1): data-atributos neutros em `XpBar.tsx` (`data-xpbar` e `data-xpbar-nivel` na raiz, `data-xpbar-trilho` + `data-compacta` no progressbar, `data-xpbar-preenchimento`); `LV N` é `::before` da raiz com `content: ... / ''` (fora da barra, mono), skew só no trilho, overflow visible no cyber, forced-colors com Highlight/CanvasText, print sem skew e com preenchimento `currentColor !important`.
 
+- Radar e tooltips (27.3): ganchos neutros `data-tooltip-cabecalho` (`<p aria-hidden class="hidden">// SKILL DATA</p>` primeiro filho do tooltip da colmeia; o cyber o mostra com `display: block` sem !important, pois o `hidden` nativo perde para o preflight `!important`) e `data-tooltip-radar` (div do tooltip do radar); grade/polígono por `[data-theme='cyber'] .recharts-*` (atributos SVG perdem para CSS, sem !important).
+
 ## Pendências
 
 - /ficha, o hexágono "esfriando" (texto escuro sobre azul com opacidade 0,6, ~3,8:1): RESOLVIDO no cyber (27.2: opacidade 1 por `!important` em `[data-esfriando]`, cor esfriada, texto `--theme-text`); continua pendente em funcional e rpg (`OPACIDADE_ESFRIANDO` em `SkillHoneycomb.tsx`, mudar a aparência deles foi vetado).
 - /, 375px, todos os temas: o rótulo "Kubernetes" aparece cortado ("Kubern") na borda direita do gráfico Teoria × prática (`TheoryPracticeQuadrant`); cosmético, pré-existente (revisão 25.V).
-- /ficha, todos os temas: no radar, os números da escala (8/10) sobrepõem o rótulo do eixo de cima; cosmético, pré-existente; revisitar na 27.3 (radar) (revisão 25.V).
+- /ficha, todos os temas: no radar, os números da escala (8/10) sobrepõem o rótulo do eixo de cima; cosmético, pré-existente; avaliado na 27.3 e mantido (corrigir exige mexer em ângulo/margem/offset do `PolarRadiusAxis` em `CategoryRadar.tsx`, o que mudaria funcional e rpg) (revisão 25.V).
 - Tooltip do hexágono da colmeia não foi verificado na revisão visual 25.V (o hover automático não acertou o hexágono); conferir nas revisões 26.V/27.V.
 - /curriculo, 320px, cyber (pré-existente, não é do tema): o link ativo 'Currículo' fica fora da área visível da nav (rolagem horizontal, scrollLeft 0). Provável causa: falta scrollIntoView do link ativo em AppLayout.tsx. Em 375px está visível.
 - Colmeia (27.2): ganchos no link do hex `data-nivel` (ids iniciante..mestre, não 1..5), `data-selecionado` (hex do cartão aberto), `data-sei-por-saber`, `data-esfriando`, e `data-hex-base`/`data-hex-corpo`/`data-selo-holo`/`data-anel-selecao`/`data-brilho`/`data-holo-stop`; anel e camada holo nascem com `display="none"` (atributo SVG) e só o cyber os mostra; em reduced motion o anel fica PARADO e visível (tracejado estático), o holograma estático, o pulso do lendário e o giro só em no-preference; o filtro vai no polígono, nunca em ancestral do tooltip.

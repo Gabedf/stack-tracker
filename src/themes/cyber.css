@@ -148,6 +148,19 @@
  *    para >= 11:1. Funcional e rpg mantêm a opacidade 0,6.
  *  - forced-colors: sem filtro, camada nem animação; contorno CanvasText, selecionado Highlight com
  *    anel parado. Impressão: sem halo, camada nem anel; contorno e texto pretos.
+ *
+ * Radar e tooltips (27.3), ganchos neutros: `data-tooltip-radar` (div do tooltip do recharts) e
+ *    `data-tooltip-cabecalho` (cabeçalho `// SKILL DATA` do tooltip da colmeia: `<p aria-hidden>` com a
+ *    classe `hidden`, só o cyber o exibe com `display: block`, sem !important porque este arquivo é
+ *    sem camada; fora do cyber nada aparece e nada muda no nome/descrição acessíveis).
+ *  - Radar: seletores `[data-theme='cyber'] .recharts-polar-grid`, `.recharts-radar-polygon` etc. Grade
+ *    ciano (neon a 50% sobre surface: 3.4:1, sobre surface-2: 3.3:1, passa de 3:1); polígono com
+ *    preenchimento 22% e `filter: drop-shadow` só no path (nunca em ancestral do tooltip). Rótulos
+ *    dos eixos seguem em text-muted (>= 6.7:1); números da escala em --theme-font-mono.
+ *  - Tooltip do radar: surface do tema e borda/brilho neon. Cabeçalho: mono, caixa alta, tracking,
+ *    accent (10.2:1 sobre surface) e borda inferior fina; estático.
+ *  - forced-colors: grade GrayText, série Highlight, sem filtro; tooltip em CanvasText. Impressão:
+ *    sem filtro, grade fina em currentColor, cabeçalho oculto.
  */
 
 /* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
@@ -617,6 +630,49 @@
   }
 }
 
+/* Radar de categorias (27.3). O recharts coloca stroke/fill como atributos de apresentação
+   SVG (especificidade 0), então estas regras vencem sem !important. Nada de filtro em
+   ancestral HTML: o drop-shadow vai só no path do polígono. */
+[data-theme='cyber'] .recharts-polar-grid :is(line, path, circle, polygon),
+[data-theme='cyber'] .recharts-polar-angle-axis-line {
+  stroke: rgb(var(--cyber-neon) / 0.5);
+  stroke-width: 1;
+}
+
+[data-theme='cyber'] .recharts-polar-radius-axis-tick-value {
+  font-family: var(--theme-font-mono);
+}
+
+[data-theme='cyber'] .recharts-radar-polygon {
+  fill-opacity: 0.22;
+  filter: drop-shadow(0 0 5px rgb(var(--cyber-neon) / 0.55))
+    drop-shadow(0 0 12px rgb(var(--cyber-neon) / 0.3));
+}
+
+/* Tooltip do radar (div com data-tooltip-radar): surface do tema e borda neon. */
+[data-theme='cyber'] [data-tooltip-radar] {
+  border-color: rgb(var(--cyber-neon) / 0.8);
+  box-shadow: 0 0 12px 1px rgb(var(--cyber-neon) / 0.3);
+}
+
+/* Cabeçalho `// SKILL DATA` do tooltip da colmeia. O elemento nasce com a classe `hidden` do
+   Tailwind (display: none, na camada utilities); este arquivo é sem camada, então o display
+   daqui vence sem !important. O atributo `hidden` nativo NÃO serve: o preflight o impõe com
+   !important numa camada, e !important de camada vence o sem camada. Decorativo
+   (aria-hidden no componente), estático, sem animação. */
+[data-theme='cyber'] [data-tooltip-cabecalho] {
+  display: block;
+  margin: 0;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgb(var(--cyber-neon) / 0.45);
+  color: var(--theme-accent);
+  font-family: var(--theme-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 /* Modo de alto contraste: sem enfeites sobrepostos às cores do sistema. */
 @media (forced-colors: active) {
   [data-theme='cyber'] body::after {
@@ -714,6 +770,37 @@
   [data-theme='cyber'] a[data-sei-por-saber] .icone {
     filter: none;
   }
+
+  /* Radar: cores de sistema, sem brilho; grade em GrayText, série em Highlight. */
+  [data-theme='cyber'] .recharts-polar-grid :is(line, path, circle, polygon),
+  [data-theme='cyber'] .recharts-polar-angle-axis-line {
+    forced-color-adjust: none;
+    stroke: GrayText;
+  }
+
+  [data-theme='cyber'] .recharts-radar-polygon {
+    forced-color-adjust: none;
+    fill: Highlight;
+    stroke: Highlight;
+    filter: none;
+  }
+
+  [data-theme='cyber'] .recharts-radar-dots circle:not([fill='transparent']) {
+    forced-color-adjust: none;
+    fill: Highlight;
+    stroke: Canvas;
+  }
+
+  [data-theme='cyber'] [data-tooltip-radar] {
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  /* Cabeçalho do tooltip da colmeia: cores de sistema, sem brilho. */
+  [data-theme='cyber'] [data-tooltip-cabecalho] {
+    border-bottom-color: CanvasText;
+    color: CanvasText;
+  }
 }
 
 /* Papel: preto no branco, sem camada decorativa (reforça o print.css). */
@@ -779,5 +866,23 @@
 
   [data-theme='cyber'] a[data-sei-por-saber] .icone {
     filter: none;
+  }
+  /* Radar: sem brilho, grade cinza fina; o tooltip do cabeçalho `// SKILL DATA` some no papel. */
+  [data-theme='cyber'] .recharts-polar-grid :is(line, path, circle, polygon),
+  [data-theme='cyber'] .recharts-polar-angle-axis-line {
+    stroke: currentColor;
+    stroke-opacity: 0.35;
+  }
+
+  [data-theme='cyber'] .recharts-radar-polygon {
+    filter: none;
+  }
+
+  [data-theme='cyber'] [data-tooltip-radar] {
+    box-shadow: none;
+  }
+
+  [data-theme='cyber'] [data-tooltip-cabecalho] {
+    display: none;
   }
 }

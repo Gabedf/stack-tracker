@@ -211,6 +211,22 @@ describe('SkillHoneycomb: detalhes', () => {
     expect(react).not.toHaveAttribute('aria-describedby')
   })
 
+  it('o cabeçalho // SKILL DATA é decorativo: aria-hidden, oculto por padrão e fora da descrição', () => {
+    renderColmeia()
+    const [react] = hexagonos()
+    fireEvent.focus(react)
+
+    const cartao = screen.getByRole('tooltip')
+    const cabecalho = cartao.querySelector('[data-tooltip-cabecalho]')
+    expect(cabecalho).not.toBeNull()
+    expect(cabecalho).toHaveAttribute('aria-hidden', 'true')
+    expect(cabecalho).toHaveClass('hidden')
+    expect(cabecalho).toHaveTextContent('// SKILL DATA')
+    expect(cartao.firstElementChild).toBe(cabecalho)
+    expect(react).toHaveAccessibleDescription(/React/)
+    expect(react).not.toHaveAccessibleDescription(/SKILL DATA/)
+  })
+
   it('o hover mostra o cartão, com prioridade sobre o foco', () => {
     renderColmeia()
     const [react, jquery] = hexagonos()
