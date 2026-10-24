@@ -1,0 +1,25 @@
+/*
+ * Efeitos de jogo compartilhados (sem escopo de tema): a estrutura das faíscas do
+ * level-up (LevelUpToast), ou seja, posição, tamanho e layout. A pele (cor, brilho)
+ * e a animação ficam no arquivo de cada tema de jogo (ex.: rpg.css). As faíscas só
+ * existem em tema de jogo com movimento liberado, e a guarda abaixo repete isso.
+ * Não define --theme-* (não é arquivo de tema; ver tokens.test.ts).
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .levelup-particulas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .levelup-particula {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.375rem;
+    height: 0.375rem;
+    margin: -0.1875rem 0 0 -0.1875rem;
+    border-radius: 9999px;
+  }
+}

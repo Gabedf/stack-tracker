@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './themes/tokens.css';
+@import './themes/efeitos-jogo.css';
 @import './themes/rpg.css';
 @import './print.css';
 
