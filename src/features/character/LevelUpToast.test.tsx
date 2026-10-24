@@ -93,6 +93,51 @@ describe('LevelUpToast', () => {
     expect(particulas[0].parentElement).toHaveAttribute('aria-hidden', 'true')
   })
 
+  it('no tema rpg continua pergaminho: sem faixa de sistema, entra com scale (não scaleX)', () => {
+    renderToast(AVISO_STACK, { tema: 'rpg' })
+    expect(toast().querySelector('[data-levelup-faixa]')).toBeNull()
+    expect(toast().style.transform).toMatch(/scale\(/)
+    expect(toast().style.transform).not.toMatch(/scaleX/)
+  })
+
+  it('no tema cyber é a mensagem do sistema: abre em scaleX, com faixa decorativa e riscos', () => {
+    renderToast(AVISO_STACK, { tema: 'cyber' })
+    expect(toast()).toHaveAttribute('data-tema', 'cyber')
+    expect(toast()).toHaveClass('shadow-glow')
+    expect(toast().style.transform).toMatch(/scaleX\(0\)/)
+    expect(toast().style.transformOrigin).toMatch(/center|50%/)
+    const faixa = toast().querySelector('[data-levelup-faixa]')
+    expect(faixa).toHaveTextContent('◆ LEVEL UP')
+    expect(faixa).toHaveAttribute('aria-hidden', 'true')
+    expect(toast().querySelector('[data-levelup-titulo]')).toHaveTextContent('Subiu para Sênior!')
+    const particulas = toast().querySelectorAll('.levelup-particula')
+    expect(particulas.length).toBeGreaterThan(0)
+    expect(particulas[0].parentElement).toHaveAttribute('aria-hidden', 'true')
+  })
+
+  it('no cyber o anúncio segue o mesmo: a região lê o texto do aviso e a faixa fica oculta', () => {
+    renderToast(AVISO_STACK, { tema: 'cyber' })
+    expect(regiao()).toHaveAttribute('aria-live', 'polite')
+    expect(within(regiao()).getByText('Subiu para Sênior!')).toBeInTheDocument()
+    expect(within(regiao()).getByText('React · Praticante → Sênior')).toBeInTheDocument()
+    expect(within(regiao()).getByText('◆ LEVEL UP')).toHaveAttribute('aria-hidden', 'true')
+  })
+
+  it('cyber com prefers-reduced-motion: nada se move (sem scaleX nem riscos) e continua anunciando', () => {
+    simularMenosMovimento(true)
+    renderToast(AVISO_STACK, { tema: 'cyber' })
+    expect(toast()).toHaveAttribute('data-animacao', 'desligada')
+    expect(toast().style.opacity).not.toBe('0')
+    expect(toast().style.transform).not.toMatch(/scale/)
+    expect(toast().querySelector('.levelup-particula')).toBeNull()
+    expect(within(regiao()).getByText('Subiu para Sênior!')).toBeInTheDocument()
+  })
+
+  it('no funcional não há faixa de sistema', () => {
+    renderToast(AVISO_STACK)
+    expect(toast().querySelector('[data-levelup-faixa]')).toBeNull()
+  })
+
   it('com prefers-reduced-motion aparece direto, sem faíscas, e continua anunciando', () => {
     simularMenosMovimento(true)
     renderToast(AVISO_STACK, { tema: 'rpg' })

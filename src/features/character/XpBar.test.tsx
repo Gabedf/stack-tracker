@@ -46,4 +46,19 @@ describe('XpBar', () => {
     expect(preenchimento().style.width).toBe('50%')
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '3050')
   })
+
+  it('expõe ganchos neutros de estilo sem mudar a semântica', () => {
+    // 2520 XP: nível 5.
+    const { container } = renderBarra(
+      <XpBar progresso={progressoDoXp(2520)} rotulo="XP" compacta />,
+    )
+    const raiz = container.querySelector('[data-xpbar]')
+    expect(raiz).toHaveAttribute('data-xpbar-nivel', '5')
+    const barra = screen.getByRole('progressbar', { name: 'XP' })
+    expect(barra).toHaveAttribute('data-xpbar-trilho')
+    expect(barra).toHaveAttribute('data-compacta')
+    expect(raiz).toContainElement(barra)
+    expect(barra).toContainElement(preenchimento())
+    expect(preenchimento()).toHaveAttribute('data-xpbar-preenchimento')
+  })
 })

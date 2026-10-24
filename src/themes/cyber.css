@@ -112,6 +112,70 @@
  *  - forced-colors: active desliga o prefixo, a varredura e a barra (a barra vira sublinhado
  *    de 2px, que o modo preserva). Impressão: sem prefixo `//`, sem barra e sem varredura
  *    (caixa alta continua, é aceitável no papel).
+ *
+ * Barra de XP (`XpBar`, 27.1), ganchos neutros no componente: `[data-xpbar]` (raiz),
+ *    `[data-xpbar-nivel]` (nível, na raiz), `[data-xpbar-trilho]` (o progressbar, com
+ *    `data-compacta` na versão pequena) e `[data-xpbar-preenchimento]`.
+ *  - Trilho inclinado com `transform: skewX(-18deg)` no próprio trilho (que só contém o
+ *    preenchimento, sem texto nem tooltip, então nenhum ancestral de tooltip recebe
+ *    transform); radius 0 e `overflow: visible` (o brilho do preenchimento não é cortado;
+ *    o preenchimento nunca passa de 100%). Preenchimento segmentado: repeating-linear-gradient
+ *    com cortes finos na cor do trilho sobre xp-fill (a animação de largura continua a do
+ *    componente, só com no-preference). Contorno do trilho = border-control (>= 3:1).
+ *  - `LV N` é o ::before da raiz, `content: 'LV ' attr(data-xpbar-nivel) / ''` (alt vazio:
+ *    o nível já está no aria-valuetext/texto), fora da barra, em --theme-font-mono,
+ *    tabular-nums e --theme-text (>= 4.5:1 sobre os fundos). Funcional e rpg não têm regra.
+ *  - forced-colors: active mantém segmentos e inclinação, com forced-color-adjust: none e
+ *    cores de sistema (preenchimento Highlight, contorno CanvasText). Impressão: o print.css
+ *    zera fundos, então o cyber pinta o preenchimento com currentColor (preto) e contorna o
+ *    trilho; o valor também sai em texto (XP e "faltam").
+ *
+ * Colmeia (`SkillHoneycomb`, 27.2), ganchos neutros sem regra nos outros temas: no link do hex
+ *    `data-nivel` (iniciante, aprendiz, praticante, senior, mestre = raridade 1..5; os ids, não
+ *    números), `data-selecionado` (hex do cartão aberto, hover ou foco), `data-sei-por-saber`,
+ *    `data-esfriando`; dentro dele `data-hex-base`, `data-hex-corpo`, `data-selo-holo` (camada do
+ *    selo) e `data-anel-selecao` (anel extra, só com selecionado); no SVG `data-brilho` e
+ *    `data-holo-stop` (paradas do degradê). O anel e a camada holo nascem com `display="none"` e só
+ *    este arquivo os mostra.
+ *  - Contorno na cor do nível, preenchimento translúcido (color-mix 14% a 22% por nível) e
+ *    `filter: drop-shadow` por raridade no polígono do corpo (nunca em ancestral HTML do tooltip):
+ *    nível 1 sem halo, 5 forte. Texto sempre --theme-text (>= 11:1 mesmo no lendário a 22%).
+ *  - Pulso lento do lendário (3,6s), giro do anel (12s linear) e varredura do holograma (7s, só
+ *    deslocamento de matiz) ficam em prefers-reduced-motion: no-preference. Em reduced motion o
+ *    anel fica PARADO e visível (tracejado estático) e o holograma fica estático.
+ *  - Esfriando: no cyber o link volta a opacidade 1 (!important sobre o style inline); a cor
+ *    esfria (contorno misturado ao text-muted, tinta 8%, sem halo), então o texto passa de ~3,8:1
+ *    para >= 11:1. Funcional e rpg mantêm a opacidade 0,6.
+ *  - forced-colors: sem filtro, camada nem animação; contorno CanvasText, selecionado Highlight com
+ *    anel parado. Impressão: sem halo, camada nem anel; contorno e texto pretos.
+ *
+ * Radar e tooltips (27.3), ganchos neutros: `data-tooltip-radar` (div do tooltip do recharts) e
+ *    `data-tooltip-cabecalho` (cabeçalho `// SKILL DATA` do tooltip da colmeia: `<p aria-hidden>` com a
+ *    classe `hidden`, só o cyber o exibe com `display: block`, sem !important porque este arquivo é
+ *    sem camada; fora do cyber nada aparece e nada muda no nome/descrição acessíveis).
+ *  - Radar: seletores `[data-theme='cyber'] .recharts-polar-grid`, `.recharts-radar-polygon` etc. Grade
+ *    ciano (neon a 50% sobre surface: 3.4:1, sobre surface-2: 3.3:1, passa de 3:1); polígono com
+ *    preenchimento 22% e `filter: drop-shadow` só no path (nunca em ancestral do tooltip). Rótulos
+ *    dos eixos seguem em text-muted (>= 6.7:1); números da escala em --theme-font-mono.
+ *  - Tooltip do radar: surface do tema e borda/brilho neon. Cabeçalho: mono, caixa alta, tracking,
+ *    accent (10.2:1 sobre surface) e borda inferior fina; estático.
+ *  - forced-colors: grade GrayText, série Highlight, sem filtro; tooltip em CanvasText. Impressão:
+ *    sem filtro, grade fina em currentColor, cabeçalho oculto.
+ *
+ * Level-up "mensagem do sistema" (27.4, `LevelUpToast` com `levelUp: 'sistema'`), ganchos neutros:
+ *    `data-levelup-faixa` (faixa `◆ LEVEL UP`, `<p aria-hidden>` que o componente só renderiza quando
+ *    o estilo é 'sistema'; fora do anúncio aria-live) e `data-levelup-titulo` (título do toast).
+ *  - O toast abre em scaleX pelo Framer Motion (0.35s, origem no centro; reduced motion = sem
+ *    movimento, `data-animacao='desligada'`). Pele: borda neon, vidro (surface 88%), título em
+ *    --theme-font-heading, faixa em --theme-font-mono.
+ *  - `@keyframes cyber-levelup-glitch`: UMA vez (0.5s, atraso 0.3s, `both`), text-shadow RGB split
+ *    (ciano/magenta) + deslocamentos de 1 a 3px; começa e termina neutro, então o contraste final é o
+ *    do accent (10.2:1). `@keyframes cyber-levelup-risco`: as `.levelup-particula` viram riscos de
+ *    2px x 8rem (gradiente transparente > neon > transparente, ciano e magenta alternados) que
+ *    cruzam o painel na diagonal (`--angulo`, `--desvio`) e somem; a estrutura vem de efeitos-jogo.css.
+ *    Os dois só dentro de prefers-reduced-motion: no-preference (e o componente nem renderiza os riscos
+ *    sem movimento). forced-colors: sem glitch, riscos nem brilho, cores de sistema. Impressão: o
+ *    print.css já oculta `.levelup-toast` (display: none !important), nada a acrescentar.
  */
 
 /* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
@@ -376,9 +440,389 @@
   }
 }
 
+/* Barra de XP estilo HP do SAO: trilho inclinado, preenchimento segmentado, LV N em mono. */
+[data-theme='cyber'] [data-xpbar]::before {
+  content: 'LV ' attr(data-xpbar-nivel) / '';
+  align-self: flex-start;
+  font-family: var(--theme-font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-text);
+}
+
+[data-theme='cyber'] [data-xpbar-trilho] {
+  overflow: visible;
+  border-radius: 0;
+  transform: skewX(-18deg);
+  box-shadow: 0 0 0 1px var(--theme-border-control);
+}
+
+[data-theme='cyber'] [data-xpbar-preenchimento] {
+  border-radius: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 10px,
+    var(--theme-xp-track) 10px 12px
+  );
+  box-shadow: 0 0 8px 1px rgb(var(--cyber-neon) / 0.55);
+}
+
+[data-theme='cyber'] [data-xpbar-trilho][data-compacta] [data-xpbar-preenchimento] {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 6px,
+    var(--theme-xp-track) 6px 7.5px
+  );
+  box-shadow: 0 0 5px 0 rgb(var(--cyber-neon) / 0.55);
+}
+
+/*
+ * Colmeia de skills (`SkillHoneycomb`, 27.2). Ganchos neutros no componente: no link de
+ * cada hexágono `[data-nivel]` (iniciante..mestre = raridade 1..5), `[data-selecionado]`,
+ * `[data-sei-por-saber]`, `[data-esfriando]`; dentro dele `[data-hex-base]`, `[data-hex-corpo]`,
+ * `[data-selo-holo]` e `[data-anel-selecao]`; no SVG `[data-brilho]` (halos antigos) e
+ * `[data-holo-stop]` (paradas do degradê). Nenhum desses atributos tem regra fora do cyber.
+ * O CSS vence os atributos de apresentação do SVG (fill, stroke, display); só o `style`
+ * inline do link (cor, opacidade) precisa de !important.
+ */
+[data-theme='cyber'] a[data-nivel] {
+  /* Cor do nível e halo (drop-shadow) de cada raridade: 1 sem brilho, 5 forte. */
+  --cyber-nivel: var(--theme-level-1);
+  --cyber-hex-tinta: 14%;
+  --cyber-hex-brilho: none;
+  /* O texto do componente é escuro (feito para preenchimento cheio); no cyber o
+     preenchimento é translúcido sobre a surface, então o texto usa --theme-text (>= 11:1). */
+  color: var(--theme-text) !important;
+}
+
+[data-theme='cyber'] a[data-nivel='aprendiz'] {
+  --cyber-nivel: var(--theme-level-2);
+  --cyber-hex-tinta: 16%;
+  --cyber-hex-brilho: drop-shadow(0 0 2px color-mix(in srgb, var(--cyber-nivel) 40%, transparent));
+}
+
+[data-theme='cyber'] a[data-nivel='praticante'] {
+  --cyber-nivel: var(--theme-level-3);
+  --cyber-hex-tinta: 18%;
+  --cyber-hex-brilho: drop-shadow(0 0 3px color-mix(in srgb, var(--cyber-nivel) 55%, transparent));
+}
+
+[data-theme='cyber'] a[data-nivel='senior'] {
+  --cyber-nivel: var(--theme-level-4);
+  --cyber-hex-tinta: 20%;
+  --cyber-hex-brilho: drop-shadow(0 0 4px color-mix(in srgb, var(--cyber-nivel) 70%, transparent))
+    drop-shadow(0 0 9px color-mix(in srgb, var(--cyber-nivel) 35%, transparent));
+}
+
+[data-theme='cyber'] a[data-nivel='mestre'] {
+  --cyber-nivel: var(--theme-level-5);
+  --cyber-hex-tinta: 22%;
+  /* Halo <= 10px: o wrapper da colmeia tem overflow-x-auto e MARGEM = 12 (SkillHoneycomb.tsx);
+     um raio maior seria cortado na borda do SVG. */
+  --cyber-hex-brilho: drop-shadow(0 0 4px color-mix(in srgb, var(--cyber-nivel) 85%, transparent))
+    drop-shadow(0 0 10px color-mix(in srgb, var(--cyber-nivel) 50%, transparent));
+}
+
+/* Os halos ciano do componente (atrás dos níveis altos) dão lugar ao drop-shadow do nível. */
+[data-theme='cyber'] [data-brilho] {
+  display: none;
+}
+
+/* Contorno neon na cor do nível, preenchimento translúcido e halo por raridade. O filtro
+   fica no polígono (não no link nem em ancestral HTML): o texto segue nítido e o tooltip
+   da colmeia não ganha contexto de empilhamento. */
+[data-theme='cyber'] a[data-nivel] [data-hex-corpo] {
+  fill: color-mix(in srgb, var(--cyber-nivel) var(--cyber-hex-tinta), transparent);
+  stroke: var(--cyber-nivel);
+  filter: var(--cyber-hex-brilho);
+}
+
+[data-theme='cyber'] a[data-nivel] text {
+  fill: var(--theme-text);
+}
+
+/* Selecionado (cartão aberto): preenchimento mais aceso e contorno mais grosso, além do anel. */
+[data-theme='cyber'] a[data-nivel][data-selecionado] [data-hex-corpo] {
+  fill: color-mix(in srgb, var(--cyber-nivel) 30%, transparent);
+  stroke-width: 2.5;
+}
+
+/* Anel tracejado girando no selecionado: parado (tracejado estático) por padrão e em
+   reduced motion; só gira em no-preference. */
+[data-theme='cyber'] [data-anel-selecao] {
+  display: inline;
+  stroke: var(--theme-text);
+  filter: drop-shadow(0 0 3px rgb(var(--cyber-neon) / 0.8));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/*
+ * Esfriando: em vez de opacidade 0,6 no grupo todo (texto ~3,8:1), o link volta a opacidade
+ * total (o !important vence o style inline; esmaecido por categoria, data-dim, continua) e
+ * a cor esfria: contorno misturado ao cinza-azulado (>= 3:1), preenchimento fraco e sem
+ * halo. O texto segue --theme-text e o floco continua sendo o selo principal.
+ */
+[data-theme='cyber'] a[data-esfriando]:not([data-dim]) {
+  opacity: 1 !important;
+}
+
+[data-theme='cyber'] a[data-esfriando] [data-hex-corpo] {
+  fill: color-mix(in srgb, var(--cyber-nivel) 8%, transparent);
+  stroke: color-mix(in srgb, var(--cyber-nivel) 55%, var(--theme-text-muted));
+  filter: none;
+}
+
+/*
+ * Selo "sei por saber" holográfico: camada com degradê iridescente suave (ciano, violeta
+ * e magenta dos tokens, alfa <= 0.26 sobre a surface: o texto fica >= 6:1), halo no livro.
+ * Estático por padrão; a varredura (um deslocamento lento de matiz) só em no-preference.
+ */
+[data-theme='cyber'] [data-selo-holo] {
+  display: inline;
+  filter: drop-shadow(0 0 2px rgb(var(--cyber-neon) / 0.45));
+}
+
+[data-theme='cyber'] [data-holo-stop='1'] {
+  stop-color: var(--theme-accent);
+  stop-opacity: 0.26;
+}
+
+[data-theme='cyber'] [data-holo-stop='2'] {
+  stop-color: var(--theme-level-4);
+  stop-opacity: 0.2;
+}
+
+[data-theme='cyber'] [data-holo-stop='3'] {
+  stop-color: var(--theme-focus);
+  stop-opacity: 0.26;
+}
+
+[data-theme='cyber'] a[data-sei-por-saber] .icone {
+  filter: drop-shadow(0 0 2px rgb(var(--cyber-neon) / 0.8));
+}
+
+/* Animações da colmeia: pulso lento no lendário, giro do anel e varredura do holograma. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes cyber-hex-pulso {
+    0%,
+    100% {
+      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--cyber-nivel) 85%, transparent))
+        drop-shadow(0 0 10px color-mix(in srgb, var(--cyber-nivel) 50%, transparent));
+    }
+    50% {
+      filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cyber-nivel) 100%, transparent))
+        drop-shadow(0 0 10px color-mix(in srgb, var(--cyber-nivel) 80%, transparent));
+    }
+  }
+
+  @keyframes cyber-anel-giro {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes cyber-holo-varredura {
+    from {
+      filter: hue-rotate(0deg) drop-shadow(0 0 2px rgb(var(--cyber-neon) / 0.45));
+    }
+    to {
+      filter: hue-rotate(50deg) drop-shadow(0 0 3px rgb(var(--cyber-neon) / 0.6));
+    }
+  }
+
+  [data-theme='cyber'] a[data-nivel='mestre']:not([data-esfriando]) [data-hex-corpo] {
+    animation: cyber-hex-pulso 3.6s ease-in-out infinite;
+  }
+
+  [data-theme='cyber'] [data-anel-selecao] {
+    animation: cyber-anel-giro 12s linear infinite;
+  }
+
+  [data-theme='cyber'] [data-selo-holo] {
+    animation: cyber-holo-varredura 7s ease-in-out infinite alternate;
+  }
+}
+
+/* Radar de categorias (27.3). O recharts coloca stroke/fill como atributos de apresentação
+   SVG (especificidade 0), então estas regras vencem sem !important. Nada de filtro em
+   ancestral HTML: o drop-shadow vai só no path do polígono. */
+[data-theme='cyber'] .recharts-polar-grid :is(line, path, circle, polygon),
+[data-theme='cyber'] .recharts-polar-angle-axis-line {
+  stroke: rgb(var(--cyber-neon) / 0.5);
+  stroke-width: 1;
+}
+
+[data-theme='cyber'] .recharts-polar-radius-axis-tick-value {
+  font-family: var(--theme-font-mono);
+}
+
+[data-theme='cyber'] .recharts-radar-polygon {
+  fill-opacity: 0.22;
+  filter: drop-shadow(0 0 5px rgb(var(--cyber-neon) / 0.55))
+    drop-shadow(0 0 12px rgb(var(--cyber-neon) / 0.3));
+}
+
+/* Tooltip do radar (div com data-tooltip-radar): surface do tema e borda neon. */
+[data-theme='cyber'] [data-tooltip-radar] {
+  border-color: rgb(var(--cyber-neon) / 0.8);
+  box-shadow: 0 0 12px 1px rgb(var(--cyber-neon) / 0.3);
+}
+
+/* Cabeçalho `// SKILL DATA` do tooltip da colmeia. O elemento nasce com a classe `hidden` do
+   Tailwind (display: none, na camada utilities); este arquivo é sem camada, então o display
+   daqui vence sem !important. O atributo `hidden` nativo NÃO serve: o preflight o impõe com
+   !important numa camada, e !important de camada vence o sem camada. Decorativo
+   (aria-hidden no componente), estático, sem animação. */
+[data-theme='cyber'] [data-tooltip-cabecalho] {
+  display: block;
+  margin: 0;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgb(var(--cyber-neon) / 0.45);
+  color: var(--theme-accent);
+  font-family: var(--theme-font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/*
+ * Level-up "mensagem do sistema" (LevelUpToast com CONFIG_TEMAS.cyber.levelUp = 'sistema').
+ * O scaleX de abertura é do Framer Motion; aqui ficam a pele do toast, a faixa, o glitch do
+ * título e os riscos de luz. A estrutura dos riscos (posição) vem de efeitos-jogo.css.
+ */
+[data-theme='cyber'] .levelup-toast {
+  /* Pele de vidro por borda e brilho; o fundo é quase opaco (98%) para o texto da página não
+     aparecer através do toast (texto >= 4.5:1 mesmo sobre texto claro atrás). */
+  background-color: color-mix(in srgb, var(--theme-surface) 98%, transparent);
+  border-color: rgb(var(--cyber-neon) / 0.85);
+}
+
+/* Faixa "◆ LEVEL UP": mono, caixa alta e sublinhado fino; decorativa (aria-hidden). */
+[data-theme='cyber'] [data-levelup-faixa] {
+  margin: 0 0 0.25rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgb(var(--cyber-neon) / 0.45);
+  font-family: var(--theme-font-mono);
+  letter-spacing: 0.24em;
+  line-height: 1.2;
+}
+
+[data-theme='cyber'] [data-levelup-titulo] {
+  font-family: var(--theme-font-heading);
+  letter-spacing: var(--theme-heading-tracking);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /*
+   * Glitch curto do título, UMA vez (iteration-count 1), depois da abertura em scaleX
+   * (delay 0.3s). Divisão de cor RGB (ciano e magenta) por text-shadow + pequenos
+   * deslocamentos; o estado final é sem sombra e sem deslocamento (contraste do texto
+   * accent sobre o vidro: 10.2:1), e o fill-mode both mantém o 0% neutro durante o delay.
+   */
+  [data-theme='cyber'] .levelup-toast[data-animacao='ligada'] [data-levelup-titulo] {
+    animation: cyber-levelup-glitch 0.5s linear 0.3s 1 both;
+  }
+
+  /* Os riscos ficam dentro do painel: o contêiner (inset: 0 no toast, definido em
+     efeitos-jogo.css) corta o que passar; ele não é ancestral de tooltip. */
+  [data-theme='cyber'] .levelup-particulas {
+    overflow: hidden;
+  }
+
+  /* Riscos de luz: finos, diagonais, cruzam o painel e somem (pele das .levelup-particula). */
+  [data-theme='cyber'] .levelup-particula {
+    --angulo: calc(-38deg + var(--particula, 0) * 11deg);
+    --desvio: calc((var(--particula, 0) - 3.5) * 0.9rem);
+    width: 8rem;
+    height: 2px;
+    margin: -1px 0 0 -4rem;
+    border-radius: 0;
+    background: linear-gradient(90deg, transparent, rgb(var(--cyber-neon)) 50%, transparent);
+    box-shadow: 0 0 6px rgb(var(--cyber-neon) / 0.8);
+    opacity: 0;
+    animation: cyber-levelup-risco 0.7s ease-out calc(0.2s + var(--particula, 0) * 60ms) 1 both;
+  }
+
+  /* Metade dos riscos em magenta (o token de foco do tema). */
+  [data-theme='cyber'] .levelup-particula:nth-child(even) {
+    background: linear-gradient(90deg, transparent, var(--theme-focus) 50%, transparent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--theme-focus) 80%, transparent);
+  }
+}
+
+@keyframes cyber-levelup-glitch {
+  0% {
+    transform: translate(0, 0);
+    text-shadow: none;
+  }
+  20% {
+    transform: translate(-3px, 0);
+    text-shadow:
+      3px 0 rgb(var(--cyber-neon) / 0.9),
+      -3px 0 var(--theme-focus);
+  }
+  45% {
+    transform: translate(2px, 1px);
+    text-shadow:
+      -3px 0 rgb(var(--cyber-neon) / 0.9),
+      3px 0 var(--theme-focus);
+  }
+  70% {
+    transform: translate(-1px, 0);
+    text-shadow:
+      2px 0 rgb(var(--cyber-neon) / 0.9),
+      -2px 0 var(--theme-focus);
+  }
+  100% {
+    transform: translate(0, 0);
+    text-shadow: none;
+  }
+}
+
+@keyframes cyber-levelup-risco {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--desvio)) rotate(var(--angulo)) translateX(-7rem);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(var(--desvio)) rotate(var(--angulo)) translateX(7rem);
+  }
+}
+
 /* Modo de alto contraste: sem enfeites sobrepostos às cores do sistema. */
 @media (forced-colors: active) {
   [data-theme='cyber'] body::after {
+    display: none;
+  }
+
+  /* Level-up: cores de sistema, sem glitch, riscos nem brilho. */
+  [data-theme='cyber'] .levelup-toast {
+    background-color: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  [data-theme='cyber'] [data-levelup-faixa] {
+    border-bottom-color: CanvasText;
+    color: CanvasText;
+  }
+
+  [data-theme='cyber'] [data-levelup-titulo] {
+    animation: none;
+    color: CanvasText;
+    text-shadow: none;
+  }
+
+  [data-theme='cyber'] .levelup-particulas {
     display: none;
   }
 
@@ -407,6 +851,102 @@
     text-decoration: underline 2px;
     text-underline-offset: 0.35em;
   }
+
+  /* Barra de XP: segmentos e inclinação ficam; preenchimento e contorno em cores de sistema. */
+  [data-theme='cyber'] [data-xpbar]::before {
+    color: CanvasText;
+  }
+
+  [data-theme='cyber'] [data-xpbar-trilho] {
+    forced-color-adjust: none;
+    background-color: Canvas;
+    box-shadow: none;
+    outline: 1px solid CanvasText;
+  }
+
+  [data-theme='cyber'] [data-xpbar-preenchimento] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    background-image: repeating-linear-gradient(90deg, transparent 0 10px, Canvas 10px 12px);
+    box-shadow: none;
+  }
+
+  [data-theme='cyber'] [data-xpbar-trilho][data-compacta] [data-xpbar-preenchimento] {
+    background-image: repeating-linear-gradient(90deg, transparent 0 6px, Canvas 6px 7.5px);
+  }
+  /* Colmeia: sem filtros nem camadas; contorno CanvasText, selecionado em Highlight. */
+  [data-theme='cyber'] [data-brilho],
+  [data-theme='cyber'] [data-selo-holo] {
+    display: none;
+  }
+
+  [data-theme='cyber'] a[data-nivel] {
+    forced-color-adjust: none;
+    color: CanvasText !important;
+  }
+
+  [data-theme='cyber'] a[data-nivel] [data-hex-base] {
+    fill: Canvas;
+  }
+
+  [data-theme='cyber'] a[data-nivel] [data-hex-corpo],
+  [data-theme='cyber'] a[data-nivel][data-esfriando] [data-hex-corpo] {
+    fill: Canvas;
+    stroke: CanvasText;
+    filter: none;
+    animation: none !important;
+  }
+
+  [data-theme='cyber'] a[data-nivel] text {
+    fill: CanvasText;
+  }
+
+  [data-theme='cyber'] a[data-nivel][data-selecionado] [data-hex-corpo] {
+    fill: Canvas;
+    stroke: Highlight;
+    stroke-width: 3;
+  }
+
+  /* O anel fica visível e parado: o selecionado continua distinguível pelo tracejado. */
+  [data-theme='cyber'] [data-anel-selecao] {
+    stroke: Highlight;
+    filter: none;
+    animation: none !important;
+  }
+
+  [data-theme='cyber'] a[data-sei-por-saber] .icone {
+    filter: none;
+  }
+
+  /* Radar: cores de sistema, sem brilho; grade em GrayText, série em Highlight. */
+  [data-theme='cyber'] .recharts-polar-grid :is(line, path, circle, polygon),
+  [data-theme='cyber'] .recharts-polar-angle-axis-line {
+    forced-color-adjust: none;
+    stroke: GrayText;
+  }
+
+  [data-theme='cyber'] .recharts-radar-polygon {
+    forced-color-adjust: none;
+    fill: Highlight;
+    stroke: Highlight;
+    filter: none;
+  }
+
+  [data-theme='cyber'] .recharts-radar-dots circle:not([fill='transparent']) {
+    forced-color-adjust: none;
+    fill: Highlight;
+    stroke: Canvas;
+  }
+
+  [data-theme='cyber'] [data-tooltip-radar] {
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  /* Cabeçalho do tooltip da colmeia: cores de sistema, sem brilho. */
+  [data-theme='cyber'] [data-tooltip-cabecalho] {
+    display: none;
+  }
 }
 
 /* Papel: preto no branco, sem camada decorativa (reforça o print.css). */
@@ -433,5 +973,68 @@
 
   [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled) {
     background-image: none;
+  }
+
+  /* Barra de XP: o print.css zera fundos; preenchimento preto e trilho contornado. */
+  [data-theme='cyber'] [data-xpbar-trilho] {
+    outline: 1px solid currentColor;
+    transform: none;
+  }
+
+  [data-theme='cyber'] [data-xpbar-preenchimento] {
+    background: currentColor !important;
+  }
+
+  /* Rótulo `LV N`: preto no papel (a cor do tema é quase branca). */
+  [data-theme='cyber'] [data-xpbar]::before {
+    color: #000 !important;
+  }
+
+  /* Colmeia: sem halos, camadas nem animação; contorno e texto pretos sobre o papel. */
+  [data-theme='cyber'] [data-brilho],
+  [data-theme='cyber'] [data-selo-holo],
+  [data-theme='cyber'] [data-anel-selecao] {
+    display: none;
+  }
+
+  [data-theme='cyber'] a[data-nivel] {
+    color: #000 !important;
+  }
+
+  [data-theme='cyber'] a[data-nivel] [data-hex-base] {
+    fill: none;
+  }
+
+  [data-theme='cyber'] a[data-nivel] [data-hex-corpo] {
+    fill: none;
+    stroke: currentColor;
+    filter: none;
+    animation: none !important;
+  }
+
+  [data-theme='cyber'] a[data-nivel] text {
+    fill: currentColor;
+  }
+
+  [data-theme='cyber'] a[data-sei-por-saber] .icone {
+    filter: none;
+  }
+  /* Radar: sem brilho, grade cinza fina; o tooltip do cabeçalho `// SKILL DATA` some no papel. */
+  [data-theme='cyber'] .recharts-polar-grid :is(line, path, circle, polygon),
+  [data-theme='cyber'] .recharts-polar-angle-axis-line {
+    stroke: currentColor;
+    stroke-opacity: 0.35;
+  }
+
+  [data-theme='cyber'] .recharts-radar-polygon {
+    filter: none;
+  }
+
+  [data-theme='cyber'] [data-tooltip-radar] {
+    box-shadow: none;
+  }
+
+  [data-theme='cyber'] [data-tooltip-cabecalho] {
+    display: none;
   }
 }

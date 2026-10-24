@@ -64,7 +64,10 @@ function TooltipCategoria({
   const item = payload?.[0]?.payload as ItemNormalizado | undefined
   if (!active || !item) return null
   return (
-    <div className="rounded-theme border border-border bg-surface px-3 py-2 text-sm shadow-theme">
+    <div
+      data-tooltip-radar
+      className="rounded-theme border border-border bg-surface px-3 py-2 text-sm shadow-theme"
+    >
       <p className="text-xs text-muted">{item.categoria}</p>
       <p>
         <span className="font-semibold tabular-nums text-fg">{formatarNota(item.valor)}</span>{' '}
