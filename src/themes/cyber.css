@@ -51,6 +51,12 @@
  * magenta #f472b6 (pior ΔE 22.8, teoria).
  */
 
+/* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
+   Como a Cinzel no rpg.css, o @font-face só baixa o arquivo quando algum texto
+   usa a fonte, então funcional e rpg não carregam a Oxanium. */
+@import '@fontsource/oxanium/latin-600.css';
+@import '@fontsource/oxanium/latin-700.css';
+
 [data-theme='cyber'] {
   color-scheme: dark;
 
@@ -98,11 +104,13 @@
     inset 0 0 0 1px rgb(34 211 238 / 0.08), 0 0 12px -2px rgb(34 211 238 / 0.18),
     0 4px 12px -4px rgb(0 0 0 / 0.6);
 
-  /* Provisório (25.4): pilhas de sistema; a 25.4 coloca a Oxanium nos títulos. */
+  /* Texto corrido numa sans do sistema, legível em tamanhos pequenos; títulos em
+     Oxanium (geométrica, de HUD), com fallback de sistema enquanto ela carrega. */
   --theme-font-base: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --theme-font-heading:
-    Bahnschrift, 'DIN Alternate', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
-  /* Monoespaçada: a mesma pilha padrão do Tailwind 4, como nos outros temas. */
+  --theme-font-heading: 'Oxanium', ui-sans-serif, system-ui, 'Segoe UI', sans-serif;
+  /* Monoespaçada: a pilha padrão do Tailwind 4, como nos outros temas. É ela que os
+     números do cyber devem usar (largura fixa garantida); a Oxanium só tem os pesos
+     dos títulos e fica nos números que já são títulos (ex.: o nível da ficha). */
   --theme-font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
