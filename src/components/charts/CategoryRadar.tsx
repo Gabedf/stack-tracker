@@ -286,7 +286,9 @@ export function CategoryRadar({
       )}
 
       <details className="text-sm">
-        <summary className="cursor-pointer font-medium text-accent">Ver dados em tabela</summary>
+        <summary className="cursor-pointer py-1 font-medium text-accent">
+          Ver dados em tabela
+        </summary>
         <TabelaRolavel rotulo="Tabela das categorias" className="mt-2">
           <table className="w-full border-collapse text-left">
             <caption className="sr-only">{rotuloValor} por categoria</caption>

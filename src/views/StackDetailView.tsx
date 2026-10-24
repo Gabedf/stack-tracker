@@ -97,7 +97,7 @@ export function StackDetailView({ hoje }: StackDetailViewProps) {
 
   return (
     <section className="space-y-6">
-      <Link to="/stacks" className={CLASSE_LINK}>
+      <Link to="/stacks" className={`inline-flex min-h-6 items-center ${CLASSE_LINK}`}>
         Voltar para Stacks
       </Link>
 

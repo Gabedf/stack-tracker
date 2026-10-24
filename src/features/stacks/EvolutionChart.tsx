@@ -339,7 +339,9 @@ export function EvolutionChart({ historico }: EvolutionChartProps) {
       </figure>
 
       <details className="text-sm">
-        <summary className="cursor-pointer font-medium text-accent">Ver dados em tabela</summary>
+        <summary className="cursor-pointer py-1 font-medium text-accent">
+          Ver dados em tabela
+        </summary>
         <TabelaRolavel rotulo="Tabela da evolução" className="mt-2">
           <table className="w-full border-collapse text-left">
             <caption className="sr-only">Evolução da nota e das dimensões por data</caption>

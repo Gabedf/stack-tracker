@@ -59,9 +59,10 @@ export function AppLayout() {
 
           <nav
             aria-label="Principal"
-            className="order-last -mx-1 w-full overflow-x-auto sm:order-none sm:mx-0 sm:w-auto"
+            className="order-last -m-1 w-full overflow-x-auto sm:order-none sm:w-auto"
           >
-            <ul className="flex gap-1 px-1 sm:px-0">
+            {/* p-1 no contêiner rolável: o contorno de foco (2px + 2px de offset) não é cortado. */}
+            <ul className="flex gap-1 p-1">
               {links.map(({ to, rotulo, end }) => (
                 <li key={to}>
                   <NavLink to={to} end={end} className={classeLink}>

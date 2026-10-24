@@ -260,7 +260,7 @@ export function StackForm({
                   value={valores[campo]}
                   aria-valuetext={`${formatarNota(valores[campo])} de 10`}
                   onChange={(e) => alterar(campo, Number(e.target.value))}
-                  className="w-full accent-accent"
+                  className="h-6 w-full cursor-pointer accent-accent"
                   {...propsCampo(campo)}
                 />
                 {erroDe(campo)}

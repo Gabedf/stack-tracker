@@ -150,7 +150,7 @@ export function StackFilters({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 sm:col-span-2 lg:col-span-4">
-        <label className="inline-flex items-center gap-2 text-sm text-fg">
+        <label className="inline-flex min-h-6 items-center gap-2 text-sm text-fg">
           <input
             type="checkbox"
             checked={criterios.somentePraticaReal}

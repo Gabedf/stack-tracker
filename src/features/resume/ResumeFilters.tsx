@@ -18,9 +18,9 @@ const CLASSE_CAMPO =
 const CLASSE_ROTULO = 'text-sm font-medium text-muted'
 const CLASSE_LEGENDA = 'mb-2 text-sm font-semibold text-fg'
 const CLASSE_CHECKBOX = 'size-4 accent-accent'
-const CLASSE_OPCAO = 'inline-flex items-center gap-2 text-sm text-fg'
+const CLASSE_OPCAO = 'inline-flex min-h-6 items-center gap-2 text-sm text-fg'
 const CLASSE_BOTAO_PEQUENO =
-  'rounded-theme border border-control bg-surface px-2 py-0.5 text-xs font-medium text-fg hover:bg-surface-2'
+  'rounded-theme border border-control bg-surface px-2 py-1 text-xs font-medium text-fg hover:bg-surface-2'
 
 /** Categorias marcadas: `null` (todas) vira a lista completa. */
 function categoriasMarcadas(opcoes: OpcoesCurriculo, categorias: readonly string[]): Set<string> {
