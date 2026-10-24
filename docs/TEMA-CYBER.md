@@ -90,7 +90,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 26.1a Classe `painel` nos cards de seção de `src/components` e `src/views`.
 - [x] 26.1b Classe `painel` nos cards de seção de `src/features/dashboard` e `src/features/character`.
 - [x] 26.1c Classe `painel` nos cards de seção de `src/features/stacks`, `resume` e `data`.
-- [ ] 26.2 Fundo do cyber: grade sutil, vinheta e scanlines num `body::after`, com as guardas de a11y.
+- [x] 26.2 Fundo do cyber: grade sutil, vinheta e scanlines num `body::after`, com as guardas de a11y.
 - [ ] 26.3 Moldura `.painel` no cyber: vidro, chanfro, colchetes de canto e brilho no hover.
 - [ ] 26.4 Títulos em caixa alta com prefixo `//`, link ativo com barra brilhante e varredura nos botões.
 - [ ] 26.R Revisão de código somente leitura da etapa 26.
@@ -134,6 +134,8 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Registro do cyber (25.5): `CONFIG_TEMAS.cyber` = `{ rotulo: 'Cyber', jogo: true, esquema: 'dark', levelUp: 'pergaminho' }` (a 27.4 troca para `'sistema'`); `print.css` já era genérico (`html[data-theme] { color-scheme: light }`, fundo/texto/sombras com `!important` em `body *`) e agora zera `body::before/::after`, então a 26.2 pode usá-los; pseudo-elementos de `.painel` (26.3) precisam de `box-shadow`/fundo neutros no print por conta própria (`body *` não pega `::before/::after`); o cyber já entrou no `contraste.test.ts` e passa, a 25.6 só amplia.
 - Contraste (25.6): `contraste.test.ts` descobre os temas por `import.meta.glob('./*.css')` + bloco `[data-theme='<id>'] {` (como o tokens.test.ts) e exige que batam com `TEMAS`/`CONFIG_TEMAS`; `--theme-border` >= 3 só quando `ehTemaDeJogo` (funcional ~1.5:1 é pendência da etapa 22, não corrigida); par reprovado em tema existente vai para a lista `EXCECOES` (`'<tema>: <token> sobre <fundo>'`, hoje vazia) com registro em Pendências; todos os pares dos três temas passam.
 - Classe `painel` (26.1): gancho neutro sem nenhuma regra CSS fora do cyber; vai no contêiner grande de seção/card (section/article/header com border + bg-surface + shadow-theme, ou a constante `CLASSE_PAINEL`/componente compartilhado como o `StackCard`); não vai em botões, inputs, selects, toasts, tooltips, badges, itens de lista compactos (ex.: `LinhaStack` em StacksView), nem em layout (header, nav, skip link); na dúvida, não coloca.
+- Fundo do cyber (26.2): `[data-theme='cyber'] body::after` (data-theme fica no `<html>`), `position: fixed; inset: 0; z-index: 1; pointer-events: none`, só gradientes e estático; z-index 1 porque o wrapper do layout tem `bg-bg` opaco (atrás dele, com z-index negativo, ficaria invisível), acima dele só tooltips (z-10), toast e skip link (z-50); `body::before` fica livre. a camada pinta (a ≤ 4%) sobre o conteúdo estático e não posicionado; a 26.3 não precisa de z-index para ficar visível, e quem usar z-index >= 2 fica acima dela sem efeito colateral; `forced-colors` e `print` ocultam com `display: none`.
+
 
 ## Pendências
 

@@ -49,6 +49,19 @@
  * XP, e o polígono do radar não deve parecer selecionado (ΔE 15.4 do accent).
  * Nenhuma série lembra o danger #ff5c7a (pior ΔE 18.1, profundidade) nem o foco
  * magenta #f472b6 (pior ΔE 22.8, teoria).
+ *
+ * Fundo decorativo (`[data-theme='cyber'] body::after`, no fim deste arquivo): uma
+ * camada fixa com grade ciano, scanlines e vinheta sobre o fundo escuro. Guardas:
+ *  - pointer-events: none; nunca captura clique, toque, foco nem seleção de texto;
+ *  - z-index: 1, acima do fundo opaco do layout (o wrapper tem bg-bg, então uma camada
+ *    atrás dele ficaria invisível) e abaixo de tooltips (z-10), toast e skip link (z-50);
+ *  - opacidade da grade (0.025) + scanlines (0.015) somam 4%, sem efeito sobre o
+ *    contraste do texto; a vinheta só escurece as bordas (até 0.16 nos cantos), o que
+ *    mantém text-muted >= 4.5:1 sobre surface-2 mesmo no canto da tela;
+ *  - sem animação (estática por padrão), sem blur nem filtros: só gradientes, que a GPU
+ *    pinta uma vez numa camada própria;
+ *  - forced-colors: active e impressão (print.css já zera body::after com !important,
+ *    reforçado aqui) ocultam a camada.
  */
 
 /* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
@@ -150,3 +163,47 @@
  * Level-up (LevelUpToast): a pele e a animação "mensagem do sistema" do cyber
  * entram na 27.4. A estrutura das faíscas está em efeitos-jogo.css.
  */
+
+/*
+ * Fundo do cyber: grade sutil + scanlines + vinheta numa só camada fixa. O atributo
+ * data-theme fica no <html>, então `body::after` é o pseudo-elemento do body no tema.
+ * Ordem das camadas (de cima para baixo): vinheta, scanlines, grade vertical e
+ * horizontal. Sem blur, sem filtro e sem animação.
+ */
+[data-theme='cyber'] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.16) 100%),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(var(--cyber-neon) / 0.015) 0,
+      rgb(var(--cyber-neon) / 0.015) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(to right, rgb(var(--cyber-neon) / 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--cyber-neon) / 0.025) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    100% 3px,
+    3rem 3rem,
+    3rem 3rem;
+}
+
+/* Modo de alto contraste: sem enfeites sobrepostos às cores do sistema. */
+@media (forced-colors: active) {
+  [data-theme='cyber'] body::after {
+    display: none;
+  }
+}
+
+/* Papel: preto no branco, sem camada decorativa (reforça o print.css). */
+@media print {
+  [data-theme='cyber'] body::after {
+    display: none;
+  }
+}
