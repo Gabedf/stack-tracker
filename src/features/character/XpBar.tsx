@@ -36,9 +36,16 @@ export function XpBar({ progresso, rotulo, compacta = false, className = '' }: X
   const animar = !menosMovimento
 
   return (
-    <div className={`flex flex-col gap-1 ${className}`}>
+    <div
+      // Ganchos neutros de estilo (só o tema cyber os usa): raiz, trilho, preenchimento e nível.
+      data-xpbar=""
+      data-xpbar-nivel={nivel}
+      className={`flex flex-col gap-1 ${className}`}
+    >
       <div
         ref={trilho}
+        data-xpbar-trilho=""
+        data-compacta={compacta ? '' : undefined}
         role="progressbar"
         aria-label={rotulo}
         aria-valuemin={xpDoNivelAtual}
@@ -51,6 +58,7 @@ export function XpBar({ progresso, rotulo, compacta = false, className = '' }: X
           // Novo nível: a barra recomeça do zero e enche até o novo valor.
           key={nivel}
           data-testid="xp-preenchimento"
+          data-xpbar-preenchimento=""
           data-animacao={animar ? 'ligada' : 'desligada'}
           className="h-full rounded-full bg-xp-fill"
           initial={animar ? { width: '0%' } : false}

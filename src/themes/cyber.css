@@ -112,6 +112,23 @@
  *  - forced-colors: active desliga o prefixo, a varredura e a barra (a barra vira sublinhado
  *    de 2px, que o modo preserva). Impressão: sem prefixo `//`, sem barra e sem varredura
  *    (caixa alta continua, é aceitável no papel).
+ *
+ * Barra de XP (`XpBar`, 27.1), ganchos neutros no componente: `[data-xpbar]` (raiz),
+ *    `[data-xpbar-nivel]` (nível, na raiz), `[data-xpbar-trilho]` (o progressbar, com
+ *    `data-compacta` na versão pequena) e `[data-xpbar-preenchimento]`.
+ *  - Trilho inclinado com `transform: skewX(-18deg)` no próprio trilho (que só contém o
+ *    preenchimento, sem texto nem tooltip, então nenhum ancestral de tooltip recebe
+ *    transform); radius 0 e `overflow: visible` (o brilho do preenchimento não é cortado;
+ *    o preenchimento nunca passa de 100%). Preenchimento segmentado: repeating-linear-gradient
+ *    com cortes finos na cor do trilho sobre xp-fill (a animação de largura continua a do
+ *    componente, só com no-preference). Contorno do trilho = border-control (>= 3:1).
+ *  - `LV N` é o ::before da raiz, `content: 'LV ' attr(data-xpbar-nivel) / ''` (alt vazio:
+ *    o nível já está no aria-valuetext/texto), fora da barra, em --theme-font-mono,
+ *    tabular-nums e --theme-text (>= 4.5:1 sobre os fundos). Funcional e rpg não têm regra.
+ *  - forced-colors: active mantém segmentos e inclinação, com forced-color-adjust: none e
+ *    cores de sistema (preenchimento Highlight, contorno CanvasText). Impressão: o print.css
+ *    zera fundos, então o cyber pinta o preenchimento com currentColor (preto) e contorna o
+ *    trilho; o valor também sai em texto (XP e "faltam").
  */
 
 /* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
@@ -376,6 +393,45 @@
   }
 }
 
+/* Barra de XP estilo HP do SAO: trilho inclinado, preenchimento segmentado, LV N em mono. */
+[data-theme='cyber'] [data-xpbar]::before {
+  content: 'LV ' attr(data-xpbar-nivel) / '';
+  align-self: flex-start;
+  font-family: var(--theme-font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-text);
+}
+
+[data-theme='cyber'] [data-xpbar-trilho] {
+  overflow: visible;
+  border-radius: 0;
+  transform: skewX(-18deg);
+  box-shadow: 0 0 0 1px var(--theme-border-control);
+}
+
+[data-theme='cyber'] [data-xpbar-preenchimento] {
+  border-radius: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 10px,
+    var(--theme-xp-track) 10px 12px
+  );
+  box-shadow: 0 0 8px 1px rgb(var(--cyber-neon) / 0.55);
+}
+
+[data-theme='cyber'] [data-xpbar-trilho][data-compacta] [data-xpbar-preenchimento] {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 6px,
+    var(--theme-xp-track) 6px 7.5px
+  );
+  box-shadow: 0 0 5px 0 rgb(var(--cyber-neon) / 0.55);
+}
+
 /* Modo de alto contraste: sem enfeites sobrepostos às cores do sistema. */
 @media (forced-colors: active) {
   [data-theme='cyber'] body::after {
@@ -407,6 +463,29 @@
     text-decoration: underline 2px;
     text-underline-offset: 0.35em;
   }
+
+  /* Barra de XP: segmentos e inclinação ficam; preenchimento e contorno em cores de sistema. */
+  [data-theme='cyber'] [data-xpbar]::before {
+    color: CanvasText;
+  }
+
+  [data-theme='cyber'] [data-xpbar-trilho] {
+    forced-color-adjust: none;
+    background-color: Canvas;
+    box-shadow: none;
+    outline: 1px solid CanvasText;
+  }
+
+  [data-theme='cyber'] [data-xpbar-preenchimento] {
+    forced-color-adjust: none;
+    background-color: Highlight;
+    background-image: repeating-linear-gradient(90deg, transparent 0 10px, Canvas 10px 12px);
+    box-shadow: none;
+  }
+
+  [data-theme='cyber'] [data-xpbar-trilho][data-compacta] [data-xpbar-preenchimento] {
+    background-image: repeating-linear-gradient(90deg, transparent 0 6px, Canvas 6px 7.5px);
+  }
 }
 
 /* Papel: preto no branco, sem camada decorativa (reforça o print.css). */
@@ -433,5 +512,15 @@
 
   [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled) {
     background-image: none;
+  }
+
+  /* Barra de XP: o print.css zera fundos; preenchimento preto e trilho contornado. */
+  [data-theme='cyber'] [data-xpbar-trilho] {
+    outline: 1px solid currentColor;
+    transform: none;
+  }
+
+  [data-theme='cyber'] [data-xpbar-preenchimento] {
+    background: currentColor !important;
   }
 }

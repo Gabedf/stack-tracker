@@ -99,7 +99,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 
 ### Etapa 27: `feat/27-cyber-sheet` (a sensação de jogo)
 
-- [ ] 27.1 XpBar estilo barra de HP do SAO (segmentada, inclinada, `LV N` em `font-mono`).
+- [x] 27.1 XpBar estilo barra de HP do SAO (segmentada, inclinada, `LV N` em `font-mono`).
 - [ ] 27.2 Colmeia neon: brilho por raridade, pulso no lendário, anel no selecionado, selo holográfico.
 - [ ] 27.3 Radar com grade ciano e polígono com `drop-shadow`; tooltip do hex com `// SKILL DATA`.
 - [ ] 27.4 Level-up "mensagem do sistema" (`levelUp: 'sistema'`) com faixa, glitch único e riscos de luz.
@@ -138,6 +138,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Moldura do painel (26.3): sem variáveis novas (usa `--cyber-chanfro`, `--cyber-neon`, `--cyber-glow`); regras em `[data-theme='cyber'] .painel` (+ `.painel.bg-surface-2` para o aside da prévia); `position: relative` fica em `@layer components` (o cyber.css é sem camada e venceria o `lg:sticky`); `::before` = chanfro TL/BR, `::after` = colchetes TR/BL; vidro é color-mix 85% sem backdrop-filter; quem restilar o painel não pode usar clip-path/overflow/isolation/transform/filter nele.
 - Títulos, nav e botões (26.4): prefixo `content: '// ' / ''` (alt-text vazio, sem fallback) só em `main :is(h1, h2)` sem link/ícone e fora de `.curriculo-impressao` (h3 não leva uppercase nem prefixo; `--theme-heading-tracking` do cyber = 0.08em); a nav é `:is(nav, header) a[aria-current='page']` (barra = box-shadow inset, sem position), o botão primário é `:is(button, a).bg-accent:not(:disabled)` com varredura em `background-position`, tudo dentro de `prefers-reduced-motion: no-preference`; forced-colors troca a barra por sublinhado.
 - O usuário decidiu manter só o necessário: as revisões de código 26.R e 27.R foram dispensadas (o portão de cada tarefa e a revisão final F.2 cobrem). Revisões visuais (26.V, 27.V), merges e F.1/F.2 continuam.
+- Barra de XP (27.1): data-atributos neutros em `XpBar.tsx` (`data-xpbar` e `data-xpbar-nivel` na raiz, `data-xpbar-trilho` + `data-compacta` no progressbar, `data-xpbar-preenchimento`); `LV N` é `::before` da raiz com `content: ... / ''` (fora da barra, mono), skew só no trilho, overflow visible no cyber, forced-colors com Highlight/CanvasText, print sem skew e com preenchimento `currentColor !important`.
 
 ## Pendências
 
