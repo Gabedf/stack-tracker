@@ -12,6 +12,7 @@ import {
   YAxis,
 } from 'recharts'
 import { formatarNota } from '../../components/formatacao'
+import { TabelaRolavel } from '../../components/TabelaRolavel'
 import { NOTA_MAXIMA, NOTA_MINIMA } from '../../domain/levels'
 import { DEFAULT_SCORING_CONFIG } from '../../domain/scoring'
 import type { Stack } from '../../domain/types'
@@ -313,7 +314,7 @@ export function TheoryPracticeQuadrant({
 
       <details className="text-sm">
         <summary className="cursor-pointer font-medium text-accent">Ver dados em tabela</summary>
-        <div className="mt-2 overflow-x-auto">
+        <TabelaRolavel rotulo="Tabela teoria x prática" className="mt-2">
           <table className="w-full border-collapse text-left">
             <caption className="sr-only">Teoria, prática e quadrante de cada stack</caption>
             <thead>
@@ -360,7 +361,7 @@ export function TheoryPracticeQuadrant({
               ))}
             </tbody>
           </table>
-        </div>
+        </TabelaRolavel>
       </details>
     </div>
   )

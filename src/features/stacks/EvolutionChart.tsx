@@ -10,6 +10,7 @@ import {
   YAxis,
 } from 'recharts'
 import { formatarData, formatarNota } from '../../components/formatacao'
+import { TabelaRolavel } from '../../components/TabelaRolavel'
 import { NIVEIS, NOTA_MAXIMA, NOTA_MINIMA } from '../../domain/levels'
 import type { RegistroHistorico } from '../../domain/types'
 import {
@@ -166,6 +167,12 @@ function TooltipEvolucao({
  * Gráfico de linha da nota ao longo do tempo, com faixas de nível ao fundo e
  * dimensões opcionais como séries secundárias. A camada acessível (resumo no
  * aria-label e tabela com todos os pontos) é o equivalente textual do gráfico.
+ *
+ * Teclado: o tooltip é só de ponteiro, por decisão. Tudo o que ele mostra (data,
+ * nota, nível e dimensões de cada ponto) está na tabela "Ver dados em tabela",
+ * que abre com Enter/Espaço e rola pelas setas. O accessibilityLayer do Recharts
+ * fica desligado: poria um role="application" focável dentro do role="img" e uma
+ * segunda forma, só visual, de ler os mesmos números.
  */
 export function EvolutionChart({ historico }: EvolutionChartProps) {
   const pontos = useMemo(() => serieEvolucao(historico), [historico])
@@ -333,7 +340,7 @@ export function EvolutionChart({ historico }: EvolutionChartProps) {
 
       <details className="text-sm">
         <summary className="cursor-pointer font-medium text-accent">Ver dados em tabela</summary>
-        <div className="mt-2 overflow-x-auto">
+        <TabelaRolavel rotulo="Tabela da evolução" className="mt-2">
           <table className="w-full border-collapse text-left">
             <caption className="sr-only">Evolução da nota e das dimensões por data</caption>
             <thead>
@@ -373,7 +380,7 @@ export function EvolutionChart({ historico }: EvolutionChartProps) {
               ))}
             </tbody>
           </table>
-        </div>
+        </TabelaRolavel>
       </details>
     </div>
   )

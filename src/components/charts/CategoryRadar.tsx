@@ -16,6 +16,7 @@ import {
 } from 'recharts'
 import { NOTA_MAXIMA, NOTA_MINIMA } from '../../domain/levels'
 import { formatarNota } from '../formatacao'
+import { TabelaRolavel } from '../TabelaRolavel'
 import {
   formaGraficoCategorias,
   resumoCategorias,
@@ -286,7 +287,7 @@ export function CategoryRadar({
 
       <details className="text-sm">
         <summary className="cursor-pointer font-medium text-accent">Ver dados em tabela</summary>
-        <div className="mt-2 overflow-x-auto">
+        <TabelaRolavel rotulo="Tabela das categorias" className="mt-2">
           <table className="w-full border-collapse text-left">
             <caption className="sr-only">{rotuloValor} por categoria</caption>
             <thead>
@@ -320,7 +321,7 @@ export function CategoryRadar({
               ))}
             </tbody>
           </table>
-        </div>
+        </TabelaRolavel>
       </details>
     </div>
   )
