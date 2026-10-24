@@ -5,15 +5,17 @@ import { IconeFloco, IconeLivro } from '../../components/icons'
 import { NIVEIS, type NivelId } from '../../domain/levels'
 import type { SkillDaColmeia } from './character'
 import {
+  LARGURA_CARTAO,
   LARGURA_PADRAO,
   layoutColmeia,
   pontosHexagono,
+  posicaoDoCartao,
   rotuloCurto,
   rotuloDaSkill,
   vizinhoNaColmeia,
   type DirecaoColmeia,
   type HexPosicionado,
-  type LayoutColmeia,
+  type PosicaoCartao,
 } from './honeycombLayout'
 
 export interface SkillHoneycombProps {
@@ -24,6 +26,7 @@ export interface SkillHoneycombProps {
   categoriaSelecionada?: string | null
 }
 
+/** Raio cheio; em telas estreitas o layout encolhe até RAIO_MINIMO. */
 const RAIO = 34
 const ESPACO = 4
 /** Folga para o brilho e o anel de foco não serem cortados nas bordas. */
@@ -117,7 +120,15 @@ function useLargura(padrao: number) {
   return [setElemento, largura] as const
 }
 
-function Brilho({ hex, esmaecido }: { hex: HexPosicionado<SkillDaColmeia>; esmaecido: boolean }) {
+function Brilho({
+  hex,
+  raio,
+  esmaecido,
+}: {
+  hex: HexPosicionado<SkillDaColmeia>
+  raio: number
+  esmaecido: boolean
+}) {
   const { brilho } = ESTILO_NIVEL[hex.item.nivel.id]
   if (brilho === 0) return null
   return (
@@ -130,13 +141,13 @@ function Brilho({ hex, esmaecido }: { hex: HexPosicionado<SkillDaColmeia>; esmae
       className={TRANSICAO}
     >
       <polygon
-        points={pontosHexagono(hex.x, hex.y, RAIO + 4)}
+        points={pontosHexagono(hex.x, hex.y, raio + 4)}
         strokeWidth={3}
         strokeOpacity={0.5}
       />
       {brilho === 2 && (
         <polygon
-          points={pontosHexagono(hex.x, hex.y, RAIO + 7)}
+          points={pontosHexagono(hex.x, hex.y, raio + 7)}
           strokeWidth={2}
           strokeOpacity={0.25}
         />
@@ -147,6 +158,8 @@ function Brilho({ hex, esmaecido }: { hex: HexPosicionado<SkillDaColmeia>; esmae
 
 interface HexagonoProps {
   hex: HexPosicionado<SkillDaColmeia>
+  /** Raio do layout (encolhe em telas estreitas). */
+  raio: number
   /** id do cartão de detalhes, quando ele descreve este hexágono. */
   descritoPor?: string
   /** Fora da categoria em destaque. */
@@ -161,6 +174,7 @@ interface HexagonoProps {
 
 function Hexagono({
   hex,
+  raio,
   descritoPor,
   esmaecido,
   tabIndex,
@@ -174,7 +188,10 @@ function Hexagono({
   const selos: Array<'livro' | 'floco'> = []
   if (skill.seiPorSaber) selos.push('livro')
   if (skill.esfriando) selos.push('floco')
-  const tamanhoSelo = 12
+  // Texto e selos acompanham o raio, sem descer de 10 px.
+  const escala = raio / RAIO
+  const fonte = (base: number) => Math.max(10, Math.round(base * escala))
+  const tamanhoSelo = fonte(12)
   const inicioSelos = x - (selos.length * tamanhoSelo + (selos.length - 1) * 2) / 2
 
   return (
@@ -201,9 +218,9 @@ function Hexagono({
       }}
     >
       {/* Base opaca: a tinta dos níveis baixos não deixa ver o que está atrás. */}
-      <polygon points={pontosHexagono(x, y, RAIO)} fill={COR_SUPERFICIE} />
+      <polygon points={pontosHexagono(x, y, raio)} fill={COR_SUPERFICIE} />
       <polygon
-        points={pontosHexagono(x, y, RAIO - 1)}
+        points={pontosHexagono(x, y, raio - 1)}
         fill={estilo.cor}
         fillOpacity={estilo.preenchimento}
         stroke={estilo.cor}
@@ -214,7 +231,7 @@ function Hexagono({
       {selos.map((selo, i) => {
         const props = {
           x: inicioSelos + i * (tamanhoSelo + 2),
-          y: y - RAIO * 0.72,
+          y: y - raio * 0.72,
           tamanho: tamanhoSelo,
         }
         return selo === 'livro' ? (
@@ -226,10 +243,10 @@ function Hexagono({
       <text
         aria-hidden="true"
         x={x}
-        y={y + 2}
+        y={y + 2 * escala}
         textAnchor="middle"
         fill={estilo.texto}
-        fontSize={12}
+        fontSize={fonte(12)}
         fontWeight={700}
       >
         {rotuloCurto(skill.nome)}
@@ -237,34 +254,16 @@ function Hexagono({
       <text
         aria-hidden="true"
         x={x}
-        y={y + 17}
+        y={y + 17 * escala}
         textAnchor="middle"
         fill={estilo.texto}
-        fontSize={11}
+        fontSize={fonte(11)}
         className="tabular-nums"
       >
         {formatarNota(skill.nota)}
       </text>
     </Link>
   )
-}
-
-const LARGURA_CARTAO = 224
-/** Altura aproximada do cartão: decide se ele cabe acima do hexágono. */
-const ALTURA_CARTAO = 170
-const FOLGA_CARTAO = 6
-
-/**
- * Posição do cartão relativa à colmeia: acima do hexágono se couber, senão
- * abaixo; na horizontal, centrado no hexágono e preso às bordas da colmeia.
- */
-function posicaoDoCartao(hex: HexPosicionado, layout: LayoutColmeia, larguraVisivel: number) {
-  const limite = Math.min(layout.largura, larguraVisivel)
-  const left = Math.max(0, Math.min(hex.x - LARGURA_CARTAO / 2, limite - LARGURA_CARTAO))
-  const acima = hex.y - layout.raio - FOLGA_CARTAO - ALTURA_CARTAO >= 0
-  return acima
-    ? { left, top: hex.y - layout.raio - FOLGA_CARTAO, transform: 'translateY(-100%)' }
-    : { left, top: hex.y + layout.raio + FOLGA_CARTAO }
 }
 
 function Detalhe({ rotulo, valor }: { rotulo: string; valor: string }) {
@@ -276,7 +275,10 @@ function Detalhe({ rotulo, valor }: { rotulo: string; valor: string }) {
   )
 }
 
-/** Cartão de detalhes do hexágono em hover ou foco (não recebe o ponteiro). */
+/**
+ * Cartão de detalhes do hexágono em hover ou foco (não recebe o ponteiro).
+ * Flutua junto ao hexágono ou, em telas estreitas, fica abaixo da colmeia.
+ */
 function CartaoSkill({
   id,
   skill,
@@ -284,14 +286,27 @@ function CartaoSkill({
 }: {
   id: string
   skill: SkillDaColmeia
-  posicao: ReturnType<typeof posicaoDoCartao>
+  posicao: PosicaoCartao
 }) {
+  const flutuante = posicao.modo === 'flutuante'
   return (
     <div
       id={id}
       role="tooltip"
-      style={{ ...posicao, width: LARGURA_CARTAO }}
-      className="pointer-events-none absolute z-10 flex max-w-full flex-col gap-2 rounded-theme border border-border bg-surface p-3 text-sm text-fg shadow-theme"
+      data-posicao={posicao.modo}
+      style={
+        flutuante
+          ? {
+              left: posicao.left,
+              top: posicao.top,
+              transform: posicao.acima ? 'translateY(-100%)' : undefined,
+              width: LARGURA_CARTAO,
+            }
+          : undefined
+      }
+      className={`pointer-events-none flex max-w-full flex-col gap-2 rounded-theme border border-border bg-surface p-3 text-sm text-fg shadow-theme ${
+        flutuante ? 'absolute z-10' : 'mt-2 w-full'
+      }`}
     >
       <div>
         <p className="font-semibold">{skill.nome}</p>
@@ -475,7 +490,12 @@ export function SkillHoneycomb({
             >
               <g>
                 {layout.hexagonos.map((hex) => (
-                  <Brilho key={hex.item.id} hex={hex} esmaecido={esmaecida(hex.item.categoria)} />
+                  <Brilho
+                    key={hex.item.id}
+                    hex={hex}
+                    raio={layout.raio}
+                    esmaecido={esmaecida(hex.item.categoria)}
+                  />
                 ))}
               </g>
               {layout.grupos.map((grupo) => (
@@ -503,6 +523,7 @@ export function SkillHoneycomb({
                       <Hexagono
                         key={hex.item.id}
                         hex={hex}
+                        raio={layout.raio}
                         descritoPor={hex === hexAtivo ? idCartao : undefined}
                         esmaecido={esmaecida(hex.item.categoria)}
                         tabIndex={hex.indice === naOrdemDoTab ? 0 : -1}
@@ -518,7 +539,7 @@ export function SkillHoneycomb({
                 <polygon
                   aria-hidden="true"
                   data-testid="anel-foco"
-                  points={pontosHexagono(hexEmFoco.x, hexEmFoco.y, RAIO + 4)}
+                  points={pontosHexagono(hexEmFoco.x, hexEmFoco.y, layout.raio + 4)}
                   fill="none"
                   stroke={COR_FOCO}
                   strokeWidth={3}
