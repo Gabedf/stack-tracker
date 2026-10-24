@@ -7,7 +7,7 @@ import { mensagemDoLevelUp, type EventoLevelUp } from './levelUp'
 
 /** Tempo até o aviso sumir sozinho. */
 export const DURACAO_AVISO_MS = 5000
-/** Faíscas do tema RPG (estilo e animação em rpg.css). */
+/** Partículas decorativas: faíscas no rpg, riscos de luz no cyber (pele em cada tema). */
 const PARTICULAS = 8
 
 export interface LevelUpToastProps {
@@ -30,11 +30,14 @@ interface Movimento {
   animate: TargetAndTransition
   exit?: TargetAndTransition
   transition: Transition
+  /** Estilo inline extra (ex.: origem da transformação). */
+  style?: CSSProperties
 }
 
 /**
- * Pergaminho (RPG): entra crescendo com um leve "pulo". Sem estilo (temas que não
- * são de jogo): sobe e aparece, discreto.
+ * Pergaminho (RPG): entra crescendo com um leve "pulo". Sistema (cyber): abre em
+ * scaleX a partir do centro, como uma janela de HUD. Sem estilo (temas que não são de
+ * jogo): sobe e aparece, discreto. Sem animar, nenhum estilo se move.
  */
 function movimento(estilo: EstiloLevelUp | null, animar: boolean): Movimento {
   if (!animar) return { initial: false, animate: { opacity: 1 }, transition: { duration: 0 } }
@@ -44,6 +47,15 @@ function movimento(estilo: EstiloLevelUp | null, animar: boolean): Movimento {
       animate: { opacity: 1, scale: [0.6, 1.08, 1] },
       exit: { opacity: 0, scale: 0.9 },
       transition: { duration: 0.5, ease: 'easeOut' },
+    }
+  }
+  if (estilo === 'sistema') {
+    return {
+      initial: { opacity: 0, scaleX: 0 },
+      animate: { opacity: 1, scaleX: 1 },
+      exit: { opacity: 0, scaleX: 0 },
+      transition: { duration: 0.35, ease: 'easeOut' },
+      style: { transformOrigin: 'center' },
     }
   }
   return {
@@ -57,8 +69,9 @@ function movimento(estilo: EstiloLevelUp | null, animar: boolean): Movimento {
 /**
  * Aviso de level-up ("Subiu para Sênior!"). A região aria-live fica sempre na
  * página, então cada aviso novo é anunciado. Some sozinho após `duracaoMs` ou
- * pelo botão fechar. Nos temas de jogo ganha brilho, escala e faíscas; no funcional é
- * um toast simples. Com prefers-reduced-motion nada se move
+ * pelo botão fechar. Nos temas de jogo ganha brilho, escala e partículas; no cyber
+ * ('sistema') ainda leva a faixa "◆ LEVEL UP" (renderizada só nesse estilo, decorativa,
+ * aria-hidden) e o gancho do título para o glitch; no funcional é um toast simples. Com prefers-reduced-motion nada se move
  * (data-animacao="desligada").
  */
 export function LevelUpToast({
@@ -81,7 +94,7 @@ export function LevelUpToast({
     return () => clearTimeout(timer)
   }, [chave, duracaoMs, onFechar])
 
-  const { initial, animate, exit, transition } = movimento(estilo, animar)
+  const { initial, animate, exit, transition, style } = movimento(estilo, animar)
 
   return (
     <div
@@ -104,6 +117,7 @@ export function LevelUpToast({
             animate={animate}
             exit={exit}
             transition={transition}
+            style={style}
           >
             {jogo && animar && (
               <span aria-hidden="true" className="levelup-particulas">
@@ -117,7 +131,17 @@ export function LevelUpToast({
               </span>
             )}
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+              {estilo === 'sistema' && (
+                <p
+                  aria-hidden="true"
+                  data-levelup-faixa
+                  className="font-mono text-xs tracking-widest text-accent uppercase"
+                >
+                  ◆ LEVEL UP
+                </p>
+              )}
               <p
+                data-levelup-titulo
                 className={`font-semibold ${jogo ? 'font-heading text-lg text-accent' : 'text-fg'}`}
               >
                 {mensagemDoLevelUp(aviso.evento)}

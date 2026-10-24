@@ -161,6 +161,21 @@
  *    accent (10.2:1 sobre surface) e borda inferior fina; estático.
  *  - forced-colors: grade GrayText, série Highlight, sem filtro; tooltip em CanvasText. Impressão:
  *    sem filtro, grade fina em currentColor, cabeçalho oculto.
+ *
+ * Level-up "mensagem do sistema" (27.4, `LevelUpToast` com `levelUp: 'sistema'`), ganchos neutros:
+ *    `data-levelup-faixa` (faixa `◆ LEVEL UP`, `<p aria-hidden>` que o componente só renderiza quando
+ *    o estilo é 'sistema'; fora do anúncio aria-live) e `data-levelup-titulo` (título do toast).
+ *  - O toast abre em scaleX pelo Framer Motion (0.35s, origem no centro; reduced motion = sem
+ *    movimento, `data-animacao='desligada'`). Pele: borda neon, vidro (surface 88%), título em
+ *    --theme-font-heading, faixa em --theme-font-mono.
+ *  - `@keyframes cyber-levelup-glitch`: UMA vez (0.5s, atraso 0.3s, `both`), text-shadow RGB split
+ *    (ciano/magenta) + deslocamentos de 1 a 3px; começa e termina neutro, então o contraste final é o
+ *    do accent (10.2:1). `@keyframes cyber-levelup-risco`: as `.levelup-particula` viram riscos de
+ *    2px x 8rem (gradiente transparente > neon > transparente, ciano e magenta alternados) que
+ *    cruzam o painel na diagonal (`--angulo`, `--desvio`) e somem; a estrutura vem de efeitos-jogo.css.
+ *    Os dois só dentro de prefers-reduced-motion: no-preference (e o componente nem renderiza os riscos
+ *    sem movimento). forced-colors: sem glitch, riscos nem brilho, cores de sistema. Impressão: o
+ *    print.css já oculta `.levelup-toast` (display: none !important), nada a acrescentar.
  */
 
 /* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
@@ -673,9 +688,132 @@
   text-transform: uppercase;
 }
 
+/*
+ * Level-up "mensagem do sistema" (LevelUpToast com CONFIG_TEMAS.cyber.levelUp = 'sistema').
+ * O scaleX de abertura é do Framer Motion; aqui ficam a pele do toast, a faixa, o glitch do
+ * título e os riscos de luz. A estrutura dos riscos (posição) vem de efeitos-jogo.css.
+ */
+[data-theme='cyber'] .levelup-toast {
+  /* Vidro como o painel: surface a 88% (o fundo atrás é escuro; texto segue >= 4.5:1). */
+  background-color: color-mix(in srgb, var(--theme-surface) 88%, transparent);
+  border-color: rgb(var(--cyber-neon) / 0.85);
+}
+
+/* Faixa "◆ LEVEL UP": mono, caixa alta e sublinhado fino; decorativa (aria-hidden). */
+[data-theme='cyber'] [data-levelup-faixa] {
+  margin: 0 0 0.25rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgb(var(--cyber-neon) / 0.45);
+  font-family: var(--theme-font-mono);
+  letter-spacing: 0.24em;
+  line-height: 1.2;
+}
+
+[data-theme='cyber'] [data-levelup-titulo] {
+  font-family: var(--theme-font-heading);
+  letter-spacing: var(--theme-heading-tracking);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /*
+   * Glitch curto do título, UMA vez (iteration-count 1), depois da abertura em scaleX
+   * (delay 0.3s). Divisão de cor RGB (ciano e magenta) por text-shadow + pequenos
+   * deslocamentos; o estado final é sem sombra e sem deslocamento (contraste do texto
+   * accent sobre o vidro: 10.2:1), e o fill-mode both mantém o 0% neutro durante o delay.
+   */
+  [data-theme='cyber'] .levelup-toast[data-animacao='ligada'] [data-levelup-titulo] {
+    animation: cyber-levelup-glitch 0.5s linear 0.3s 1 both;
+  }
+
+  /* Riscos de luz: finos, diagonais, cruzam o painel e somem (pele das .levelup-particula). */
+  [data-theme='cyber'] .levelup-particula {
+    --angulo: calc(-38deg + var(--particula, 0) * 11deg);
+    --desvio: calc((var(--particula, 0) - 3.5) * 0.9rem);
+    width: 8rem;
+    height: 2px;
+    margin: -1px 0 0 -4rem;
+    border-radius: 0;
+    background: linear-gradient(90deg, transparent, rgb(var(--cyber-neon)) 50%, transparent);
+    box-shadow: 0 0 6px rgb(var(--cyber-neon) / 0.8);
+    opacity: 0;
+    animation: cyber-levelup-risco 0.7s ease-out calc(0.2s + var(--particula, 0) * 60ms) 1 both;
+  }
+
+  /* Metade dos riscos em magenta (o token de foco do tema). */
+  [data-theme='cyber'] .levelup-particula:nth-child(even) {
+    background: linear-gradient(90deg, transparent, var(--theme-focus) 50%, transparent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--theme-focus) 80%, transparent);
+  }
+}
+
+@keyframes cyber-levelup-glitch {
+  0% {
+    transform: translate(0, 0);
+    text-shadow: none;
+  }
+  20% {
+    transform: translate(-3px, 0);
+    text-shadow:
+      3px 0 rgb(var(--cyber-neon) / 0.9),
+      -3px 0 var(--theme-focus);
+  }
+  45% {
+    transform: translate(2px, 1px);
+    text-shadow:
+      -3px 0 rgb(var(--cyber-neon) / 0.9),
+      3px 0 var(--theme-focus);
+  }
+  70% {
+    transform: translate(-1px, 0);
+    text-shadow:
+      2px 0 rgb(var(--cyber-neon) / 0.9),
+      -2px 0 var(--theme-focus);
+  }
+  100% {
+    transform: translate(0, 0);
+    text-shadow: none;
+  }
+}
+
+@keyframes cyber-levelup-risco {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--desvio)) rotate(var(--angulo)) translateX(-9rem);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(var(--desvio)) rotate(var(--angulo)) translateX(9rem);
+  }
+}
+
 /* Modo de alto contraste: sem enfeites sobrepostos às cores do sistema. */
 @media (forced-colors: active) {
   [data-theme='cyber'] body::after {
+    display: none;
+  }
+
+  /* Level-up: cores de sistema, sem glitch, riscos nem brilho. */
+  [data-theme='cyber'] .levelup-toast {
+    background-color: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+
+  [data-theme='cyber'] [data-levelup-faixa] {
+    border-bottom-color: CanvasText;
+    color: CanvasText;
+  }
+
+  [data-theme='cyber'] [data-levelup-titulo] {
+    animation: none;
+    color: CanvasText;
+    text-shadow: none;
+  }
+
+  [data-theme='cyber'] .levelup-particulas {
     display: none;
   }
 

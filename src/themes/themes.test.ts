@@ -27,6 +27,12 @@ describe('themes', () => {
     expect(CONFIG_TEMAS.rpg.esquema).toBe('light')
   })
 
+  it('estilo de level-up: cyber é "sistema"; rpg e funcional seguem "pergaminho"', () => {
+    expect(CONFIG_TEMAS.cyber.levelUp).toBe('sistema')
+    expect(CONFIG_TEMAS.rpg.levelUp).toBe('pergaminho')
+    expect(CONFIG_TEMAS.funcional.levelUp).toBe('pergaminho')
+  })
+
   it('ehTemaDeJogo segue a config de cada tema', () => {
     expect(ehTemaDeJogo('funcional')).toBe(false)
     expect(ehTemaDeJogo('rpg')).toBe(true)
