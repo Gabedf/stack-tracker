@@ -28,6 +28,13 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 21 | feat/21-import-export | concluída | 942b62e |
 | 22 | feat/22-polish-a11y | pendente | |
 | 23 | chore/23-docs-final | pendente | |
+| 24 | refactor/24-theme-registry | concluída (em feat/tema-cyber) | fe55342 |
+| 25 | feat/25-cyber-tokens | concluída (em feat/tema-cyber) | ff223ac |
+| 26 | feat/26-cyber-hud | concluída (em feat/tema-cyber) | 0011406 |
+| 27 | feat/27-cyber-sheet | concluída (em feat/tema-cyber) | a8cbfc2 |
+
+As etapas 24 a 27 (tema Cyber) foram feitas na branch de integração `feat/tema-cyber`, criada a partir de `feat/22-polish-a11y`;
+a etapa 22 segue em andamento na outra branch. Plano, decisões e pendências do tema: [docs/TEMA-CYBER.md](TEMA-CYBER.md).
 
 ## Pendências para etapas futuras
 
@@ -35,3 +42,17 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 - (geral) npm audit: tinypool via Vitest 3 (só dev). A correção exige Vitest 4 e Node >= 20.19.
 - (22) Borda do tema funcional (~1.5:1) abaixo de 3:1 nos campos de formulário.
 - (futuro) Estilo visual do RPG é provisório (pergaminho); tudo isolado em src/themes/rpg.css para troca.
+
+## Pendências do tema Cyber (etapas 24 a 27)
+
+Do tema (cyber):
+
+- (27.5) Painéis materializando em sequência ao trocar de rota nos temas de jogo: não implementada (opcional, pulada).
+
+Já existiam antes do tema (todos os temas, ou só funcional e rpg):
+
+- /ficha: o hexágono "esfriando" tem texto escuro sobre azul com opacidade 0,6 (~3,8:1) nos temas funcional e rpg; no cyber foi resolvido.
+- /, 375px: o rótulo "Kubernetes" aparece cortado ("Kubern") no gráfico Teoria × prática (`TheoryPracticeQuadrant`).
+- /ficha: no radar, os números da escala (8/10) sobrepõem o rótulo do eixo de cima (`CategoryRadar.tsx`).
+- /curriculo, 320px: o link ativo da nav fica fora da área visível; falta `scrollIntoView` do link ativo em `AppLayout.tsx`.
+- (22) Borda do tema funcional (~1.5:1) abaixo de 3:1; o `contraste.test.ts` só exige 3:1 de `--theme-border` nos temas de jogo.
