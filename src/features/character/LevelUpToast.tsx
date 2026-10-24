@@ -1,7 +1,7 @@
 import { AnimatePresence, m, type TargetAndTransition, type Transition } from 'framer-motion'
 import { useEffect, type CSSProperties } from 'react'
 import { useMenosMovimento } from '../../components/motion'
-import { useTheme } from '../../themes'
+import { CONFIG_TEMAS, ehTemaDeJogo, useTheme, type EstiloLevelUp } from '../../themes'
 import type { AvisoLevelUp } from './LevelUpContext'
 import { mensagemDoLevelUp, type EventoLevelUp } from './levelUp'
 
@@ -32,10 +32,13 @@ interface Movimento {
   transition: Transition
 }
 
-/** RPG: entra crescendo com um leve "pulo"; funcional: sobe e aparece, discreto. */
-function movimento(rpg: boolean, animar: boolean): Movimento {
+/**
+ * Pergaminho (RPG): entra crescendo com um leve "pulo". Sem estilo (temas que não
+ * são de jogo): sobe e aparece, discreto.
+ */
+function movimento(estilo: EstiloLevelUp | null, animar: boolean): Movimento {
   if (!animar) return { initial: false, animate: { opacity: 1 }, transition: { duration: 0 } }
-  if (rpg) {
+  if (estilo === 'pergaminho') {
     return {
       initial: { opacity: 0, scale: 0.6 },
       animate: { opacity: 1, scale: [0.6, 1.08, 1] },
@@ -54,7 +57,7 @@ function movimento(rpg: boolean, animar: boolean): Movimento {
 /**
  * Aviso de level-up ("Subiu para Sênior!"). A região aria-live fica sempre na
  * página, então cada aviso novo é anunciado. Some sozinho após `duracaoMs` ou
- * pelo botão fechar. No tema RPG ganha brilho, escala e faíscas; no funcional é
+ * pelo botão fechar. Nos temas de jogo ganha brilho, escala e faíscas; no funcional é
  * um toast simples. Com prefers-reduced-motion nada se move
  * (data-animacao="desligada").
  */
@@ -66,7 +69,9 @@ export function LevelUpToast({
 }: LevelUpToastProps) {
   const { tema } = useTheme()
   const menosMovimento = useMenosMovimento()
-  const rpg = tema === 'rpg'
+  // Só os temas de jogo têm estilo de level-up; null é o toast simples.
+  const estilo = ehTemaDeJogo(tema) ? CONFIG_TEMAS[tema].levelUp : null
+  const jogo = estilo !== null
   const animar = !menosMovimento
   const chave = aviso?.chave
 
@@ -76,7 +81,7 @@ export function LevelUpToast({
     return () => clearTimeout(timer)
   }, [chave, duracaoMs, onFechar])
 
-  const { initial, animate, exit, transition } = movimento(rpg, animar)
+  const { initial, animate, exit, transition } = movimento(estilo, animar)
 
   return (
     <div
@@ -93,14 +98,14 @@ export function LevelUpToast({
             data-tema={tema}
             data-animacao={animar ? 'ligada' : 'desligada'}
             className={`levelup-toast pointer-events-auto relative flex w-full max-w-sm items-start gap-3 rounded-theme border bg-surface p-3 text-fg shadow-theme ${
-              rpg ? 'border-accent shadow-glow' : 'border-border'
+              jogo ? 'border-accent shadow-glow' : 'border-border'
             }`}
             initial={initial}
             animate={animate}
             exit={exit}
             transition={transition}
           >
-            {rpg && animar && (
+            {jogo && animar && (
               <span aria-hidden="true" className="levelup-particulas">
                 {Array.from({ length: PARTICULAS }, (_, i) => (
                   <span
@@ -113,7 +118,7 @@ export function LevelUpToast({
             )}
             <div className="flex min-w-0 flex-1 flex-col gap-0.5">
               <p
-                className={`font-semibold ${rpg ? 'font-heading text-lg text-accent' : 'text-fg'}`}
+                className={`font-semibold ${jogo ? 'font-heading text-lg text-accent' : 'text-fg'}`}
               >
                 {mensagemDoLevelUp(aviso.evento)}
               </p>

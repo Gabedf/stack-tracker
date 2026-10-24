@@ -65,7 +65,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 ### Etapa 24: `refactor/24-theme-registry` (nenhuma mudança visual)
 
 - [x] 24.1 Trocar `ROTULOS_TEMA` por `CONFIG_TEMAS` e criar `ehTemaDeJogo` em `src/themes/themes.ts`.
-- [ ] 24.2 Trocar comparações com `'rpg'` por `ehTemaDeJogo`; `movimento()` recebe o estilo `levelUp`.
+- [x] 24.2 Trocar comparações com `'rpg'` por `ehTemaDeJogo`; `movimento()` recebe o estilo `levelUp`.
 - [ ] 24.3 `ThemeToggle` vira seletor acessível com todos os temas; ajustar testes do botão "Tema:".
 - [ ] 24.4 Teste que falha se a lista de ids do script anti-flash do `index.html` divergir de `TEMAS`.
 - [ ] 24.5 `tokens.test.ts` genérico: todo `src/themes/*.css` define os mesmos `--theme-*` que tokens.css.
@@ -119,5 +119,6 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
   principal tinha alterações não commitadas da etapa 22; assim a etapa 22 não é alterada nem
   misturada ao tema.
 - Tipos exportados por `src/themes` (e pelo index.ts): `ConfigTema`, `EsquemaTema`, `EstiloLevelUp`; o rótulo agora é `CONFIG_TEMAS[tema].rotulo`.
+- `movimento(estilo: EstiloLevelUp | null, animar)` no LevelUpToast: `null` = sem efeito de jogo (estilo só vem quando `ehTemaDeJogo`); brilho/faíscas valem para todo tema de jogo; o link Ficha usa `temas: TEMAS.filter(ehTemaDeJogo)`; `setTema('rpg')` do botão "Ativar tema RPG" na ficha fica (é valor, não comparação).
 
 ## Pendências
