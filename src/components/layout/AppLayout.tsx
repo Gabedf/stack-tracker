@@ -93,6 +93,12 @@ export function AppLayout() {
           <Outlet />
         </Suspense>
       </main>
+
+      <footer data-print="ocultar" className="border-t border-border">
+        <p className="mx-auto max-w-5xl px-4 py-4 text-sm text-muted sm:px-6">
+          {NOME_APP}: seus dados ficam só neste computador, em data/stacks.json.
+        </p>
+      </footer>
     </div>
   )
 }
