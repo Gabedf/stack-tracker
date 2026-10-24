@@ -112,7 +112,7 @@ export function QuickAddStack({ destaque = false, className = '' }: QuickAddStac
       disabled: ocupado,
       'aria-invalid': erro ? true : undefined,
       'aria-describedby': erro ? idErro(campo) : undefined,
-      className: `${CLASSE_CAMPO} ${erro ? 'border-danger' : 'border-border'}`,
+      className: `${CLASSE_CAMPO} ${erro ? 'border-danger' : 'border-control'}`,
     }
   }
 

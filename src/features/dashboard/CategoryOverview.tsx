@@ -60,7 +60,7 @@ export function CategoryOverview({ estatisticas }: CategoryOverviewProps) {
               'rounded-theme border px-2 py-1 font-medium ' +
               (m.id === metrica
                 ? 'border-fg bg-surface-2 text-fg'
-                : 'border-border bg-surface text-muted hover:bg-surface-2')
+                : 'border-control bg-surface text-muted hover:bg-surface-2')
             }
           >
             {m.rotulo}

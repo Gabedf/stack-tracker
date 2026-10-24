@@ -19,7 +19,7 @@ export interface StackFiltersProps {
 }
 
 const CLASSE_CAMPO =
-  'w-full rounded-theme border border-border bg-surface px-3 py-1.5 text-sm text-fg shadow-theme'
+  'w-full rounded-theme border border-control bg-surface px-3 py-1.5 text-sm text-fg shadow-theme'
 const CLASSE_ROTULO = 'text-sm font-medium text-muted'
 
 interface CampoBuscaProps {
@@ -163,7 +163,7 @@ export function StackFilters({
         <button
           type="button"
           onClick={onLimpar}
-          className="rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2"
+          className="rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2"
         >
           Limpar filtros
         </button>

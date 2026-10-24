@@ -26,7 +26,7 @@ export interface CharacterSheetViewProps {
 export const NOME_PERSONAGEM = 'Personagem'
 
 const CLASSE_BOTAO =
-  'rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
+  'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_PAINEL =
   'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme'
 

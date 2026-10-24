@@ -176,7 +176,7 @@ export function ResumePreview({ selecao, opcoes, markdown, className = '' }: Res
               onClick={() => setAba(id)}
               className={`-mb-px rounded-t-theme border border-b-0 px-4 py-1.5 text-sm font-medium ${
                 ativa
-                  ? 'border-border bg-surface text-accent'
+                  ? 'border-control bg-surface text-accent'
                   : 'border-transparent text-muted hover:text-fg'
               }`}
             >
@@ -214,7 +214,7 @@ export function ResumePreview({ selecao, opcoes, markdown, className = '' }: Res
           value={markdown}
           rows={18}
           spellCheck={false}
-          className="w-full resize-y rounded-theme border border-border bg-bg p-3 font-mono text-sm text-fg"
+          className="w-full resize-y rounded-theme border border-control bg-bg p-3 font-mono text-sm text-fg"
         />
       </div>
     </section>

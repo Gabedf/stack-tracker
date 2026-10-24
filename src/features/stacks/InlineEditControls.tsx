@@ -16,7 +16,7 @@ export interface InlineEditControlsProps {
 const CLASSE_BOTAO_PRIMARIO =
   'rounded-theme border border-accent bg-accent px-4 py-2 text-sm font-semibold text-accent-contrast disabled:cursor-not-allowed disabled:opacity-60'
 const CLASSE_BOTAO_SECUNDARIO =
-  'rounded-theme border border-border bg-surface px-4 py-2 text-sm font-medium text-fg hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60'
+  'rounded-theme border border-control bg-surface px-4 py-2 text-sm font-medium text-fg hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60'
 
 /**
  * Botões Salvar (submit) e Desfazer de um editor inline, com região de status

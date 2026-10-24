@@ -26,7 +26,7 @@ type Leitura =
 
 const CLASSE_BOTAO =
   'rounded-theme border px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-60'
-const CLASSE_SECUNDARIO = `${CLASSE_BOTAO} border-border bg-surface text-fg hover:bg-surface-2`
+const CLASSE_SECUNDARIO = `${CLASSE_BOTAO} border-control bg-surface text-fg hover:bg-surface-2`
 const CLASSE_PRIMARIO = `${CLASSE_BOTAO} border-accent bg-accent text-accent-contrast`
 const CLASSE_PERIGO = `${CLASSE_BOTAO} border-danger bg-danger text-accent-contrast`
 
@@ -210,7 +210,7 @@ export function ImportSection({ stacks, onImportar, desabilitado = false }: Impo
           accept=".json,application/json"
           disabled={desabilitado || importando}
           onChange={(e) => void escolherArquivo(e)}
-          className="text-sm text-fg file:mr-3 file:rounded-theme file:border file:border-border file:bg-surface-2 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-fg"
+          className="text-sm text-fg file:mr-3 file:rounded-theme file:border file:border-control file:bg-surface-2 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-fg"
         />
       </div>
 
@@ -226,7 +226,7 @@ export function ImportSection({ stacks, onImportar, desabilitado = false }: Impo
           disabled={desabilitado || importando}
           onChange={(e) => setColado(e.target.value)}
           spellCheck={false}
-          className="w-full rounded-theme border border-border bg-surface-2 px-3 py-2 font-mono text-sm text-fg"
+          className="w-full rounded-theme border border-control bg-surface-2 px-3 py-2 font-mono text-sm text-fg"
         />
         <p id={idDicaColar} className="text-xs text-muted">
           {DICA_FORMATO}

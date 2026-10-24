@@ -13,7 +13,7 @@ type Aviso = { tipo: 'ok' | 'erro'; texto: string } | null
 const DURACAO_AVISO_MS = 4000
 
 const CLASSE_BOTAO =
-  'rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg shadow-theme hover:bg-surface-2'
+  'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg shadow-theme hover:bg-surface-2'
 
 /** Copiar o Markdown, baixar o .md e imprimir, com aviso por aria-live. */
 export function ResumeActions({ markdown, className = '' }: ResumeActionsProps) {

@@ -273,7 +273,7 @@ export function CategoryRadar({
                   'inline-flex items-center gap-2 rounded-theme border px-2 py-1 text-sm ' +
                   (selecionada === item.categoria
                     ? 'border-fg bg-surface-2 text-fg'
-                    : 'border-border bg-surface text-fg hover:bg-surface-2')
+                    : 'border-control bg-surface text-fg hover:bg-surface-2')
                 }
               >
                 <span className="font-medium">{item.categoria}</span>

@@ -65,7 +65,7 @@ function validar(valores: ValoresEvidencia): Validacao {
 const CLASSE_CAMPO =
   'w-full rounded-theme border bg-surface px-3 py-1.5 text-sm text-fg shadow-theme'
 const CLASSE_BOTAO_SECUNDARIO =
-  'rounded-theme border border-border bg-surface px-4 py-2 text-sm font-medium text-fg hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60'
+  'rounded-theme border border-control bg-surface px-4 py-2 text-sm font-medium text-fg hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60'
 
 /**
  * Formulário inline para adicionar ou editar uma evidência. Valida com o
@@ -129,7 +129,7 @@ export function EvidenceForm({ inicial, rotulo, onSalvar, onCancelar }: Evidence
       'aria-invalid': erro ? true : undefined,
       'aria-describedby': descricao || undefined,
       onBlur: () => tocar(campo),
-      className: `${CLASSE_CAMPO} ${erro ? 'border-danger' : 'border-border'}`,
+      className: `${CLASSE_CAMPO} ${erro ? 'border-danger' : 'border-control'}`,
     }
   }
 
