@@ -70,7 +70,10 @@
     fill-opacity: var(--theme-icon-fill-opacity);
   }
 
-  :focus-visible {
+  /* Campo de data: o foco fica nos segmentos internos (dia/mês/ano), sem
+     :focus-visible no próprio input; o contorno vem do :focus-within. */
+  :focus-visible,
+  input[type='date']:focus-within {
     outline: 2px solid var(--theme-focus);
     outline-offset: 2px;
   }
