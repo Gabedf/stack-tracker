@@ -87,6 +87,10 @@
   /* Texto corrido numa serifada do sistema; títulos em Cinzel (capitulares romanas). */
   --theme-font-base: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
   --theme-font-heading: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+  /* Monoespaçada: a mesma pilha padrão do Tailwind 4, como no tema funcional. */
+  --theme-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   --theme-heading-tracking: 0.03em;
 
   /* Ícones: traço mais grosso e um leve preenchimento, como gravura/emblema. */
@@ -114,28 +118,15 @@
  * Level-up (LevelUpToast): o aviso entra com escala pelo Framer Motion; aqui ficam
  * o pulso de brilho dourado e as faíscas que saltam do centro. Só com movimento
  * liberado (o componente também não renderiza as faíscas com reduced motion).
+ * A estrutura das faíscas (posição, tamanho) está em efeitos-jogo.css.
  */
 @media (prefers-reduced-motion: no-preference) {
   [data-theme='rpg'] .levelup-toast[data-animacao='ligada'] {
     animation: levelup-brilho 1.4s ease-out 1;
   }
 
-  [data-theme='rpg'] .levelup-particulas {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: visible;
-  }
-
   [data-theme='rpg'] .levelup-particula {
     --angulo: calc(var(--particula, 0) * 45deg);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0.375rem;
-    height: 0.375rem;
-    margin: -0.1875rem 0 0 -0.1875rem;
-    border-radius: 9999px;
     background-color: var(--theme-xp-fill);
     box-shadow: var(--theme-glow);
     opacity: 0;

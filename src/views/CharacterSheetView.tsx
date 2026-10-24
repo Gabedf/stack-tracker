@@ -15,7 +15,7 @@ import {
   type Personagem,
 } from '../features/character'
 import { useStacks } from '../features/stacks'
-import { useTheme } from '../themes'
+import { ehTemaDeJogo, useTheme } from '../themes'
 
 export interface CharacterSheetViewProps {
   /** Data de referência para as notas (decaimento). Padrão: o momento da montagem. */
@@ -28,7 +28,7 @@ export const NOME_PERSONAGEM = 'Personagem'
 const CLASSE_BOTAO =
   'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_PAINEL =
-  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme'
+  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme painel'
 
 function Painel({ id, titulo, children }: { id: string; titulo: string; children: ReactNode }) {
   return (
@@ -41,10 +41,10 @@ function Painel({ id, titulo, children }: { id: string; titulo: string; children
   )
 }
 
-/** Aviso do tema funcional: a ficha é pensada para o tema RPG. */
+/** Aviso fora dos temas de jogo: a ficha é pensada para o tema RPG. */
 function AvisoTema() {
   const { tema, setTema } = useTheme()
-  if (tema === 'rpg') return null
+  if (ehTemaDeJogo(tema)) return null
 
   return (
     <div
@@ -75,7 +75,7 @@ function Cabecalho({ personagem }: { personagem: Personagem }) {
   return (
     <section
       aria-labelledby="ficha-nome"
-      className="flex flex-col gap-4 rounded-theme border border-border bg-surface p-5 shadow-theme"
+      className="flex flex-col gap-4 rounded-theme border border-border bg-surface p-5 shadow-theme painel"
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-1">

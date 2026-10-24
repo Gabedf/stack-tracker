@@ -28,6 +28,14 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 21 | feat/21-import-export | concluída | 942b62e |
 | 22 | feat/22-polish-a11y | concluída | 2b11a3a |
 | 23 | chore/23-docs-final | concluída | b33595d |
+| 24 | refactor/24-theme-registry | concluída (em feat/tema-cyber) | fe55342 |
+| 25 | feat/25-cyber-tokens | concluída (em feat/tema-cyber) | ff223ac |
+| 26 | feat/26-cyber-hud | concluída (em feat/tema-cyber) | 0011406 |
+| 27 | feat/27-cyber-sheet | concluída (em feat/tema-cyber) | a8cbfc2 |
+
+As etapas 24 a 27 (tema Cyber) foram feitas na branch de integração `feat/tema-cyber`, criada a partir de `feat/22-polish-a11y`,
+e depois mergeadas na main (commit "merge: tema cyber"), que já tinha as etapas 22 e 23. Plano, decisões e pendências do tema:
+[docs/TEMA-CYBER.md](TEMA-CYBER.md).
 
 ## Limitações conhecidas e próximos passos
 
@@ -55,3 +63,21 @@ Em 2026-10-23, na branch chore/23-docs-final, com Node 20.16.0:
   GET /api/stacks com 200.
 - Nenhum bug encontrado; nenhum código de produto alterado nesta etapa. O roteiro manual de UI
   (README) não foi executado nesta verificação automatizada.
+
+Após o merge do tema Cyber na main: `npm run lint`, `npm run build` e `npm run format:check` verdes e `npm test` com 55 arquivos e
+1121 testes passando.
+
+## Pendências do tema Cyber (etapas 24 a 27)
+
+Do tema (cyber):
+
+- (27.5) Painéis materializando em sequência ao trocar de rota nos temas de jogo: não implementada (opcional, pulada).
+
+Já existiam antes do tema (todos os temas, ou só funcional e rpg):
+
+- /ficha: o hexágono "esfriando" tem texto escuro sobre azul com opacidade 0,6 (~3,8:1) nos temas funcional e rpg; no cyber foi resolvido.
+- /, 375px: o rótulo "Kubernetes" aparece cortado ("Kubern") no gráfico Teoria × prática (`TheoryPracticeQuadrant`).
+- /ficha: no radar, os números da escala (8/10) sobrepõem o rótulo do eixo de cima (`CategoryRadar.tsx`).
+- /curriculo, 320px: o link ativo da nav fica fora da área visível; falta `scrollIntoView` do link ativo em `AppLayout.tsx`.
+
+A borda dos campos de formulário (antes ~1.5:1 no tema funcional) foi resolvida na etapa 22 com o token `--theme-border-control`; o `contraste.test.ts` exige 3:1 dele em todos os temas e de `--theme-border` só nos temas de jogo.

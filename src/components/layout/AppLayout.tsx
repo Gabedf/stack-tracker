@@ -1,6 +1,6 @@
 import { Suspense, useRef, type MouseEvent } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
-import { ThemeToggle, useTheme, type Tema } from '../../themes'
+import { ehTemaDeJogo, TEMAS, ThemeToggle, useTheme, type Tema } from '../../themes'
 
 import { NOME_APP } from './constants'
 import { RouteFallback } from './RouteFallback'
@@ -17,7 +17,7 @@ interface LinkNav {
 const LINKS_NAV: readonly LinkNav[] = [
   { to: '/', rotulo: 'Dashboard', end: true },
   { to: '/stacks', rotulo: 'Stacks', end: false },
-  { to: '/ficha', rotulo: 'Ficha', end: false, temas: ['rpg'] },
+  { to: '/ficha', rotulo: 'Ficha', end: false, temas: TEMAS.filter(ehTemaDeJogo) },
   { to: '/curriculo', rotulo: 'Currículo', end: false },
 ]
 

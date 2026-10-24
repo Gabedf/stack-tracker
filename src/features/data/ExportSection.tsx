@@ -30,7 +30,7 @@ export function ExportSection({ stacks, desabilitado = false, hoje }: ExportSect
   return (
     <section
       aria-labelledby={idTitulo}
-      className="space-y-3 rounded-theme border border-border bg-surface p-4 shadow-theme"
+      className="space-y-3 rounded-theme border border-border bg-surface p-4 shadow-theme painel"
     >
       <h2 id={idTitulo} className="text-xl font-semibold">
         Exportar

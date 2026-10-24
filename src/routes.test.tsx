@@ -65,10 +65,10 @@ describe('rotas', () => {
     expect(screen.getByRole('link', { name: 'Voltar ao Dashboard' })).toHaveAttribute('href', '/')
   })
 
-  it('o layout tem cabeçalho, toggle de tema e link para pular ao conteúdo', () => {
+  it('o layout tem cabeçalho, seletor de tema e link para pular ao conteúdo', () => {
     renderEm('/')
     expect(screen.getByRole('link', { name: 'Painel de Stacks' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /^Tema:/ })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Tema' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Pular para o conteúdo' })).toHaveAttribute(
       'href',
       '#conteudo',
@@ -93,7 +93,7 @@ describe('carregamento sob demanda', () => {
     )
     expect(within(screen.getByRole('main')).getByRole('status')).toHaveTextContent('Carregando…')
     expect(nav()).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /^Tema:/ })).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Tema' })).toBeInTheDocument()
   })
 })
 

@@ -31,6 +31,16 @@
     background: #fff !important;
   }
 
+  /*
+   * Vale para qualquer [data-theme], inclusive os escuros: o fundo e os textos
+   * acima já ignoram os --theme-*. Camadas decorativas do body (grade,
+   * scanlines, vinheta) não vão para o papel.
+   */
+  body::before,
+  body::after {
+    content: none !important;
+  }
+
   /* Fora do papel: cabeçalho, navegação, filtros, ações, abas, avisos. */
   header,
   nav,

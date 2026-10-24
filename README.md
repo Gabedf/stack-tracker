@@ -3,7 +3,7 @@
 Painel web pessoal para acompanhar o domínio de cada stack de tecnologia: o que se sabe em teoria, o que
 foi usado de verdade e o que se sabe "só por saber". A nota de cada stack é calculada (nunca digitada) a
 partir das dimensões e das evidências, guarda um histórico de evolução e alimenta uma exportação para
-currículo. Há dois temas: funcional e RPG, com ficha de personagem, níveis e XP.
+currículo. Há três temas: funcional, RPG e Cyber, com ficha de personagem, níveis e XP.
 
 - Especificação: [docs/SPEC.md](docs/SPEC.md)
 - Progresso das etapas: [docs/PROGRESS.md](docs/PROGRESS.md)
@@ -93,17 +93,31 @@ Detalhes e regras completas em [docs/SPEC.md](docs/SPEC.md); a implementação e
 
 ## Temas
 
-- **Funcional** (padrão) e **RPG**. O tema é o atributo `data-theme` do `<html>`, alternado pelo botão no
+- **Funcional** (padrão), **RPG** e **Cyber**. O tema é o atributo `data-theme` do `<html>`, alternado pelo seletor no
   cabeçalho e salvo no `localStorage`; um script em `index.html` aplica o tema salvo antes do React montar.
+  Para ver o Cyber, rode `npm run dev` e escolha "Cyber" no seletor. A visão geral e as decisões do tema estão em
+  [docs/TEMA-CYBER.md](docs/TEMA-CYBER.md).
 - Componentes nunca usam cores literais: usam classes do Tailwind ligadas aos tokens `--theme-*`
   (`src/index.css`, `@theme inline`). Um teste barra cores fixas fora de `src/themes`.
 - `src/themes/tokens.css` define o tema funcional. `src/themes/rpg.css` concentra tudo o que é do visual
   RPG; o estilo pergaminho/medieval atual é **provisório** e pode ser trocado editando só esse arquivo
-  (os nomes das classes do personagem ficam em `src/features/character/classes.ts`).
-- **Criar outro tema:** crie um CSS em `src/themes/` com um bloco `[data-theme='<nome>']` que defina
-  exatamente os mesmos `--theme-*` de `tokens.css` (há teste para isso), importe-o em `src/index.css`,
-  acrescente o nome em `TEMAS` e `ROTULOS_TEMA` (`src/themes/themes.ts`) e na lista do script de
-  `index.html`. Confira o contraste (`src/themes/contraste.test.ts`).
+  (os nomes das classes do personagem ficam em `src/features/character/classes.ts`). `src/themes/cyber.css`
+  define o tema Cyber, e `src/themes/efeitos-jogo.css` guarda os efeitos dos temas de jogo.
+
+## Como adicionar um tema
+
+1. Registre o id em `TEMAS` e a config (`rotulo`, `jogo`, `esquema`, `levelUp`) em `CONFIG_TEMAS`, em `src/themes/themes.ts`.
+2. Crie `src/themes/<id>.css` com o bloco `[data-theme='<id>']` e os mesmos `--theme-*` de `src/themes/tokens.css`, e importe o
+   arquivo em `src/index.css`.
+3. Acrescente o id em `var temas = [...]` no script anti-flash do `index.html`.
+4. Os testes que guardam a paridade precisam passar:
+   - `src/themes/tokens.test.ts`: todo tema define os mesmos `--theme-*`;
+   - `src/themes/contraste.test.ts`: contrastes mínimos e `color-scheme` igual ao `esquema` da config;
+   - `src/themes/antiFlash.test.ts`: a lista do `index.html` é igual a `TEMAS`;
+   - `src/themes/themes.test.ts`: o registro e os helpers de `themes.ts`.
+5. Variáveis só do tema usam o prefixo `--<id>-*`, nunca `--theme-*`.
+6. No HTML ficam só ganchos neutros (a classe `painel`, data-atributos); o estilo de cada tema fica no CSS dele. Animação vai atrás
+   de `prefers-reduced-motion: no-preference`, e os enfeites são desligados em `forced-colors: active` e na impressão.
 
 ## Arquitetura
 
@@ -124,7 +138,7 @@ server/        jsonStoragePlugin.ts (+ teste)
 src/
   domain/      types, schema, scoring, levels, history
   storage/     StorageAdapter, JsonFileAdapter, stacksFileLoader
-  themes/      tokens.css, rpg.css, ThemeProvider, toggle
+  themes/      tokens.css, rpg.css, cyber.css, efeitos-jogo.css, themes.ts, ThemeProvider, toggle
   features/    stacks, dashboard, character, resume, data
   components/  base, charts, icons, layout, motion
   views/       Dashboard, Stacks, Detalhe, Formulário, Ficha, Currículo, Dados
@@ -133,8 +147,8 @@ src/
 
 ## Testes
 
-`npm test` roda a suíte do Vitest com Testing Library e jsdom (na verificação final: 54 arquivos,
-1031 testes). Cobertura por área:
+`npm test` roda a suíte do Vitest com Testing Library e jsdom (após o merge do tema Cyber: 55 arquivos,
+1121 testes). Cobertura por área:
 
 - **Domínio:** schema (JSON inválido rejeitado), nota (pesos, evidências, limites, decaimento,
   "sei por saber"), níveis e histórico (não duplica snapshot idêntico).
@@ -158,7 +172,7 @@ Antes de começar, faça uma cópia de `data/stacks.json` se quiser preservar os
 3. **Editar stack:** no detalhe, mude um slider de dimensão e salve. Confira em `data/stacks.json` as
    dimensões novas e um snapshot novo no fim do `historico` (data, dimensões e nota). Salvar sem mudar nada
    não deve criar snapshot.
-4. **Temas:** alterne para RPG no cabeçalho, recarregue a página (o tema persiste), abra a Ficha e volte
+4. **Temas:** alterne para RPG e para Cyber no cabeçalho, recarregue a página (o tema persiste), abra a Ficha e volte
    para o funcional.
 5. **Currículo:** mude filtros (categoria, nível mínimo, "só comprovado", nota visível) e confira a
    pré-visualização e o Markdown; teste Copiar e Imprimir.
@@ -172,7 +186,7 @@ Os testes automatizados cobrem contraste dos tokens (`src/themes/contraste.test.
 um h1 por página, headings sem saltos, landmarks e campos rotulados (`src/views/semantica.test.tsx`).
 O resto precisa de olho e mão. Rode `npm run dev` e confira antes de cada entrega.
 
-### Teclado (sem mouse, nos dois temas)
+### Teclado (sem mouse, nos três temas)
 
 - [ ] Em qualquer página, o primeiro Tab mostra "Pular para o conteúdo"; Enter leva o foco ao conteúdo principal.
 - [ ] Todo elemento interativo mostra contorno de foco visível (no RPG, também o brilho dourado).
@@ -200,7 +214,7 @@ O resto precisa de olho e mão. Rode `npm run dev` e confira antes de cada entre
 - [ ] Barras de nota/XP leem o valor ("7,5 de 10"); sliders leem "x de 10".
 - [ ] Erros de formulário são lidos como descrição do campo; avisos de sucesso e level-up são anunciados.
 
-### Contraste (nos dois temas)
+### Contraste (nos três temas)
 
 - [ ] Bordas de campos, selects, checkboxes, sliders e botões secundários visíveis (≥ 3:1).
 - [ ] Texto normal, desabilitado legível, erro (vermelho) e sucesso (verde) legíveis sobre os fundos.
@@ -217,7 +231,7 @@ O resto precisa de olho e mão. Rode `npm run dev` e confira antes de cada entre
 
 - [ ] Com "reduzir movimento" ligado no sistema: sem animação na barra de XP, no level-up e nas transições do RPG.
 - [ ] Currículo > Imprimir: só o currículo vai para o papel (sem cabeçalho, navegação, filtros e rodapé),
-      em preto no branco e legível nos dois temas.
+      em preto no branco e legível nos três temas.
 
 ## Limitações conhecidas
 

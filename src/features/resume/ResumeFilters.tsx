@@ -69,7 +69,7 @@ export function ResumeFilters({
       aria-label="Filtros do currículo"
       data-print="ocultar"
       onSubmit={(e) => e.preventDefault()}
-      className={`flex flex-col gap-5 rounded-theme border border-border bg-surface p-4 shadow-theme ${className}`}
+      className={`flex flex-col gap-5 rounded-theme border border-border bg-surface p-4 shadow-theme painel ${className}`}
     >
       <div className="flex flex-col gap-1">
         <label htmlFor={idTitulo} className={CLASSE_ROTULO}>

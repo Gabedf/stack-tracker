@@ -1,5 +1,5 @@
 /** Temas disponíveis. O valor é o que vai no atributo data-theme do <html>. */
-export const TEMAS = ['funcional', 'rpg'] as const
+export const TEMAS = ['funcional', 'rpg', 'cyber'] as const
 
 export type Tema = (typeof TEMAS)[number]
 
@@ -8,9 +8,31 @@ export const TEMA_PADRAO: Tema = 'funcional'
 /** Chave do localStorage. O script anti-flash em index.html usa a mesma. */
 export const CHAVE_TEMA_STORAGE = 'painel-stacks:tema'
 
-export const ROTULOS_TEMA: Record<Tema, string> = {
-  funcional: 'Funcional',
-  rpg: 'RPG',
+/** Valor de `color-scheme` do tema (controles nativos, barras de rolagem). */
+export type EsquemaTema = 'light' | 'dark'
+
+/** Estilo da animação de level-up: pergaminho (rpg) ou mensagem do sistema. */
+export type EstiloLevelUp = 'pergaminho' | 'sistema'
+
+export interface ConfigTema {
+  /** Nome mostrado na interface. */
+  rotulo: string
+  /** Temas de jogo mostram os enfeites de jogo (level-up animado e afins). */
+  jogo: boolean
+  /** Deve bater com o `color-scheme` declarado no CSS do tema. */
+  esquema: EsquemaTema
+  levelUp: EstiloLevelUp
+}
+
+export const CONFIG_TEMAS: Record<Tema, ConfigTema> = {
+  funcional: { rotulo: 'Funcional', jogo: false, esquema: 'light', levelUp: 'pergaminho' },
+  rpg: { rotulo: 'RPG', jogo: true, esquema: 'light', levelUp: 'pergaminho' },
+  cyber: { rotulo: 'Cyber', jogo: true, esquema: 'dark', levelUp: 'sistema' },
+}
+
+/** Se o tema é de jogo; use no lugar de comparar com ids como `'rpg'`. */
+export function ehTemaDeJogo(tema: Tema): boolean {
+  return CONFIG_TEMAS[tema].jogo
 }
 
 export function isTema(valor: unknown): valor is Tema {

@@ -37,8 +37,20 @@ describe('ThemeProvider / useTheme', () => {
     expect(temaNoHtml()).toBe('rpg')
 
     act(() => result.current.alternar())
+    expect(result.current.tema).toBe('cyber')
+    expect(temaNoHtml()).toBe('cyber')
+
+    act(() => result.current.alternar())
     expect(result.current.tema).toBe('funcional')
     expect(temaNoHtml()).toBe('funcional')
+  })
+
+  it('setTema aplica o tema cyber', () => {
+    const { result } = renderHook(() => useTheme(), { wrapper })
+    act(() => result.current.setTema('cyber'))
+    expect(result.current.tema).toBe('cyber')
+    expect(temaNoHtml()).toBe('cyber')
+    expect(localStorage.getItem(CHAVE_TEMA_STORAGE)).toBe('cyber')
   })
 
   it('setTema define o tema diretamente', () => {

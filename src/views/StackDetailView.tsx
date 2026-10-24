@@ -24,7 +24,7 @@ const CLASSE_LINK = 'font-medium text-accent underline underline-offset-2'
 const CLASSE_BOTAO_LINK =
   'inline-block rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_PAINEL =
-  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme'
+  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme painel'
 const CLASSE_TITULO_PAINEL = 'font-heading text-lg font-semibold text-fg'
 
 function CodigoId({ id }: { id: string }) {
@@ -101,7 +101,7 @@ export function StackDetailView({ hoje }: StackDetailViewProps) {
         Voltar para Stacks
       </Link>
 
-      <header className="flex flex-col gap-4 rounded-theme border border-border bg-surface p-4 shadow-theme sm:flex-row sm:items-start sm:justify-between">
+      <header className="flex flex-col gap-4 rounded-theme border border-border bg-surface p-4 shadow-theme painel sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-2">
           <h1 className="font-heading text-3xl font-bold text-fg">{stack.nome}</h1>
           <p className="text-muted">

@@ -89,7 +89,7 @@ export function StackFilters({
       role="search"
       aria-label="Filtrar stacks"
       onSubmit={(e) => e.preventDefault()}
-      className={`grid gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] ${className}`}
+      className={`grid gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme painel sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] ${className}`}
     >
       <CampoBusca valor={criterios.busca} onChange={(busca) => onChange({ busca })} />
 

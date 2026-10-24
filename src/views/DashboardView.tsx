@@ -16,7 +16,7 @@ import {
 } from '../features/dashboard'
 import { useStacks } from '../features/stacks'
 import { criteriosParaUrl } from '../features/stacks/stackFiltering'
-import { useTheme } from '../themes'
+import { ehTemaDeJogo, useTheme } from '../themes'
 
 export interface DashboardViewProps {
   /** Data de referência para as notas (decaimento). Padrão: o momento da montagem. */
@@ -26,7 +26,7 @@ export interface DashboardViewProps {
 const CLASSE_BOTAO =
   'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_PAINEL =
-  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme'
+  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme painel'
 
 /** Painel com título (h2) ligado à região por aria-labelledby. */
 function Painel({ id, titulo, children }: { id: string; titulo: string; children: ReactNode }) {
@@ -40,10 +40,10 @@ function Painel({ id, titulo, children }: { id: string; titulo: string; children
   )
 }
 
-/** Atalho de destaque para a ficha do personagem; só aparece no tema RPG. */
+/** Atalho de destaque para a ficha do personagem; só aparece nos temas de jogo. */
 function LinkFicha() {
   const { tema } = useTheme()
-  if (tema !== 'rpg') return null
+  if (!ehTemaDeJogo(tema)) return null
   return (
     <Link
       to="/ficha"
