@@ -89,3 +89,19 @@ h1[tabindex='-1']:focus {
   outline: none;
   box-shadow: none;
 }
+
+/*
+ * Rede de segurança do prefers-reduced-motion: os temas e componentes já só
+ * animam com no-preference (rpg.css, motion-safe:, MotionConfig "user"); se
+ * algo escapar, aqui a animação/transição termina na hora.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
