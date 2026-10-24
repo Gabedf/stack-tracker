@@ -42,6 +42,17 @@ const TEMAS_DESCOBERTOS = Object.entries(cssDaPasta).flatMap(([caminho, css]) =>
   return [[id, caminho, coresDoTema(css)] as const]
 })
 
+/**
+ * `color-scheme` declarado no bloco do tema (do `{` do seletor até o primeiro `}`,
+ * comentários fora). No tokens.css o bloco do funcional é `:root, [data-theme='funcional']`.
+ */
+function esquemaDoBloco(css: string): string | undefined {
+  const semComentarios = css.replace(/\/\*[\s\S]*?\*\//g, '')
+  const inicio = semComentarios.search(BLOCO_DO_TEMA)
+  const bloco = semComentarios.slice(inicio, semComentarios.indexOf('}', inicio))
+  return /color-scheme\s*:\s*([a-z ]+?)\s*;/.exec(bloco)?.[1]
+}
+
 function rgb(hex: string): Rgb {
   let h = hex.slice(1)
   if (h.length === 3) h = [...h].map((c) => c + c).join('')
@@ -119,6 +130,16 @@ describe('contraste', () => {
     expect(ids).toEqual([...TEMAS].sort())
     expect(Object.keys(CONFIG_TEMAS).sort()).toEqual(ids)
   })
+
+  it.each(TEMAS_DESCOBERTOS.map(([id, caminho]) => [id, caminho] as const))(
+    'tema %s: color-scheme de %s bate com CONFIG_TEMAS.esquema',
+    (id, caminho) => {
+      expect(
+        esquemaDoBloco(cssDaPasta[caminho]),
+        `${id}: o color-scheme em ${caminho} deve ser '${CONFIG_TEMAS[id].esquema}' (esquema em themes.ts)`,
+      ).toBe(CONFIG_TEMAS[id].esquema)
+    },
+  )
 
   it('as exceções apontam para temas existentes', () => {
     for (const excecao of EXCECOES) {
