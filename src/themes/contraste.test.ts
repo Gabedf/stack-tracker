@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import cyberCss from './cyber.css?raw'
 import rpgCss from './rpg.css?raw'
 import tokensCss from './tokens.css?raw'
 
@@ -65,6 +66,7 @@ const NAO_TEXTO = ['focus', 'border-control', 'accent', 'danger', 'xp-fill'] as 
 const TEMAS = [
   ['funcional', coresDoTema(tokensCss)],
   ['rpg', coresDoTema(rpgCss)],
+  ['cyber', coresDoTema(cyberCss)],
 ] as const
 
 describe('contraste', () => {

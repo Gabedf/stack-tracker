@@ -79,7 +79,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 25.2 Criar `src/themes/cyber.css` com a paleta, `color-scheme: dark` e tabela de contraste.
 - [x] 25.3 Validar as séries de gráfico do cyber contra a surface escura, incluindo daltonismo.
 - [x] 25.4 Instalar `@fontsource/oxanium`, importar os pesos usados e definir as fontes do tema.
-- [ ] 25.5 Registrar `cyber` em `CONFIG_TEMAS` e no `index.html`; conferir impressão; ajustar testes.
+- [x] 25.5 Registrar `cyber` em `CONFIG_TEMAS` e no `index.html`; conferir impressão; ajustar testes.
 - [ ] 25.6 Criar `src/themes/contraste.test.ts` verificando os contrastes mínimos dos temas.
 - [ ] 25.R Revisão de código somente leitura da etapa 25.
 - [ ] 25.V Revisão visual da etapa 25 nos três temas (1280px e 375px).
@@ -131,5 +131,6 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Provisórios do cyber (25.2): séries de gráfico `#22d3ee`, `#f472b6`, `#a3e635`, `#ff8c42` (a 25.3 valida) e fontes de sistema (títulos `Bahnschrift`/`DIN Alternate`; a 25.4 troca pela Oxanium); `cyber.css` já tem foco com `--theme-glow` e transições atrás de `no-preference`, sem pele de level-up (27.4).
 - Séries de gráfico do cyber (25.3): nota `#069ce4`, teoria `#9b48fb`, prática `#879f18`, profundidade `#b64e10` (dataviz, todos os pares: normal 21.4, protan 14.9, deutan 9.3, tritan 11.2; >= 3.19:1 nos três fundos); nota não usa o ciano do accent para o radar não parecer realce.
 - Fontes do cyber (25.4): `@fontsource/oxanium` só `latin-600` e `latin-700` (pesos dos `font-heading`: semibold/bold); `--theme-font-heading` = `'Oxanium'` + sans de sistema; `--theme-font-base` = sans de sistema (`ui-sans-serif, system-ui, ...`); `--theme-font-mono` = pilha mono do Tailwind 4, que é a fonte dos números do cyber (a Oxanium não tem peso 400 importado e fica só nos números que já são títulos, como o nível da ficha).
+- Registro do cyber (25.5): `CONFIG_TEMAS.cyber` = `{ rotulo: 'Cyber', jogo: true, esquema: 'dark', levelUp: 'pergaminho' }` (a 27.4 troca para `'sistema'`); `print.css` já era genérico (`html[data-theme] { color-scheme: light }`, fundo/texto/sombras com `!important` em `body *`) e agora zera `body::before/::after`, então a 26.2 pode usá-los; pseudo-elementos de `.painel` (26.3) precisam de `box-shadow`/fundo neutros no print por conta própria (`body *` não pega `::before/::after`); o cyber já entrou no `contraste.test.ts` e passa, a 25.6 só amplia.
 
 ## Pendências
