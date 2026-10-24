@@ -103,10 +103,10 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 27.2 Colmeia neon: brilho por raridade, pulso no lendário, anel no selecionado, selo holográfico.
 - [x] 27.3 Radar com grade ciano e polígono com `drop-shadow`; tooltip do hex com `// SKILL DATA`.
 - [x] 27.4 Level-up "mensagem do sistema" (`levelUp: 'sistema'`) com faixa, glitch único e riscos de luz.
-- [ ] 27.5 (opcional) Painéis materializam em sequência ao trocar de rota nos temas de jogo.
+- [x] 27.5 (opcional) Painéis materializam em sequência ao trocar de rota nos temas de jogo (pulada; ver Pendências).
 - [x] 27.R Revisão de código somente leitura da etapa 27 (dispensada por decisão do usuário).
-- [ ] 27.V Revisão visual da etapa 27 nos três temas.
-- [ ] 27.M Merge `merge: etapa 27 - cyber sheet` em `feat/tema-cyber`.
+- [x] 27.V Revisão visual da etapa 27 nos três temas (5 achados corrigidos; level-up e tooltips verificados; rpg/funcional sem regressão).
+- [x] 27.M Merge `merge: etapa 27 - cyber sheet` em `feat/tema-cyber`.
 
 ### Etapa final (`feat/tema-cyber`)
 
@@ -149,6 +149,8 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - /ficha, o hexágono "esfriando" (texto escuro sobre azul com opacidade 0,6, ~3,8:1): RESOLVIDO no cyber (27.2: opacidade 1 por `!important` em `[data-esfriando]`, cor esfriada, texto `--theme-text`); continua pendente em funcional e rpg (`OPACIDADE_ESFRIANDO` em `SkillHoneycomb.tsx`, mudar a aparência deles foi vetado).
 - /, 375px, todos os temas: o rótulo "Kubernetes" aparece cortado ("Kubern") na borda direita do gráfico Teoria × prática (`TheoryPracticeQuadrant`); cosmético, pré-existente (revisão 25.V).
 - /ficha, todos os temas: no radar, os números da escala (8/10) sobrepõem o rótulo do eixo de cima; cosmético, pré-existente; avaliado na 27.3 e mantido (corrigir exige mexer em ângulo/margem/offset do `PolarRadiusAxis` em `CategoryRadar.tsx`, o que mudaria funcional e rpg) (revisão 25.V).
-- Tooltip do hexágono da colmeia não foi verificado na revisão visual 25.V (o hover automático não acertou o hexágono); conferir nas revisões 26.V/27.V.
+- Tooltip do hexágono da colmeia não foi verificado na revisão visual 25.V: RESOLVIDO (verificado nas revisões 26.V e 27.V).
 - /curriculo, 320px, cyber (pré-existente, não é do tema): o link ativo 'Currículo' fica fora da área visível da nav (rolagem horizontal, scrollLeft 0). Provável causa: falta scrollIntoView do link ativo em AppLayout.tsx. Em 375px está visível.
 - Colmeia (27.2): ganchos no link do hex `data-nivel` (ids iniciante..mestre, não 1..5), `data-selecionado` (hex do cartão aberto), `data-sei-por-saber`, `data-esfriando`, e `data-hex-base`/`data-hex-corpo`/`data-selo-holo`/`data-anel-selecao`/`data-brilho`/`data-holo-stop`; anel e camada holo nascem com `display="none"` (atributo SVG) e só o cyber os mostra; em reduced motion o anel fica PARADO e visível (tracejado estático), o holograma estático, o pulso do lendário e o giro só em no-preference; o filtro vai no polígono, nunca em ancestral do tooltip.
+
+- 27.5 (painéis materializam em sequência ao trocar de rota) não implementada: tarefa opcional, pulada por decisão do orquestrador ('só o necessário'); sem efeito sobre o resto.
