@@ -520,8 +520,10 @@
 [data-theme='cyber'] a[data-nivel='mestre'] {
   --cyber-nivel: var(--theme-level-5);
   --cyber-hex-tinta: 22%;
-  --cyber-hex-brilho: drop-shadow(0 0 5px color-mix(in srgb, var(--cyber-nivel) 85%, transparent))
-    drop-shadow(0 0 12px color-mix(in srgb, var(--cyber-nivel) 50%, transparent));
+  /* Halo <= 10px: o wrapper da colmeia tem overflow-x-auto e MARGEM = 12 (SkillHoneycomb.tsx);
+     um raio maior seria cortado na borda do SVG. */
+  --cyber-hex-brilho: drop-shadow(0 0 4px color-mix(in srgb, var(--cyber-nivel) 85%, transparent))
+    drop-shadow(0 0 10px color-mix(in srgb, var(--cyber-nivel) 50%, transparent));
 }
 
 /* Os halos ciano do componente (atrás dos níveis altos) dão lugar ao drop-shadow do nível. */
@@ -608,12 +610,12 @@
   @keyframes cyber-hex-pulso {
     0%,
     100% {
-      filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cyber-nivel) 85%, transparent))
-        drop-shadow(0 0 12px color-mix(in srgb, var(--cyber-nivel) 50%, transparent));
+      filter: drop-shadow(0 0 4px color-mix(in srgb, var(--cyber-nivel) 85%, transparent))
+        drop-shadow(0 0 10px color-mix(in srgb, var(--cyber-nivel) 50%, transparent));
     }
     50% {
-      filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cyber-nivel) 100%, transparent))
-        drop-shadow(0 0 20px color-mix(in srgb, var(--cyber-nivel) 65%, transparent));
+      filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cyber-nivel) 100%, transparent))
+        drop-shadow(0 0 10px color-mix(in srgb, var(--cyber-nivel) 80%, transparent));
     }
   }
 
@@ -694,8 +696,9 @@
  * título e os riscos de luz. A estrutura dos riscos (posição) vem de efeitos-jogo.css.
  */
 [data-theme='cyber'] .levelup-toast {
-  /* Vidro como o painel: surface a 88% (o fundo atrás é escuro; texto segue >= 4.5:1). */
-  background-color: color-mix(in srgb, var(--theme-surface) 88%, transparent);
+  /* Pele de vidro por borda e brilho; o fundo é quase opaco (98%) para o texto da página não
+     aparecer através do toast (texto >= 4.5:1 mesmo sobre texto claro atrás). */
+  background-color: color-mix(in srgb, var(--theme-surface) 98%, transparent);
   border-color: rgb(var(--cyber-neon) / 0.85);
 }
 
@@ -723,6 +726,12 @@
    */
   [data-theme='cyber'] .levelup-toast[data-animacao='ligada'] [data-levelup-titulo] {
     animation: cyber-levelup-glitch 0.5s linear 0.3s 1 both;
+  }
+
+  /* Os riscos ficam dentro do painel: o contêiner (inset: 0 no toast, definido em
+     efeitos-jogo.css) corta o que passar; ele não é ancestral de tooltip. */
+  [data-theme='cyber'] .levelup-particulas {
+    overflow: hidden;
   }
 
   /* Riscos de luz: finos, diagonais, cruzam o painel e somem (pele das .levelup-particula). */
@@ -778,14 +787,14 @@
 @keyframes cyber-levelup-risco {
   0% {
     opacity: 0;
-    transform: translateY(var(--desvio)) rotate(var(--angulo)) translateX(-9rem);
+    transform: translateY(var(--desvio)) rotate(var(--angulo)) translateX(-7rem);
   }
   30% {
     opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translateY(var(--desvio)) rotate(var(--angulo)) translateX(9rem);
+    transform: translateY(var(--desvio)) rotate(var(--angulo)) translateX(7rem);
   }
 }
 
@@ -936,8 +945,7 @@
 
   /* Cabeçalho do tooltip da colmeia: cores de sistema, sem brilho. */
   [data-theme='cyber'] [data-tooltip-cabecalho] {
-    border-bottom-color: CanvasText;
-    color: CanvasText;
+    display: none;
   }
 }
 
@@ -976,6 +984,12 @@
   [data-theme='cyber'] [data-xpbar-preenchimento] {
     background: currentColor !important;
   }
+
+  /* Rótulo `LV N`: preto no papel (a cor do tema é quase branca). */
+  [data-theme='cyber'] [data-xpbar]::before {
+    color: #000 !important;
+  }
+
   /* Colmeia: sem halos, camadas nem animação; contorno e texto pretos sobre o papel. */
   [data-theme='cyber'] [data-brilho],
   [data-theme='cyber'] [data-selo-holo],
