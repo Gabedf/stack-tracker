@@ -80,7 +80,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 25.3 Validar as séries de gráfico do cyber contra a surface escura, incluindo daltonismo.
 - [x] 25.4 Instalar `@fontsource/oxanium`, importar os pesos usados e definir as fontes do tema.
 - [x] 25.5 Registrar `cyber` em `CONFIG_TEMAS` e no `index.html`; conferir impressão; ajustar testes.
-- [ ] 25.6 Criar `src/themes/contraste.test.ts` verificando os contrastes mínimos dos temas.
+- [x] 25.6 Criar `src/themes/contraste.test.ts` verificando os contrastes mínimos dos temas.
 - [ ] 25.R Revisão de código somente leitura da etapa 25.
 - [ ] 25.V Revisão visual da etapa 25 nos três temas (1280px e 375px).
 - [ ] 25.M Merge `merge: etapa 25 - cyber tokens` em `feat/tema-cyber`.
@@ -132,5 +132,6 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Séries de gráfico do cyber (25.3): nota `#069ce4`, teoria `#9b48fb`, prática `#879f18`, profundidade `#b64e10` (dataviz, todos os pares: normal 21.4, protan 14.9, deutan 9.3, tritan 11.2; >= 3.19:1 nos três fundos); nota não usa o ciano do accent para o radar não parecer realce.
 - Fontes do cyber (25.4): `@fontsource/oxanium` só `latin-600` e `latin-700` (pesos dos `font-heading`: semibold/bold); `--theme-font-heading` = `'Oxanium'` + sans de sistema; `--theme-font-base` = sans de sistema (`ui-sans-serif, system-ui, ...`); `--theme-font-mono` = pilha mono do Tailwind 4, que é a fonte dos números do cyber (a Oxanium não tem peso 400 importado e fica só nos números que já são títulos, como o nível da ficha).
 - Registro do cyber (25.5): `CONFIG_TEMAS.cyber` = `{ rotulo: 'Cyber', jogo: true, esquema: 'dark', levelUp: 'pergaminho' }` (a 27.4 troca para `'sistema'`); `print.css` já era genérico (`html[data-theme] { color-scheme: light }`, fundo/texto/sombras com `!important` em `body *`) e agora zera `body::before/::after`, então a 26.2 pode usá-los; pseudo-elementos de `.painel` (26.3) precisam de `box-shadow`/fundo neutros no print por conta própria (`body *` não pega `::before/::after`); o cyber já entrou no `contraste.test.ts` e passa, a 25.6 só amplia.
+- Contraste (25.6): `contraste.test.ts` descobre os temas por `import.meta.glob('./*.css')` + bloco `[data-theme='<id>'] {` (como o tokens.test.ts) e exige que batam com `TEMAS`/`CONFIG_TEMAS`; `--theme-border` >= 3 só quando `ehTemaDeJogo` (funcional ~1.5:1 é pendência da etapa 22, não corrigida); par reprovado em tema existente vai para a lista `EXCECOES` (`'<tema>: <token> sobre <fundo>'`, hoje vazia) com registro em Pendências; todos os pares dos três temas passam.
 
 ## Pendências
