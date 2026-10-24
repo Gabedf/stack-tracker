@@ -100,10 +100,22 @@ export function ImportSection({ stacks, onImportar, desabilitado = false }: Impo
   const [erroSalvar, setErroSalvar] = useState<string[] | null>(null)
   const [sucesso, setSucesso] = useState<string | null>(null)
   const cancelarRef = useRef<HTMLButtonElement>(null)
+  const importarRef = useRef<HTMLButtonElement>(null)
+  /** Ao sair da confirmação por "Voltar" ou Esc, o foco volta ao botão Importar. */
+  const voltarFoco = useRef(false)
 
   useLayoutEffect(() => {
     if (confirmando) cancelarRef.current?.focus()
+    else if (voltarFoco.current) {
+      voltarFoco.current = false
+      importarRef.current?.focus()
+    }
   }, [confirmando])
+
+  function voltarDaConfirmacao() {
+    voltarFoco.current = true
+    setConfirmando(false)
+  }
 
   // A comparação acompanha as stacks atuais do painel.
   const analise = useMemo(
@@ -315,7 +327,7 @@ export function ImportSection({ stacks, onImportar, desabilitado = false }: Impo
               onKeyDown={(e) => {
                 if (e.key === 'Escape' && !importando) {
                   e.stopPropagation()
-                  setConfirmando(false)
+                  voltarDaConfirmacao()
                 }
               }}
               className="space-y-3 rounded-theme border border-danger bg-surface p-4"
@@ -338,7 +350,7 @@ export function ImportSection({ stacks, onImportar, desabilitado = false }: Impo
                   ref={cancelarRef}
                   type="button"
                   disabled={importando}
-                  onClick={() => setConfirmando(false)}
+                  onClick={voltarDaConfirmacao}
                   className={CLASSE_SECUNDARIO}
                 >
                   Voltar
@@ -348,6 +360,7 @@ export function ImportSection({ stacks, onImportar, desabilitado = false }: Impo
           ) : (
             <div className="flex flex-wrap gap-3">
               <button
+                ref={importarRef}
                 type="button"
                 disabled={desabilitado || importando}
                 onClick={aoClicarImportar}

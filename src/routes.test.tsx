@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { lazy } from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { beforeAll, describe, expect, it } from 'vitest'
@@ -158,5 +158,35 @@ describe('navegação principal', () => {
 
     fireEvent.click(within(nav()).getByRole('link', { name: 'Dashboard' }))
     expect(await h1('Dashboard')).toBeInTheDocument()
+  })
+})
+
+describe('foco ao navegar', () => {
+  it('o skip link leva o foco ao <main>', () => {
+    renderEm('/')
+    fireEvent.click(screen.getByRole('link', { name: 'Pular para o conteúdo' }))
+    expect(screen.getByRole('main')).toHaveFocus()
+  })
+
+  it('não move o foco na primeira renderização', async () => {
+    renderEm('/stacks')
+    expect(await h1('Stacks')).not.toHaveFocus()
+  })
+
+  it('ao trocar de rota, foca o h1 da nova página (anunciado pelo leitor de tela)', async () => {
+    renderEm('/')
+    await h1('Dashboard')
+
+    const link = within(nav()).getByRole('link', { name: 'Currículo' })
+    link.focus()
+    fireEvent.click(link)
+    const titulo = await h1('Currículo')
+    await waitFor(() => expect(titulo).toHaveFocus())
+    expect(titulo).toHaveAttribute('tabindex', '-1')
+
+    fireEvent.click(within(nav()).getByRole('link', { name: 'Stacks' }))
+    await waitFor(() =>
+      expect(screen.getByRole('heading', { level: 1, name: 'Stacks' })).toHaveFocus(),
+    )
   })
 })

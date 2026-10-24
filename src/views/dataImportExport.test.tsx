@@ -300,6 +300,14 @@ describe('importar JSON válido', () => {
     // Voltar não salva; confirmar salva.
     fireEvent.click(within(confirmacao).getByRole('button', { name: 'Voltar' }))
     expect(adapter.salvar).not.toHaveBeenCalled()
+    expect(botao('Importar')).toHaveFocus()
+
+    // Esc também sai da confirmação e devolve o foco ao Importar.
+    fireEvent.click(botao('Importar'))
+    fireEvent.keyDown(botao('Voltar'), { key: 'Escape' })
+    expect(screen.queryByRole('button', { name: 'Voltar' })).not.toBeInTheDocument()
+    expect(botao('Importar')).toHaveFocus()
+
     fireEvent.click(botao('Importar'))
     fireEvent.click(botao('Confirmar substituição'))
 

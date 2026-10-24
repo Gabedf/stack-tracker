@@ -75,3 +75,14 @@
     outline-offset: 2px;
   }
 }
+
+/*
+ * Alvos de foco só por script (o <main> do skip link e o h1 focado ao trocar de
+ * rota): o leitor de tela anuncia, mas não há contorno, já que não são controles.
+ * Fora de @layer para vencer também o brilho de foco do rpg.css.
+ */
+main[tabindex='-1']:focus,
+h1[tabindex='-1']:focus {
+  outline: none;
+  box-shadow: none;
+}
