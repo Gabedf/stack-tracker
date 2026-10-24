@@ -45,6 +45,7 @@
 
   --font-sans: var(--theme-font-base);
   --font-heading: var(--theme-font-heading);
+  --font-mono: var(--theme-font-mono);
 }
 
 @layer base {

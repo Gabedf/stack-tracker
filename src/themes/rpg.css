@@ -87,6 +87,10 @@
   /* Texto corrido numa serifada do sistema; títulos em Cinzel (capitulares romanas). */
   --theme-font-base: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
   --theme-font-heading: 'Cinzel', 'Palatino Linotype', Georgia, serif;
+  /* Monoespaçada: a mesma pilha padrão do Tailwind 4, como no tema funcional. */
+  --theme-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   --theme-heading-tracking: 0.03em;
 
   /* Ícones: traço mais grosso e um leve preenchimento, como gravura/emblema. */

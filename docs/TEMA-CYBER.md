@@ -75,7 +75,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 
 ### Etapa 25: `feat/25-cyber-tokens` (o tema existe e tudo funciona nele)
 
-- [ ] 25.1 Token `--theme-font-mono` em tokens.css e rpg.css e mapeamento `--font-mono` no `@theme inline`.
+- [x] 25.1 Token `--theme-font-mono` em tokens.css e rpg.css e mapeamento `--font-mono` no `@theme inline`.
 - [ ] 25.2 Criar `src/themes/cyber.css` com a paleta, `color-scheme: dark` e tabela de contraste.
 - [ ] 25.3 Validar as séries de gráfico do cyber contra a surface escura, incluindo daltonismo.
 - [ ] 25.4 Instalar `@fontsource/oxanium`, importar os pesos usados e definir as fontes do tema.
@@ -124,5 +124,6 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Anti-flash (24.4): os ids aceitos ficam no array literal `var temas = [...]` do script em `index.html` (aspas simples); ao registrar um tema, acrescente o id ali também; `src/themes/antiFlash.test.ts` compara com `TEMAS` (mesmo conjunto) e confere a chave `CHAVE_TEMA_STORAGE`.
 - Paridade de tokens (24.5): arquivo de tema = `src/themes/*.css` (fora `tokens.css`, a referência) com um bloco cujo seletor é só `[data-theme='<id>'] {` no início da linha; `efeitos-jogo.css` deve usar só seletores descendentes (`[data-theme='rpg'] .x`) e não definir `--theme-*` (há teste para isso); `cyber.css` entra sozinho no `it.each` ao ter o bloco `[data-theme='cyber'] {`.
 - Efeitos de jogo (24.6): `efeitos-jogo.css` (importado entre tokens.css e rpg.css) tem só a estrutura das faíscas, sem escopo de tema e dentro de `prefers-reduced-motion: no-preference`; cor, brilho, `--angulo`, animação e keyframes ficam no CSS de cada tema de jogo (`[data-theme='<id>'] .levelup-particula`), então o cyber precisa trazer a pele e a animação dele.
+- Fonte mono (25.1): `--theme-font-mono` = pilha mono padrão do Tailwind 4 no funcional e no rpg, mapeada em `--font-mono` (classe `font-mono`, hoje só nos textareas de importar/currículo); os números hoje usam a fonte base + `tabular-nums`, então aplicar `font-mono` neles mudaria funcional/rpg: o cyber deve trocar a fonte dos números só sob `[data-theme='cyber']`.
 
 ## Pendências
