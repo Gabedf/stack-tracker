@@ -7,6 +7,10 @@
  * de rótulo. O número de colunas depende só da largura disponível, então a
  * mesma função serve para 1 ou para 100 stacks sem sobreposição.
  *
+ * Em telas estreitas o hexágono encolhe (até RAIO_MINIMO) quando isso mantém
+ * mais colunas; depois disso, as colunas caem até 1. A grade não passa da
+ * largura disponível (exceto abaixo de ~100 px, em que nem uma coluna cabe).
+ *
  * Geometria (R = raio circunscrito):
  *   largura do hex  = √3 · R    altura do hex = 2 · R
  *   passo horizontal = √3 · R + espaço
@@ -29,8 +33,12 @@ export interface ItemColmeia {
 export interface OpcoesColmeia {
   /** Largura disponível em px. */
   largura: number
-  /** Raio circunscrito do hexágono (centro ao vértice). */
+  /** Raio circunscrito do hexágono (centro ao vértice): o maior, usado se couber. */
   raio?: number
+  /** Menor raio aceito ao encolher em telas estreitas. Igual a `raio` desliga o ajuste. */
+  raioMinimo?: number
+  /** Colunas que a colmeia tenta manter encolhendo o hexágono. */
+  colunasDesejadas?: number
   /** Espaço entre hexágonos vizinhos. */
   espaco?: number
   /** Margem em volta da grade (brilho e anel de foco não são cortados). */
@@ -74,6 +82,9 @@ export interface LayoutColmeia<T extends ItemColmeia = ItemColmeia> {
 }
 
 export const RAIO_PADRAO = 34
+/** Menor raio legível: o rótulo curto (até 7 letras, 10 px) ainda cabe. */
+export const RAIO_MINIMO = 28
+export const COLUNAS_DESEJADAS = 6
 export const ESPACO_PADRAO = 4
 export const MARGEM_PADRAO = 8
 export const ALTURA_ROTULO_PADRAO = 22
@@ -90,20 +101,57 @@ export function passosHex(raio: number, espaco: number): { passoX: number; passo
   return { passoX: larguraHex(raio) + espaco, passoY: 1.5 * raio + (espaco * RAIZ3) / 2 }
 }
 
+/** Colunas que cabem de fato na largura (0 se nem uma cabe). */
+function colunasQueCabem(
+  quantidade: number,
+  largura: number,
+  raio: number,
+  espaco: number,
+  margem: number,
+): number {
+  const { passoX } = passosHex(raio, espaco)
+  const util = Math.max(0, largura - 2 * margem) + espaco
+  const numaLinha = Math.floor(util / passoX)
+  if (quantidade <= numaLinha) return quantidade
+  return Math.max(0, Math.floor((util - passoX / 2) / passoX))
+}
+
 /**
  * Colunas que cabem na largura. Com mais de uma linha, a linha deslocada ocupa
  * meio passo a mais; se todos os itens cabem numa linha só, esse meio passo não
- * é necessário. Nunca menos que 1 (em telas muito estreitas, a grade rola).
+ * é necessário. Nunca menos que 1 (abaixo de ~100 px, a grade rola).
  */
 export function colunasDaColmeia(
   quantidade: number,
   { largura, raio = RAIO_PADRAO, espaco = ESPACO_PADRAO, margem = MARGEM_PADRAO }: OpcoesColmeia,
 ): number {
-  const { passoX } = passosHex(raio, espaco)
-  const util = Math.max(0, largura - 2 * margem) + espaco
-  const numaLinha = Math.floor(util / passoX)
-  if (quantidade <= numaLinha) return Math.max(1, quantidade)
-  return Math.max(1, Math.floor((util - passoX / 2) / passoX))
+  return Math.max(1, colunasQueCabem(quantidade, largura, raio, espaco, margem))
+}
+
+/**
+ * Raio do hexágono para a largura: o maior entre `raioMinimo` e `raio` que
+ * ainda mantém o máximo de colunas possível (até `colunasDesejadas`). Se o
+ * hexágono menor não ganha colunas, fica o tamanho cheio; se nem uma coluna
+ * cabe no tamanho cheio, encolhe até caber (ou até o mínimo).
+ */
+export function raioDaColmeia(
+  quantidade: number,
+  {
+    largura,
+    raio = RAIO_PADRAO,
+    raioMinimo = RAIO_MINIMO,
+    colunasDesejadas = COLUNAS_DESEJADAS,
+    espaco = ESPACO_PADRAO,
+    margem = MARGEM_PADRAO,
+  }: OpcoesColmeia,
+): number {
+  const minimo = Math.min(raioMinimo, raio)
+  const cabem = (r: number) => colunasQueCabem(quantidade, largura, r, espaco, margem)
+  const alvo = Math.max(1, Math.min(colunasDesejadas, quantidade, cabem(minimo)))
+  for (let r = raio; r > minimo; r--) {
+    if (cabem(r) >= alvo) return r
+  }
+  return minimo
 }
 
 /** Itens agrupados por categoria (na ordem pedida) e, dentro dela, por nota decrescente. */
@@ -130,13 +178,13 @@ export function layoutColmeia<T extends ItemColmeia>(
   opcoes: OpcoesColmeia,
 ): LayoutColmeia<T> {
   const {
-    raio = RAIO_PADRAO,
     espaco = ESPACO_PADRAO,
     margem = MARGEM_PADRAO,
     alturaRotulo = ALTURA_ROTULO_PADRAO,
     ordemCategorias,
   } = opcoes
   const ordenados = ordenarParaColmeia(itens, ordemCategorias)
+  const raio = raioDaColmeia(ordenados.length, { ...opcoes, espaco, margem })
   const colunas = colunasDaColmeia(ordenados.length, { ...opcoes, raio, espaco, margem })
   const { passoX, passoY } = passosHex(raio, espaco)
   const meiaLargura = larguraHex(raio) / 2
@@ -185,6 +233,35 @@ export function layoutColmeia<T extends ItemColmeia>(
   const largura = Math.max(opcoes.largura, maiorX + margem)
 
   return { hexagonos, grupos, colunas, linhas: linha, raio, largura, altura }
+}
+
+export const LARGURA_CARTAO = 224
+/** Altura aproximada do cartão de detalhes: decide se ele cabe acima do hexágono. */
+export const ALTURA_CARTAO = 170
+export const FOLGA_CARTAO = 6
+/** Abaixo desta largura o cartão não flutua sobre a colmeia: aparece logo abaixo dela. */
+export const LARGURA_MINIMA_CARTAO_FLUTUANTE = 2 * LARGURA_CARTAO
+
+export type PosicaoCartao =
+  { modo: 'abaixo' } | { modo: 'flutuante'; left: number; top: number; acima: boolean }
+
+/**
+ * Onde mostrar o cartão de detalhes de `hex`, relativo à colmeia. Em larguras
+ * estreitas, abaixo da colmeia (no fluxo, largura total). Nas demais, flutuando
+ * acima do hexágono se couber, senão abaixo; na horizontal, centrado no
+ * hexágono e preso às bordas da área visível, então nunca sai da tela.
+ */
+export function posicaoDoCartao(
+  hex: Pick<HexPosicionado, 'x' | 'y'>,
+  layout: Pick<LayoutColmeia, 'largura' | 'raio'>,
+  larguraVisivel: number,
+): PosicaoCartao {
+  const limite = Math.min(layout.largura, larguraVisivel)
+  if (limite < LARGURA_MINIMA_CARTAO_FLUTUANTE) return { modo: 'abaixo' }
+  const left = Math.max(0, Math.min(hex.x - LARGURA_CARTAO / 2, limite - LARGURA_CARTAO))
+  const acima = hex.y - layout.raio - FOLGA_CARTAO - ALTURA_CARTAO >= 0
+  const top = acima ? hex.y - layout.raio - FOLGA_CARTAO : hex.y + layout.raio + FOLGA_CARTAO
+  return { modo: 'flutuante', left, top, acima }
 }
 
 /** Pontos do polígono (atributo points do SVG) de um hexágono pointy-top. */

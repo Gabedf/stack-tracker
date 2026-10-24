@@ -27,7 +27,7 @@ const VISOES: readonly { id: Visao; rotulo: string }[] = [
 ]
 
 const CLASSE_BOTAO =
-  'rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
+  'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 
 export interface StacksViewProps {
   /** Data de referência para as notas (decaimento). Padrão: o momento da montagem. */

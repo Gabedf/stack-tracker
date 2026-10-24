@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, type TargetAndTransition, type Transition } from 'framer-motion'
+import { AnimatePresence, m, type TargetAndTransition, type Transition } from 'framer-motion'
 import { useEffect, type CSSProperties } from 'react'
 import { useMenosMovimento } from '../../components/motion'
 import { useTheme } from '../../themes'
@@ -87,7 +87,7 @@ export function LevelUpToast({
     >
       <AnimatePresence mode="wait">
         {aviso && (
-          <motion.div
+          <m.div
             key={aviso.chave}
             data-testid="levelup-toast"
             data-tema={tema}
@@ -132,7 +132,7 @@ export function LevelUpToast({
             >
               ×
             </button>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

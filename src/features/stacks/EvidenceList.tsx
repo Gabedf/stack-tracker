@@ -35,7 +35,7 @@ const ICONE_EVIDENCIA: Record<TipoEvidencia, (props: IconeProps) => ReactElement
 }
 
 const CLASSE_BOTAO =
-  'rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60'
+  'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60'
 const CLASSE_BOTAO_PERIGO =
   'rounded-theme border border-danger bg-surface px-3 py-1.5 text-sm font-medium text-danger hover:bg-surface-2'
 

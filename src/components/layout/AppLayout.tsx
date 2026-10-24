@@ -1,7 +1,10 @@
+import { Suspense, useRef, type MouseEvent } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { ThemeToggle, useTheme, type Tema } from '../../themes'
 
 import { NOME_APP } from './constants'
+import { RouteFallback } from './RouteFallback'
+import { useFocoAoNavegar } from './useFocoAoNavegar'
 
 interface LinkNav {
   to: string
@@ -29,11 +32,20 @@ function classeLink({ isActive }: { isActive: boolean }) {
 export function AppLayout() {
   const { tema } = useTheme()
   const links = LINKS_NAV.filter((link) => !link.temas || link.temas.includes(tema))
+  const mainRef = useRef<HTMLElement>(null)
+  useFocoAoNavegar(mainRef)
+
+  // Foca o <main> direto (tabIndex -1): funciona com o router e não suja a URL com #conteudo.
+  function pularParaConteudo(evento: MouseEvent<HTMLAnchorElement>) {
+    evento.preventDefault()
+    mainRef.current?.focus()
+  }
 
   return (
     <div className="min-h-screen bg-bg text-fg">
       <a
         href="#conteudo"
+        onClick={pularParaConteudo}
         className="sr-only rounded-theme border border-border bg-surface px-3 py-2 text-sm font-medium text-fg shadow-theme focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
       >
         Pular para o conteúdo
@@ -47,9 +59,10 @@ export function AppLayout() {
 
           <nav
             aria-label="Principal"
-            className="order-last -mx-1 w-full overflow-x-auto sm:order-none sm:mx-0 sm:w-auto"
+            className="order-last -m-1 w-full overflow-x-auto sm:order-none sm:w-auto"
           >
-            <ul className="flex gap-1 px-1 sm:px-0">
+            {/* p-1 no contêiner rolável: o contorno de foco (2px + 2px de offset) não é cortado. */}
+            <ul className="flex gap-1 p-1">
               {links.map(({ to, rotulo, end }) => (
                 <li key={to}>
                   <NavLink to={to} end={end} className={classeLink}>
@@ -71,12 +84,21 @@ export function AppLayout() {
       </header>
 
       <main
+        ref={mainRef}
         id="conteudo"
         tabIndex={-1}
         className="mx-auto max-w-5xl px-4 py-6 focus:outline-none sm:px-6"
       >
-        <Outlet />
+        <Suspense fallback={<RouteFallback />}>
+          <Outlet />
+        </Suspense>
       </main>
+
+      <footer data-print="ocultar" className="border-t border-border">
+        <p className="mx-auto max-w-5xl px-4 py-4 text-sm text-muted sm:px-6">
+          {NOME_APP}: seus dados ficam só neste computador, em data/stacks.json.
+        </p>
+      </footer>
     </div>
   )
 }

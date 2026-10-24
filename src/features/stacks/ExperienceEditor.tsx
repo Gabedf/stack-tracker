@@ -80,7 +80,7 @@ export function ExperienceEditor({ experiencia, onSalvar }: ExperienceEditorProp
             id={`${base}-tipo`}
             value={rascunho.tipo}
             onChange={(e) => alterar({ tipo: e.target.value as TipoExperiencia })}
-            className="w-full rounded-theme border border-border bg-surface px-3 py-1.5 text-sm text-fg shadow-theme"
+            className="w-full rounded-theme border border-control bg-surface px-3 py-1.5 text-sm text-fg shadow-theme"
           >
             {TIPOS_EXPERIENCIA.map((tipo) => (
               <option key={tipo} value={tipo}>
@@ -104,7 +104,7 @@ export function ExperienceEditor({ experiencia, onSalvar }: ExperienceEditorProp
             aria-invalid={erroMeses ? true : undefined}
             aria-describedby={erroMeses ? `${base}-meses-erro` : undefined}
             onChange={(e) => alterar({ meses: e.target.value })}
-            className={`w-full rounded-theme border bg-surface px-3 py-1.5 text-sm text-fg shadow-theme ${erroMeses ? 'border-danger' : 'border-border'}`}
+            className={`w-full rounded-theme border bg-surface px-3 py-1.5 text-sm text-fg shadow-theme ${erroMeses ? 'border-danger' : 'border-control'}`}
           />
           {erroMeses && (
             <p id={`${base}-meses-erro`} className="text-sm font-medium text-danger">

@@ -6,7 +6,7 @@
 /*
  * Expõe os tokens dos temas ao Tailwind. "inline" faz as classes usarem
  * var(--theme-*) diretamente, então elas acompanham o data-theme ativo.
- * Ex.: bg-bg, bg-surface, bg-surface-2, text-fg, text-muted, border-border,
+ * Ex.: bg-bg, bg-surface, bg-surface-2, text-fg, text-muted, border-border, border-control,
  * text-accent, bg-accent text-accent-contrast, rounded-theme, shadow-theme, font-heading,
  * bg-xp-fill, bg-xp-track, text-level-1..5, shadow-glow.
  */
@@ -17,6 +17,7 @@
   --color-fg: var(--theme-text);
   --color-muted: var(--theme-text-muted);
   --color-border: var(--theme-border);
+  --color-control: var(--theme-border-control);
   --color-accent: var(--theme-accent);
   --color-accent-contrast: var(--theme-accent-contrast);
   --color-success: var(--theme-success);
@@ -69,8 +70,38 @@
     fill-opacity: var(--theme-icon-fill-opacity);
   }
 
-  :focus-visible {
+  /* Campo de data: o foco fica nos segmentos internos (dia/mês/ano), sem
+     :focus-visible no próprio input; o contorno vem do :focus-within. */
+  :focus-visible,
+  input[type='date']:focus-within {
     outline: 2px solid var(--theme-focus);
     outline-offset: 2px;
+  }
+}
+
+/*
+ * Alvos de foco só por script (o <main> do skip link e o h1 focado ao trocar de
+ * rota): o leitor de tela anuncia, mas não há contorno, já que não são controles.
+ * Fora de @layer para vencer também o brilho de foco do rpg.css.
+ */
+main[tabindex='-1']:focus,
+h1[tabindex='-1']:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/*
+ * Rede de segurança do prefers-reduced-motion: os temas e componentes já só
+ * animam com no-preference (rpg.css, motion-safe:, MotionConfig "user"); se
+ * algo escapar, aqui a animação/transição termina na hora.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

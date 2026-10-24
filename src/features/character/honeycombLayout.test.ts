@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
   ESPACO_PADRAO,
+  LARGURA_CARTAO,
   MARGEM_PADRAO,
+  RAIO_MINIMO,
   RAIO_PADRAO,
   colunasDaColmeia,
   hexagonosSobrepoem,
@@ -10,6 +12,8 @@ import {
   ordenarParaColmeia,
   passosHex,
   pontosHexagono,
+  posicaoDoCartao,
+  raioDaColmeia,
   rotuloCurto,
   vizinhoNaColmeia,
   type ItemColmeia,
@@ -87,6 +91,117 @@ describe('colunasDaColmeia', () => {
     expect(colunasDaColmeia(100, { largura: 320 })).toBe(4)
     expect(colunasDaColmeia(100, { largura: 40 })).toBe(1)
     expect(colunasDaColmeia(0, { largura: 480 })).toBe(1)
+  })
+})
+
+describe('raioDaColmeia', () => {
+  it('com espaço de sobra, usa o raio cheio', () => {
+    expect(raioDaColmeia(25, { largura: 768 })).toBe(RAIO_PADRAO)
+    expect(raioDaColmeia(2, { largura: 480 })).toBe(RAIO_PADRAO)
+  })
+
+  it('encolhe só o necessário para ganhar colunas, sem passar do mínimo', () => {
+    const raio = raioDaColmeia(25, { largura: 375 })
+    expect(raio).toBeLessThan(RAIO_PADRAO)
+    expect(raio).toBeGreaterThanOrEqual(RAIO_MINIMO)
+    const colunas = colunasDaColmeia(25, { largura: 375, raio })
+    expect(colunas).toBeGreaterThan(colunasDaColmeia(25, { largura: 375 }))
+    // Um pixel a mais de raio já perde a coluna ganha.
+    expect(colunasDaColmeia(25, { largura: 375, raio: raio + 1 })).toBeLessThan(colunas)
+  })
+
+  it('se o hexágono menor não ganha colunas, fica o tamanho cheio', () => {
+    // 2 itens cabem numa linha nos dois tamanhos.
+    expect(raioDaColmeia(2, { largura: 200 })).toBe(RAIO_PADRAO)
+  })
+
+  it('se nem uma coluna cabe no raio cheio, encolhe até caber', () => {
+    const raio = raioDaColmeia(3, { largura: 100 })
+    expect(raio).toBeLessThan(RAIO_PADRAO)
+    const layout = layoutColmeia(itens(3, ['Frontend']), { largura: 100 })
+    expect(layout.raio).toBe(raio)
+    expect(layout.largura).toBe(100)
+  })
+
+  it('raioMinimo igual ao raio desliga o ajuste', () => {
+    expect(raioDaColmeia(25, { largura: 320, raioMinimo: RAIO_PADRAO })).toBe(RAIO_PADRAO)
+  })
+})
+
+describe('colmeia responsiva', () => {
+  // Larguras de tela comuns, usadas como largura disponível para a colmeia.
+  it.each([320, 375, 768, 1280])(
+    '%i px: não passa da largura, sem colisão e com hexágono legível',
+    (largura) => {
+      const layout = layoutColmeia(itens(25), { largura, ordemCategorias: CATEGORIAS })
+      expect(layout.largura).toBe(largura)
+      expect(
+        Math.max(...layout.hexagonos.map((h) => h.x + larguraHex(layout.raio) / 2)),
+      ).toBeLessThanOrEqual(largura)
+      expect(layout.raio).toBeGreaterThanOrEqual(RAIO_MINIMO)
+      expect(layout.raio).toBeLessThanOrEqual(RAIO_PADRAO)
+      semColisao(layout)
+      dentroDaArea(layout)
+    },
+  )
+
+  it.each([320, 375])('%i px: encolhe o hexágono para manter mais colunas', (largura) => {
+    const layout = layoutColmeia(itens(25), { largura })
+    expect(layout.raio).toBeLessThan(RAIO_PADRAO)
+    expect(layout.colunas).toBeGreaterThan(colunasDaColmeia(25, { largura }))
+  })
+
+  it.each([768, 1280])('%i px: raio cheio', (largura) => {
+    expect(layoutColmeia(itens(25), { largura }).raio).toBe(RAIO_PADRAO)
+  })
+
+  it('em larguras bem estreitas, cai até 1 coluna sem rolar', () => {
+    const layout = layoutColmeia(itens(6, ['Frontend']), { largura: 110 })
+    expect(layout.colunas).toBe(1)
+    expect(layout.largura).toBe(110)
+    semColisao(layout)
+    dentroDaArea(layout)
+  })
+})
+
+describe('posicaoDoCartao', () => {
+  it.each([320, 375])('%i px: o cartão fica abaixo da colmeia', (largura) => {
+    const layout = layoutColmeia(itens(25), { largura })
+    for (const hex of layout.hexagonos) {
+      expect(posicaoDoCartao(hex, layout, largura)).toEqual({ modo: 'abaixo' })
+    }
+  })
+
+  it.each([768, 1280])('%i px: flutua e nunca sai da área visível', (largura) => {
+    const layout = layoutColmeia(itens(25), { largura })
+    for (const hex of layout.hexagonos) {
+      const posicao = posicaoDoCartao(hex, layout, largura)
+      if (posicao.modo !== 'flutuante') throw new Error('esperava flutuante')
+      expect(posicao.left).toBeGreaterThanOrEqual(0)
+      expect(posicao.left + LARGURA_CARTAO).toBeLessThanOrEqual(largura)
+    }
+  })
+
+  it('acima do hexágono se couber; na primeira linha, abaixo', () => {
+    // 480 px: 6 colunas, 5 linhas; da última linha, o cartão cabe acima.
+    const layout = layoutColmeia(itens(25, ['Frontend']), { largura: 480 })
+    const primeiro = layout.hexagonos[0]
+    const ultimo = layout.hexagonos[layout.hexagonos.length - 1]
+    expect(posicaoDoCartao(primeiro, layout, 480)).toMatchObject({
+      acima: false,
+      top: primeiro.y + layout.raio + 6,
+    })
+    expect(posicaoDoCartao(ultimo, layout, 480)).toMatchObject({
+      acima: true,
+      top: ultimo.y - layout.raio - 6,
+    })
+  })
+
+  it('usa a menor entre a largura da colmeia e a visível', () => {
+    const layout = layoutColmeia(itens(25, ['Frontend']), { largura: 1280 })
+    const ultimoDaLinha = layout.hexagonos.reduce((a, b) => (b.x > a.x ? b : a))
+    const posicao = posicaoDoCartao(ultimoDaLinha, layout, 600)
+    expect(posicao).toMatchObject({ modo: 'flutuante', left: 600 - LARGURA_CARTAO })
   })
 })
 

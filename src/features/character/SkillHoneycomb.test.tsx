@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nivelDaNota } from '../../domain/levels'
 import { HOJE_SEED, stacksDoSeed } from '../../test/seed'
 import { skillsDaColmeia, type SkillDaColmeia } from './character'
@@ -207,6 +207,55 @@ describe('SkillHoneycomb: detalhes', () => {
     fireEvent.mouseLeave(links[0])
     fireEvent.mouseEnter(links[29])
     expect(screen.getByRole('tooltip').style.transform).toBe('translateY(-100%)')
+  })
+})
+
+describe('SkillHoneycomb em tela estreita', () => {
+  /** ResizeObserver falso que mede o elemento com a largura dada. */
+  function simularLargura(largura: number) {
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        private readonly callback: ResizeObserverCallback
+        constructor(callback: ResizeObserverCallback) {
+          this.callback = callback
+        }
+        observe() {
+          this.callback(
+            [{ contentRect: { width: largura } } as ResizeObserverEntry],
+            this as unknown as ResizeObserver,
+          )
+        }
+        unobserve() {}
+        disconnect() {}
+      },
+    )
+  }
+
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('cabe na largura medida e mostra o cartão abaixo da colmeia, sem flutuar', () => {
+    simularLargura(254)
+    const muitas = Array.from({ length: 12 }, (_, i) => skill(i))
+    renderColmeia({ skills: muitas })
+    expect(Number(colmeia().getAttribute('width'))).toBeLessThanOrEqual(254)
+
+    const ultimo = hexagonos()[11]
+    fireEvent.mouseEnter(ultimo)
+    const cartao = screen.getByRole('tooltip')
+    expect(cartao).toHaveAttribute('data-posicao', 'abaixo')
+    expect(cartao).not.toHaveClass('absolute')
+    expect(cartao.style.left).toBe('')
+    expect(cartao).toHaveTextContent(ultimo.getAttribute('aria-label')!.split(',')[0])
+  })
+
+  it('em largura folgada, o cartão continua flutuando junto ao hexágono', () => {
+    simularLargura(768)
+    renderColmeia()
+    fireEvent.mouseEnter(hexagonos()[0])
+    const cartao = screen.getByRole('tooltip')
+    expect(cartao).toHaveAttribute('data-posicao', 'flutuante')
+    expect(cartao).toHaveClass('absolute')
   })
 })
 

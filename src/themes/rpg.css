@@ -5,6 +5,7 @@
  * O visual pergaminho/medieval é PROVISÓRIO; o que importa é a sensação de jogo.
  *
  * Contraste WCAG 2.x calculado (texto normal >= 4.5:1; foco, bordas e gráficos >= 3:1).
+ * Conferido por src/themes/contraste.test.ts.
  * Fundos: bg #efe2bf, surface #faf1db, surface-2 #ecdcb4,
  * trilho accent/15 sobre surface (~#e9d3bd).
  *
@@ -22,6 +23,7 @@
  *   level-5     #8f4308      5.48     6.28      5.20        -
  *   focus       #1f4f7a      6.63     7.60      6.29       5.91   (>= 3)
  *   border      #8b6a3e      3.85     4.41      3.66       3.43   (>= 3)
+ *   (border-control usa o mesmo #8b6a3e: no pergaminho a moldura já passa de 3:1)
  *   xp-fill     #8a6410      4.17     4.77      3.95        -     (>= 3)
  *
  *   accent-contrast #faf1db sobre accent 7.62 e sobre danger 8.26.
@@ -47,6 +49,7 @@
   --theme-text: #2b1d0e;
   --theme-text-muted: #5b4126;
   --theme-border: #8b6a3e;
+  --theme-border-control: #8b6a3e;
   --theme-accent: #8a2c12;
   --theme-accent-contrast: #faf1db;
   --theme-success: #2f5d1e;

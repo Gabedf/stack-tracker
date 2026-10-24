@@ -24,7 +24,7 @@ export interface DashboardViewProps {
 }
 
 const CLASSE_BOTAO =
-  'rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
+  'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_PAINEL =
   'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme'
 
@@ -107,7 +107,10 @@ export function DashboardView({ hoje }: DashboardViewProps) {
 
     conteudo = (
       <div className="flex flex-col gap-6">
-        <ul aria-label="Resumo" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <ul
+          aria-label="Resumo"
+          className="grid gap-3 min-[25rem]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"
+        >
           <li>
             <StatTile
               rotulo="Stacks"

@@ -84,7 +84,7 @@ export function DimensionsEditor({ dimensoes, onSalvar }: DimensionsEditorProps)
               value={rascunho[campo]}
               aria-valuetext={`${formatarNota(rascunho[campo])} de 10`}
               onChange={(e) => alterar({ [campo]: Number(e.target.value) })}
-              className="w-full accent-accent"
+              className="h-6 w-full cursor-pointer accent-accent"
             />
           </div>
         )
@@ -101,7 +101,7 @@ export function DimensionsEditor({ dimensoes, onSalvar }: DimensionsEditorProps)
           aria-invalid={erroData ? true : undefined}
           aria-describedby={erroData ? `${base}-ultimoUso-erro` : undefined}
           onChange={(e) => alterar({ ultimoUso: e.target.value })}
-          className={`w-full rounded-theme border bg-surface px-3 py-1.5 text-sm text-fg shadow-theme ${erroData ? 'border-danger' : 'border-border'}`}
+          className={`w-full rounded-theme border bg-surface px-3 py-1.5 text-sm text-fg shadow-theme ${erroData ? 'border-danger' : 'border-control'}`}
         />
         {erroData && (
           <p id={`${base}-ultimoUso-erro`} className="text-sm font-medium text-danger">

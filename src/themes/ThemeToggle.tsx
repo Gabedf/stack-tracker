@@ -11,7 +11,7 @@ export function ThemeToggle() {
       type="button"
       onClick={alternar}
       title={`Mudar para o tema ${proximo}`}
-      className="rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg shadow-theme hover:bg-surface-2"
+      className="rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg shadow-theme hover:bg-surface-2"
     >
       Tema: {ROTULOS_TEMA[tema]}
     </button>

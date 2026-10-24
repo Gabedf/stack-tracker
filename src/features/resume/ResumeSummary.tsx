@@ -19,7 +19,7 @@ export function ResumeSummary({ selecao, className = '' }: ResumeSummaryProps) {
       </p>
       {fora > 0 && (
         <details className="rounded-theme border border-border bg-surface px-3 py-2">
-          <summary className="cursor-pointer text-muted hover:text-fg">
+          <summary className="cursor-pointer py-0.5 text-muted hover:text-fg">
             Ver as que ficaram de fora
           </summary>
           <ul aria-label="Stacks de fora" className="mt-2 flex flex-col gap-1">

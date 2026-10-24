@@ -101,7 +101,7 @@ export function DeleteStackButton({ nome, onConfirm }: DeleteStackButtonProps) {
               type="button"
               disabled={excluindo}
               onClick={cancelar}
-              className={`${CLASSE_BOTAO} border-border bg-surface text-fg hover:bg-surface-2`}
+              className={`${CLASSE_BOTAO} border-control bg-surface text-fg hover:bg-surface-2`}
             >
               Cancelar exclusão
             </button>

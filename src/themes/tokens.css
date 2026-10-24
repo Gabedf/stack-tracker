@@ -5,8 +5,34 @@
  * Este arquivo define o tema funcional (padrão); o tema RPG fica em rpg.css e
  * precisa definir exatamente os mesmos --theme-* (há teste para isso).
  *
- * Contraste (WCAG AA): text, text-muted e level-1..5 >= 4.5:1 sobre bg, surface e
- * surface-2 (level-1 #475569: 7.24 / 7.58 / 6.92); xp-fill sobre xp-track 5.49.
+ * Contraste WCAG 2.x calculado (texto normal >= 4.5:1; foco, bordas de controle,
+ * barras e marcadores >= 3:1). Conferido por src/themes/contraste.test.ts.
+ * Fundos: bg #f8fafc, surface #ffffff, surface-2 #f1f5f9,
+ * accent/15 sobre surface (#dde4f9, selo "Sênior").
+ *
+ *   par                          bg     surface  surface-2  accent/15
+ *   text            #0f172a    17.06    17.85     16.30      14.06
+ *   text-muted      #475569     7.24     7.58      6.92       5.97
+ *   accent          #1d4ed8     6.41     6.70      6.12       5.28
+ *   success         #15803d     4.79     5.02      4.58        -
+ *   warning         #b45309     4.80     5.02      4.58        -
+ *   danger          #b91c1c     6.18     6.47      5.91        -
+ *   level-1         #475569     7.24     7.58      6.92        -
+ *   level-2         #0f766e     5.23     5.47      5.00        -
+ *   level-3         #1d4ed8     6.41     6.70      6.12        -
+ *   level-4         #6d28d9     6.79     7.10      6.49        -
+ *   level-5         #9a3412     6.98     7.31      6.67        -
+ *   focus           #2563eb     4.94     5.17      4.72       4.07   (>= 3)
+ *   border-control  #64748b     4.55     4.76      4.34       3.75   (>= 3)
+ *   border          #cbd5e1     1.42     1.48      1.36        -     (só cards)
+ *
+ *   accent-contrast #ffffff sobre accent 6.70 e sobre danger 6.47.
+ *   xp-fill sobre xp-track #dbeafe: 5.49.
+ *
+ * --theme-border é a moldura dos cards e divisórias (decorativa, fica clara para
+ * não pesar); campos, selects, botões secundários, toggles e abas usam
+ * --theme-border-control (classe border-control), que precisa de >= 3:1.
+ * Estados desabilitados (opacity-60) são isentos pela WCAG; continuam legíveis.
  *
  * Séries de gráfico (--theme-chart-*): ordem fixa nota, teoria, prática,
  * profundidade, validada com o validador do skill dataviz contra a surface de
@@ -26,6 +52,7 @@
   --theme-text: #0f172a;
   --theme-text-muted: #475569;
   --theme-border: #cbd5e1;
+  --theme-border-control: #64748b;
   --theme-accent: #1d4ed8;
   --theme-accent-contrast: #ffffff;
   --theme-success: #15803d;

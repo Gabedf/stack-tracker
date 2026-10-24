@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import App from './App'
 import { StacksProvider } from './features/stacks'
 import type { StorageAdapter } from './storage'
@@ -10,6 +10,10 @@ const adapterPendente: StorageAdapter = {
   carregar: () => new Promise(() => {}),
   salvar: () => new Promise(() => {}),
 }
+
+// As views são React.lazy: pré-carrega os módulos para a espera nos testes ser
+// só a do Suspense, não a da transformação dos arquivos.
+beforeAll(() => import('./views/DashboardView'))
 
 function renderApp() {
   return render(
@@ -27,9 +31,11 @@ describe('App', () => {
     expect(screen.getByRole('link', { name: 'Painel de Stacks' })).toBeInTheDocument()
   })
 
-  it('abre o Dashboard na rota inicial', () => {
+  it('abre o Dashboard na rota inicial', async () => {
     renderApp()
-    expect(screen.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Dashboard' }, { timeout: 3000 }),
+    ).toBeInTheDocument()
   })
 
   it('renderiza o botão de tema', () => {

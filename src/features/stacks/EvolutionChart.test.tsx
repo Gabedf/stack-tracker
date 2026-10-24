@@ -81,6 +81,23 @@ describe('EvolutionChart', () => {
     expect(celulas(2)).toEqual(['30/06/2026', '7,2', 'Sênior', '8,0', '7,0', '6,0'])
   })
 
+  it('pelo teclado, os valores do tooltip ficam na tabela (região rolável e focável)', () => {
+    const { container } = render(<EvolutionChart historico={HISTORICO} />)
+
+    // O gráfico não cria paradas de Tab: o tooltip é só de ponteiro.
+    expect(within(screen.getByRole('img')).queryAllByRole('button')).toHaveLength(0)
+    const focaveis = Array.from(screen.getByRole('img').querySelectorAll('[tabindex]'), (el) =>
+      el.getAttribute('tabindex'),
+    ).filter((t) => Number(t) >= 0)
+    expect(focaveis).toEqual([])
+
+    const resumo = container.querySelector('details > summary')
+    expect(resumo).toHaveTextContent('Ver dados em tabela')
+    const regiao = screen.getByRole('region', { name: 'Tabela da evolução' })
+    expect(regiao).toHaveAttribute('tabindex', '0')
+    expect(within(regiao).getByRole('table')).toBeInTheDocument()
+  })
+
   it('dimensões começam desligadas e os toggles alternam aria-pressed', () => {
     render(<EvolutionChart historico={HISTORICO} />)
 

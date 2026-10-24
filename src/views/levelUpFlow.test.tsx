@@ -1,9 +1,9 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { MotionConfig } from 'framer-motion'
 import { cloneElement, type ReactElement } from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AppLayout } from '../components/layout'
+import { MotionProvider } from '../components/motion'
 import type { Stack, StacksFile } from '../domain/types'
 import { calcularPersonagem, LevelUpProvider } from '../features/character'
 import { StacksProvider } from '../features/stacks'
@@ -44,7 +44,7 @@ function renderApp(rota: string, { tema = 'rpg' }: { tema?: Tema } = {}) {
   render(
     <ThemeProvider>
       <StacksProvider adapter={adapter} hoje={HOJE_SEED}>
-        <MotionConfig reducedMotion="user">
+        <MotionProvider>
           <LevelUpProvider hoje={HOJE_SEED}>
             <MemoryRouter initialEntries={[rota]}>
               <Routes>
@@ -55,7 +55,7 @@ function renderApp(rota: string, { tema = 'rpg' }: { tema?: Tema } = {}) {
               </Routes>
             </MemoryRouter>
           </LevelUpProvider>
-        </MotionConfig>
+        </MotionProvider>
       </StacksProvider>
     </ThemeProvider>,
   )

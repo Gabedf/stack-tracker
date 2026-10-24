@@ -12,6 +12,7 @@ import {
   YAxis,
 } from 'recharts'
 import { formatarNota } from '../../components/formatacao'
+import { TabelaRolavel } from '../../components/TabelaRolavel'
 import { NOTA_MAXIMA, NOTA_MINIMA } from '../../domain/levels'
 import { DEFAULT_SCORING_CONFIG } from '../../domain/scoring'
 import type { Stack } from '../../domain/types'
@@ -312,8 +313,10 @@ export function TheoryPracticeQuadrant({
       </figure>
 
       <details className="text-sm">
-        <summary className="cursor-pointer font-medium text-accent">Ver dados em tabela</summary>
-        <div className="mt-2 overflow-x-auto">
+        <summary className="cursor-pointer py-1 font-medium text-accent">
+          Ver dados em tabela
+        </summary>
+        <TabelaRolavel rotulo="Tabela teoria x prática" className="mt-2">
           <table className="w-full border-collapse text-left">
             <caption className="sr-only">Teoria, prática e quadrante de cada stack</caption>
             <thead>
@@ -344,7 +347,7 @@ export function TheoryPracticeQuadrant({
                   <th scope="row" className="py-1 pr-3 font-normal">
                     <Link
                       to={`/stacks/${p.id}`}
-                      className="text-accent underline underline-offset-2"
+                      className="inline-flex min-h-6 items-center text-accent underline underline-offset-2"
                     >
                       {p.nome}
                     </Link>
@@ -360,7 +363,7 @@ export function TheoryPracticeQuadrant({
               ))}
             </tbody>
           </table>
-        </div>
+        </TabelaRolavel>
       </details>
     </div>
   )

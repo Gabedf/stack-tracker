@@ -19,7 +19,7 @@ export interface StackFiltersProps {
 }
 
 const CLASSE_CAMPO =
-  'w-full rounded-theme border border-border bg-surface px-3 py-1.5 text-sm text-fg shadow-theme'
+  'w-full rounded-theme border border-control bg-surface px-3 py-1.5 text-sm text-fg shadow-theme'
 const CLASSE_ROTULO = 'text-sm font-medium text-muted'
 
 interface CampoBuscaProps {
@@ -150,7 +150,7 @@ export function StackFilters({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 sm:col-span-2 lg:col-span-4">
-        <label className="inline-flex items-center gap-2 text-sm text-fg">
+        <label className="inline-flex min-h-6 items-center gap-2 text-sm text-fg">
           <input
             type="checkbox"
             checked={criterios.somentePraticaReal}
@@ -163,7 +163,7 @@ export function StackFilters({
         <button
           type="button"
           onClick={onLimpar}
-          className="rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2"
+          className="rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2"
         >
           Limpar filtros
         </button>

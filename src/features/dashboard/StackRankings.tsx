@@ -3,7 +3,8 @@ import { formatarNota } from '../../components/formatacao'
 import { LevelBadge } from '../../components/LevelBadge'
 import type { StackComNota, StackEsfriando } from './dashboardStats'
 
-const CLASSE_LINK = 'rounded-theme font-medium text-fg hover:text-accent hover:underline'
+const CLASSE_LINK =
+  'inline-flex min-h-6 items-center rounded-theme font-medium text-fg hover:text-accent hover:underline'
 const CLASSE_ITEM = 'flex flex-wrap items-center gap-x-3 gap-y-1 py-2'
 
 function LinkStack({ id, nome }: { id: string; nome: string }) {

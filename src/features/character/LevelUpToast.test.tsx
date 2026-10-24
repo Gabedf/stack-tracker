@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { MotionProvider } from '../../components/motion'
 import { NIVEIS } from '../../domain/levels'
 import { simularMenosMovimento } from '../../test/browserMocks'
 import { ThemeProvider, type Tema } from '../../themes'
@@ -22,7 +23,9 @@ function renderToast(
   const onFechar = vi.fn()
   render(
     <ThemeProvider>
-      <LevelUpToast aviso={aviso} restantes={restantes} onFechar={onFechar} />
+      <MotionProvider>
+        <LevelUpToast aviso={aviso} restantes={restantes} onFechar={onFechar} />
+      </MotionProvider>
     </ThemeProvider>,
   )
   return onFechar

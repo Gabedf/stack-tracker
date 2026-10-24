@@ -44,7 +44,7 @@ const CLASSE_DICA = 'text-xs text-muted'
 const CLASSE_FIELDSET = 'flex flex-col gap-4 rounded-theme border border-border bg-surface p-4'
 const CLASSE_LEGENDA = 'px-1 font-heading text-sm font-semibold text-fg'
 const CLASSE_BOTAO_SECUNDARIO =
-  'rounded-theme border border-border bg-surface px-4 py-2 text-sm font-medium text-fg hover:bg-surface-2'
+  'rounded-theme border border-control bg-surface px-4 py-2 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_BOTAO_PRIMARIO =
   'rounded-theme border border-accent bg-accent px-4 py-2 text-sm font-semibold text-accent-contrast disabled:cursor-not-allowed disabled:opacity-60'
 
@@ -111,7 +111,7 @@ export function StackForm({
   }
 
   function classeCampo(campo: CampoForm) {
-    return `${CLASSE_CAMPO} ${erros[campo] ? 'border-danger' : 'border-border'}`
+    return `${CLASSE_CAMPO} ${erros[campo] ? 'border-danger' : 'border-control'}`
   }
 
   function erroDe(campo: CampoForm): ReactNode {
@@ -260,7 +260,7 @@ export function StackForm({
                   value={valores[campo]}
                   aria-valuetext={`${formatarNota(valores[campo])} de 10`}
                   onChange={(e) => alterar(campo, Number(e.target.value))}
-                  className="w-full accent-accent"
+                  className="h-6 w-full cursor-pointer accent-accent"
                   {...propsCampo(campo)}
                 />
                 {erroDe(campo)}

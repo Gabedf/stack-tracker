@@ -22,7 +22,7 @@ export interface StackDetailViewProps {
 
 const CLASSE_LINK = 'font-medium text-accent underline underline-offset-2'
 const CLASSE_BOTAO_LINK =
-  'inline-block rounded-theme border border-border bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
+  'inline-block rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_PAINEL =
   'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme'
 const CLASSE_TITULO_PAINEL = 'font-heading text-lg font-semibold text-fg'
@@ -97,7 +97,7 @@ export function StackDetailView({ hoje }: StackDetailViewProps) {
 
   return (
     <section className="space-y-6">
-      <Link to="/stacks" className={CLASSE_LINK}>
+      <Link to="/stacks" className={`inline-flex min-h-6 items-center ${CLASSE_LINK}`}>
         Voltar para Stacks
       </Link>
 
