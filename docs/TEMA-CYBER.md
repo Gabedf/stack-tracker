@@ -92,7 +92,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 26.1c Classe `painel` nos cards de seção de `src/features/stacks`, `resume` e `data`.
 - [x] 26.2 Fundo do cyber: grade sutil, vinheta e scanlines num `body::after`, com as guardas de a11y.
 - [x] 26.3 Moldura `.painel` no cyber: vidro, chanfro, colchetes de canto e brilho no hover.
-- [ ] 26.4 Títulos em caixa alta com prefixo `//`, link ativo com barra brilhante e varredura nos botões.
+- [x] 26.4 Títulos em caixa alta com prefixo `//`, link ativo com barra brilhante e varredura nos botões.
 - [ ] 26.R Revisão de código somente leitura da etapa 26.
 - [ ] 26.V Revisão visual da etapa 26 nos três temas.
 - [ ] 26.M Merge `merge: etapa 26 - cyber hud` em `feat/tema-cyber`.
@@ -136,7 +136,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Classe `painel` (26.1): gancho neutro sem nenhuma regra CSS fora do cyber; vai no contêiner grande de seção/card (section/article/header com border + bg-surface + shadow-theme, ou a constante `CLASSE_PAINEL`/componente compartilhado como o `StackCard`); não vai em botões, inputs, selects, toasts, tooltips, badges, itens de lista compactos (ex.: `LinhaStack` em StacksView), nem em layout (header, nav, skip link); na dúvida, não coloca.
 - Fundo do cyber (26.2): `[data-theme='cyber'] body::after` (data-theme fica no `<html>`), `position: fixed; inset: 0; z-index: 1; pointer-events: none`, só gradientes e estático; z-index 1 porque o wrapper do layout tem `bg-bg` opaco (atrás dele, com z-index negativo, ficaria invisível), acima dele só tooltips (z-10), toast e skip link (z-50); `body::before` fica livre. a camada pinta (a ≤ 4%) sobre o conteúdo estático e não posicionado; a 26.3 não precisa de z-index para ficar visível, e quem usar z-index >= 2 fica acima dela sem efeito colateral; `forced-colors` e `print` ocultam com `display: none`.
 - Moldura do painel (26.3): sem variáveis novas (usa `--cyber-chanfro`, `--cyber-neon`, `--cyber-glow`); regras em `[data-theme='cyber'] .painel` (+ `.painel.bg-surface-2` para o aside da prévia); `position: relative` fica em `@layer components` (o cyber.css é sem camada e venceria o `lg:sticky`); `::before` = chanfro TL/BR, `::after` = colchetes TR/BL; vidro é color-mix 85% sem backdrop-filter; quem restilar o painel não pode usar clip-path/overflow/isolation/transform/filter nele.
-
+- Títulos, nav e botões (26.4): prefixo `content: '// ' / ''` (alt-text vazio, sem fallback) só em `main :is(h1, h2)` sem link/ícone e fora de `.curriculo-impressao` (h3 não leva uppercase nem prefixo; `--theme-heading-tracking` do cyber = 0.08em); a nav é `:is(nav, header) a[aria-current='page']` (barra = box-shadow inset, sem position), o botão primário é `:is(button, a).bg-accent:not(:disabled)` com varredura em `background-position`, tudo dentro de `prefers-reduced-motion: no-preference`; forced-colors troca a barra por sublinhado.
 
 ## Pendências
 

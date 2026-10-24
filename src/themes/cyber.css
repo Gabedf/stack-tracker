@@ -82,6 +82,36 @@
  *    só em dispositivos com hover.
  *  - forced-colors: active e impressão desligam chanfro e colchetes (content: none) e o
  *    fundo volta a cor do sistema/opaco (print.css, `body *`, não pega pseudo-elementos).
+ *
+ * Títulos, link ativo e varredura (antes do forced-colors/print, no fim deste arquivo):
+ *  - Títulos: `main :is(h1, h2)` ganha caixa alta e prefixo decorativo `//` em ::before
+ *    com `content: '// ' / ''`. A sintaxe com texto alternativo vazio (Chromium, Safari e
+ *    Firefox atuais) tira o prefixo da árvore de acessibilidade: o nome acessível, o texto
+ *    lido e o foco do h1 (etapa 22) não mudam, e conteúdo gerado não entra no texto copiado.
+ *    Sem fallback de propósito: navegador sem suporte à sintaxe descarta a declaração e só
+ *    perde o enfeite (um `content: '//'` de reserva faria o leitor dizer "barra barra").
+ *    Caixa alta (text-transform) não altera o nome acessível. Só h1 e h2 de seção, sem h3
+ *    (quase todos mostram nome de stack, evidência ou arquivo digitado pelo usuário).
+ *    Ficam de fora: títulos com link ou ícone (`:has(a, svg)`, ex.: nome da stack no card,
+ *    para não mudar o dado do usuário nem quebrar a linha) e o documento do currículo
+ *    (`.curriculo-impressao`), que é conteúdo exportável. O espaçamento entre letras vem
+ *    de --theme-heading-tracking (0.08em), já aplicado a h1..h6 e .font-heading no index.css.
+ *  - Link ativo da nav: `:is(nav, header) a[aria-current='page']` (o NavLink do router
+ *    marca a rota atual com aria-current; o link "Dados" fica no header, fora da nav).
+ *    A barra é uma box-shadow inset (2px accent + brilho interno): não altera largura,
+ *    altura nem posição, e não é cortada pelo overflow-x da nav. Não depende só da cor,
+ *    pois é uma forma além do texto accent e do fundo surface-2 que o link já tem.
+ *    Com :focus-visible vale o brilho de foco (e o contorno magenta).
+ *  - Varredura nos botões primários: `button.bg-accent`/`a.bg-accent` (o botão primário do
+ *    projeto é bg-accent + text-accent-contrast; o selo de nível é um span e não casa).
+ *    Em vez de pseudo-elemento (mexeria em position/overflow), uma faixa de luz em
+ *    background-image desliza com background-position no hover e no foco do teclado. Tudo,
+ *    inclusive o gradiente, fica em prefers-reduced-motion: no-preference: fora disso nada
+ *    se move nem aparece. A faixa só clareia o accent (alfa <= 0.28, tom ciano claro, nunca
+ *    branco puro), então o texto escuro (#04121a) só ganha contraste: pior caso >= 10.5:1.
+ *  - forced-colors: active desliga o prefixo, a varredura e a barra (a barra vira sublinhado
+ *    de 2px, que o modo preserva). Impressão: sem prefixo `//`, sem barra e sem varredura
+ *    (caixa alta continua, é aceitável no papel).
  */
 
 /* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
@@ -147,7 +177,7 @@
   --theme-font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
-  --theme-heading-tracking: 0.06em;
+  --theme-heading-tracking: 0.08em;
 
   /* Ícones: traço fino com um leve preenchimento, como holograma. */
   --theme-icon-stroke: 1.5;
@@ -290,6 +320,62 @@
   }
 }
 
+/*
+ * Títulos de página e de seção: caixa alta e prefixo `//` decorativo (ver o cabeçalho).
+ * Fora: títulos com link ou ícone e o documento do currículo.
+ */
+[data-theme='cyber'] main :is(h1, h2):not(:has(a, svg)):not(.curriculo-impressao *) {
+  text-transform: uppercase;
+}
+
+[data-theme='cyber'] main :is(h1, h2):not(:has(a, svg)):not(.curriculo-impressao *)::before {
+  /* O texto alternativo vazio (depois da barra) esconde o prefixo do leitor de tela. */
+  content: '// ' / '';
+  color: var(--theme-accent);
+  font-weight: 700;
+}
+
+/*
+ * Link ativo da nav: barra de 2px em accent na base, com brilho interno. box-shadow
+ * inset não ocupa espaço (sem deslocar o layout) e o overflow-x da nav não a corta.
+ */
+[data-theme='cyber'] :is(nav, header) a[aria-current='page']:not(:focus-visible) {
+  box-shadow:
+    inset 0 -2px 0 var(--theme-accent),
+    inset 0 -10px 12px -8px rgb(var(--cyber-neon) / 0.55);
+}
+
+/*
+ * Varredura de luz nos botões primários: faixa clara e sutil que atravessa o botão da
+ * esquerda para a direita. Só para quem não pediu menos movimento (nem o gradiente existe
+ * fora disso). A transição repete as propriedades do realce de controles acima.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled) {
+    background-image: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 38%,
+      rgb(190 245 255 / 0.28) 50%,
+      transparent 62%,
+      transparent 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 250% 100%;
+    background-position: 100% 0;
+    transition:
+      color 120ms ease-out,
+      background-color 120ms ease-out,
+      border-color 120ms ease-out,
+      box-shadow 120ms ease-out,
+      background-position 650ms ease-out;
+  }
+
+  [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled):is(:hover, :focus-visible) {
+    background-position: 0 0;
+  }
+}
+
 /* Modo de alto contraste: sem enfeites sobrepostos às cores do sistema. */
 @media (forced-colors: active) {
   [data-theme='cyber'] body::after {
@@ -306,6 +392,21 @@
   [data-theme='cyber'] .painel::after {
     content: none;
   }
+
+  /* Sem prefixo `//`, sem varredura; a barra do link ativo vira sublinhado (preservado). */
+  [data-theme='cyber'] main :is(h1, h2):not(:has(a, svg)):not(.curriculo-impressao *)::before {
+    content: none;
+  }
+
+  [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled) {
+    background-image: none;
+  }
+
+  [data-theme='cyber'] :is(nav, header) a[aria-current='page']:not(:focus-visible) {
+    box-shadow: none;
+    text-decoration: underline 2px;
+    text-underline-offset: 0.35em;
+  }
 }
 
 /* Papel: preto no branco, sem camada decorativa (reforça o print.css). */
@@ -319,5 +420,18 @@
   [data-theme='cyber'] .painel::after {
     content: none;
     display: none;
+  }
+
+  /* Sem prefixo `//`, sem barra do link ativo e sem varredura (caixa alta é aceitável). */
+  [data-theme='cyber'] main :is(h1, h2):not(:has(a, svg)):not(.curriculo-impressao *)::before {
+    content: none;
+  }
+
+  [data-theme='cyber'] :is(nav, header) a[aria-current='page']:not(:focus-visible) {
+    box-shadow: none;
+  }
+
+  [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled) {
+    background-image: none;
   }
 }
