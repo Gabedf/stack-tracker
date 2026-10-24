@@ -111,7 +111,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 ### Etapa final (`feat/tema-cyber`)
 
 - [x] F.1 Atualizar `docs/PROGRESS.md` (linhas 24 a 27) e a seção "Como adicionar um tema" no README.
-- [ ] F.2 Revisão final: build, testes, lint, formato e varredura de trailers vazia.
+- [x] F.2 Revisão final: build, testes, lint, formato e varredura de trailers vazia (revisão final ok: 1104 testes, varredura de trailers vazia).
 
 ## Decisões
 
