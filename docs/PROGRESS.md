@@ -27,7 +27,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 20 | feat/20-resume-ui | concluída | e5b67f2 |
 | 21 | feat/21-import-export | concluída | 942b62e |
 | 22 | feat/22-polish-a11y | concluída | 2b11a3a |
-| 23 | chore/23-docs-final | concluída | pendente de merge |
+| 23 | chore/23-docs-final | concluída | b33595d |
 
 ## Limitações conhecidas e próximos passos
 
