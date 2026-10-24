@@ -32,9 +32,23 @@
  * --theme-border (#3d7397) já passa de 3:1 sobre os três fundos, mas não sobre o
  * trilho accent/15; por isso --theme-border-control é um tom mais claro (#4f87ad).
  *
- * Séries de gráfico: provisório (25.3). Escolhidas legíveis no escuro, todas
- * >= 3:1 sobre a surface (nota 10.17, teoria 6.94, prática 12.19,
- * profundidade 7.95); a validação de pares e daltonismo é feita na 25.3.
+ * Séries de gráfico (ordem nota, teoria, prática, profundidade) validadas com o
+ * validador do skill dataviz (modo escuro, todos os pares, ΔE em OKLab x100,
+ * simulação Machado 2009) contra bg, surface e surface-2: faixa de L 0.48-0.67,
+ * croma >= 0.10, visão normal pior ΔE 21.4 (prática x profundidade), protanopia
+ * 14.9, deuteranopia 9.3 (nota x teoria), tritanopia 11.2 (teoria x prática);
+ * todas >= 8 (meta CVD) e >= 15 (piso normal).
+ *
+ *   série                        bg     surface  surface-2  chart-band
+ *   nota          #069ce4      6.45     6.02      5.38       6.18
+ *   teoria        #9b48fb      4.42     4.13      3.68       4.23
+ *   prática       #879f18      6.56     6.13      5.47       6.29
+ *   profundidade  #b64e10      3.83     3.58      3.19       3.67
+ *
+ * Nota é azul, não o ciano do accent: no cyber o ciano marca realce, brilho e
+ * XP, e o polígono do radar não deve parecer selecionado (ΔE 15.4 do accent).
+ * Nenhuma série lembra o danger #ff5c7a (pior ΔE 18.1, profundidade) nem o foco
+ * magenta #f472b6 (pior ΔE 22.8, teoria).
  */
 
 [data-theme='cyber'] {
@@ -56,11 +70,11 @@
   /* Magenta: contrasta com o accent ciano, então o foco aparece até sobre botões. */
   --theme-focus: #f472b6;
 
-  /* Provisório (25.3): neon legível no escuro, validação de pares e daltonismo na 25.3. */
-  --theme-chart-nota: #22d3ee;
-  --theme-chart-teoria: #f472b6;
-  --theme-chart-pratica: #a3e635;
-  --theme-chart-profundidade: #ff8c42;
+  /* Séries validadas no escuro (números no cabeçalho): azul, violeta, oliva e laranja queimado. */
+  --theme-chart-nota: #069ce4;
+  --theme-chart-teoria: #9b48fb;
+  --theme-chart-pratica: #879f18;
+  --theme-chart-profundidade: #b64e10;
   --theme-chart-grid: #1c2a44;
   --theme-chart-band: #0a1120;
 
