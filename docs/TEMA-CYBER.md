@@ -70,8 +70,8 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 24.4 Teste que falha se a lista de ids do script anti-flash do `index.html` divergir de `TEMAS`.
 - [x] 24.5 `tokens.test.ts` genérico: todo `src/themes/*.css` define os mesmos `--theme-*` que tokens.css.
 - [x] 24.6 Mover a estrutura das partículas de level-up de `rpg.css` para `efeitos-jogo.css`.
-- [ ] 24.R Revisão somente leitura do diff da etapa 24 (regressões e comparações com `'rpg'`).
-- [ ] 24.M Merge `merge: etapa 24 - theme registry` em `feat/tema-cyber` e marcar a checklist.
+- [x] 24.R Revisão somente leitura do diff da etapa 24 (regressões e comparações com `'rpg'`) (revisão sem achados).
+- [x] 24.M Merge `merge: etapa 24 - theme registry` em `feat/tema-cyber` e marcar a checklist.
 
 ### Etapa 25: `feat/25-cyber-tokens` (o tema existe e tudo funciona nele)
 
