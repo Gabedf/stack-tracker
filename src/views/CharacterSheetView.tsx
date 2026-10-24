@@ -28,7 +28,7 @@ export const NOME_PERSONAGEM = 'Personagem'
 const CLASSE_BOTAO =
   'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_PAINEL =
-  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme'
+  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme painel'
 
 function Painel({ id, titulo, children }: { id: string; titulo: string; children: ReactNode }) {
   return (
@@ -75,7 +75,7 @@ function Cabecalho({ personagem }: { personagem: Personagem }) {
   return (
     <section
       aria-labelledby="ficha-nome"
-      className="flex flex-col gap-4 rounded-theme border border-border bg-surface p-5 shadow-theme"
+      className="flex flex-col gap-4 rounded-theme border border-border bg-surface p-5 shadow-theme painel"
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex flex-col gap-1">

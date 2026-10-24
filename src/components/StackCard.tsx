@@ -30,7 +30,7 @@ export function StackCard({ stack, hoje, nivelTitulo = 2, className = '' }: Stac
   return (
     <article
       aria-labelledby={idTitulo}
-      className={`flex flex-col gap-4 rounded-theme border border-border bg-surface p-4 text-fg shadow-theme ${className}`}
+      className={`flex flex-col gap-4 rounded-theme border border-border bg-surface p-4 text-fg shadow-theme painel ${className}`}
     >
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">

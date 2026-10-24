@@ -120,7 +120,7 @@ export interface ResumePreviewProps extends ResumeDocumentProps {
   className?: string
 }
 
-const CLASSE_PAINEL = 'rounded-theme border border-border bg-surface p-5 shadow-theme'
+const CLASSE_PAINEL = 'rounded-theme border border-border bg-surface p-5 shadow-theme painel'
 
 /**
  * Preview com abas (padrão WAI-ARIA: setas, Home e End trocam de aba). O painel

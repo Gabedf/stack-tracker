@@ -26,7 +26,7 @@ export interface DashboardViewProps {
 const CLASSE_BOTAO =
   'rounded-theme border border-control bg-surface px-3 py-1.5 text-sm font-medium text-fg hover:bg-surface-2'
 const CLASSE_PAINEL =
-  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme'
+  'flex flex-col gap-3 rounded-theme border border-border bg-surface p-4 shadow-theme painel'
 
 /** Painel com título (h2) ligado à região por aria-labelledby. */
 function Painel({ id, titulo, children }: { id: string; titulo: string; children: ReactNode }) {

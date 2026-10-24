@@ -49,6 +49,69 @@
  * XP, e o polígono do radar não deve parecer selecionado (ΔE 15.4 do accent).
  * Nenhuma série lembra o danger #ff5c7a (pior ΔE 18.1, profundidade) nem o foco
  * magenta #f472b6 (pior ΔE 22.8, teoria).
+ *
+ * Fundo decorativo (`[data-theme='cyber'] body::after`, no fim deste arquivo): uma
+ * camada fixa com grade ciano, scanlines e vinheta sobre o fundo escuro. Guardas:
+ *  - pointer-events: none; nunca captura clique, toque, foco nem seleção de texto;
+ *  - z-index: 1, acima do fundo opaco do layout (o wrapper tem bg-bg, então uma camada
+ *    atrás dele ficaria invisível) e abaixo de tooltips (z-10), toast e skip link (z-50);
+ *  - opacidade da grade (0.025) + scanlines (0.015) somam 4%, sem efeito sobre o
+ *    contraste do texto; a vinheta só escurece as bordas (até 0.16 nos cantos), o que
+ *    mantém text-muted >= 4.5:1 sobre surface-2 mesmo no canto da tela;
+ *  - sem animação (estática por padrão), sem blur nem filtros: só gradientes, que a GPU
+ *    pinta uma vez numa camada própria;
+ *  - forced-colors: active e impressão (print.css já zera body::after com !important,
+ *    reforçado aqui) ocultam a camada.
+ *
+ * Moldura `.painel` (`[data-theme='cyber'] .painel`, antes do fim deste arquivo): vidro,
+ * chanfro, colchetes de canto e brilho no hover. Guardas:
+ *  - NUNCA clip-path, overflow, isolation, transform, filter nem backdrop-filter no painel:
+ *    clip-path e overflow cortariam a sombra, o foco e o tooltip da colmeia; os outros
+ *    criam contexto de empilhamento/bloco contenedor de filhos absolute/fixed. O chanfro e
+ *    os colchetes são só gradientes em ::before/::after (absolute, inset -1px = sobre a
+ *    borda, sem criar rolagem), com pointer-events: none e sem texto.
+ *  - vidro = surface a 85% sobre o bg (color-mix); o fundo atrás é sempre escuro (bg ou
+ *    outro painel), então o contraste fica igual ou melhor que o da tabela acima (ex.:
+ *    text-muted sobre surface-2 85% sobre bg: 7.00, aninhado 6.80; opaco 6.77).
+ *  - position: relative vem na camada `components` do Tailwind, que perde para os
+ *    utilitários: o `lg:sticky` da prévia do StackForm continua valendo (sticky também
+ *    ancora os pseudo-elementos). Nenhum filho é afetado: o tooltip da colmeia ancora no
+ *    wrapper `relative` dele (z-10), não no painel, e fica acima da moldura.
+ *  - o brilho de hover não vence o foco: `:focus-visible` (token magenta) segue valendo.
+ *  - transição de box-shadow só em prefers-reduced-motion: no-preference; o brilho de hover
+ *    só em dispositivos com hover.
+ *  - forced-colors: active e impressão desligam chanfro e colchetes (content: none) e o
+ *    fundo volta a cor do sistema/opaco (print.css, `body *`, não pega pseudo-elementos).
+ *
+ * Títulos, link ativo e varredura (antes do forced-colors/print, no fim deste arquivo):
+ *  - Títulos: `main :is(h1, h2)` ganha caixa alta e prefixo decorativo `//` em ::before
+ *    com `content: '// ' / ''`. A sintaxe com texto alternativo vazio (Chromium, Safari e
+ *    Firefox atuais) tira o prefixo da árvore de acessibilidade: o nome acessível, o texto
+ *    lido e o foco do h1 (etapa 22) não mudam, e conteúdo gerado não entra no texto copiado.
+ *    Sem fallback de propósito: navegador sem suporte à sintaxe descarta a declaração e só
+ *    perde o enfeite (um `content: '//'` de reserva faria o leitor dizer "barra barra").
+ *    Caixa alta (text-transform) não altera o nome acessível. Só h1 e h2 de seção, sem h3
+ *    (quase todos mostram nome de stack, evidência ou arquivo digitado pelo usuário).
+ *    Ficam de fora: títulos com link ou ícone (`:has(a, svg)`, ex.: nome da stack no card,
+ *    para não mudar o dado do usuário nem quebrar a linha) e o documento do currículo
+ *    (`.curriculo-impressao`), que é conteúdo exportável. O espaçamento entre letras vem
+ *    de --theme-heading-tracking (0.08em), já aplicado a h1..h6 e .font-heading no index.css.
+ *  - Link ativo da nav: `:is(nav, header) a[aria-current='page']` (o NavLink do router
+ *    marca a rota atual com aria-current; o link "Dados" fica no header, fora da nav).
+ *    A barra é uma box-shadow inset (2px accent + brilho interno): não altera largura,
+ *    altura nem posição, e não é cortada pelo overflow-x da nav. Não depende só da cor,
+ *    pois é uma forma além do texto accent e do fundo surface-2 que o link já tem.
+ *    Com :focus-visible vale o brilho de foco (e o contorno magenta).
+ *  - Varredura nos botões primários: `button.bg-accent`/`a.bg-accent` (o botão primário do
+ *    projeto é bg-accent + text-accent-contrast; o selo de nível é um span e não casa).
+ *    Em vez de pseudo-elemento (mexeria em position/overflow), uma faixa de luz em
+ *    background-image desliza com background-position no hover e no foco do teclado. Tudo,
+ *    inclusive o gradiente, fica em prefers-reduced-motion: no-preference: fora disso nada
+ *    se move nem aparece. A faixa só clareia o accent (alfa <= 0.28, tom ciano claro, nunca
+ *    branco puro), então o texto escuro (#04121a) só ganha contraste: pior caso >= 10.5:1.
+ *  - forced-colors: active desliga o prefixo, a varredura e a barra (a barra vira sublinhado
+ *    de 2px, que o modo preserva). Impressão: sem prefixo `//`, sem barra e sem varredura
+ *    (caixa alta continua, é aceitável no papel).
  */
 
 /* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
@@ -114,7 +177,7 @@
   --theme-font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
-  --theme-heading-tracking: 0.06em;
+  --theme-heading-tracking: 0.08em;
 
   /* Ícones: traço fino com um leve preenchimento, como holograma. */
   --theme-icon-stroke: 1.5;
@@ -150,3 +213,225 @@
  * Level-up (LevelUpToast): a pele e a animação "mensagem do sistema" do cyber
  * entram na 27.4. A estrutura das faíscas está em efeitos-jogo.css.
  */
+
+/*
+ * Fundo do cyber: grade sutil + scanlines + vinheta numa só camada fixa. O atributo
+ * data-theme fica no <html>, então `body::after` é o pseudo-elemento do body no tema.
+ * Ordem das camadas (de cima para baixo): vinheta, scanlines, grade vertical e
+ * horizontal. Sem blur, sem filtro e sem animação.
+ */
+[data-theme='cyber'] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.16) 100%),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(var(--cyber-neon) / 0.015) 0,
+      rgb(var(--cyber-neon) / 0.015) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(to right, rgb(var(--cyber-neon) / 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--cyber-neon) / 0.025) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    100% 3px,
+    3rem 3rem,
+    3rem 3rem;
+}
+
+/*
+ * Moldura de painel (classe neutra `painel`, ver a 26.1). A posição vai na camada
+ * `components` para os utilitários do Tailwind (ex.: lg:sticky) continuarem vencendo.
+ */
+@layer components {
+  [data-theme='cyber'] .painel {
+    position: relative;
+  }
+}
+
+/* Vidro: a surface levemente translúcida (sem backdrop-filter; ver o cabeçalho). */
+[data-theme='cyber'] .painel {
+  background-color: color-mix(in srgb, var(--theme-surface) 85%, transparent);
+}
+
+[data-theme='cyber'] .painel.bg-surface-2 {
+  background-color: color-mix(in srgb, var(--theme-surface-2) 85%, transparent);
+}
+
+/*
+ * ::before: chanfro nos cantos superior esquerdo e inferior direito. Um quadrado de
+ * --cyber-chanfro por canto, com o triângulo na cor do fundo da página e um fio neon na
+ * diagonal. inset: -1px cobre a borda de 1px.
+ */
+[data-theme='cyber'] .painel::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background:
+    linear-gradient(
+        135deg,
+        var(--theme-bg) calc(50% - 1px),
+        rgb(var(--cyber-neon) / 0.7) calc(50% - 1px) 50%,
+        transparent 50%
+      )
+      top left / var(--cyber-chanfro) var(--cyber-chanfro) no-repeat,
+    linear-gradient(
+        -45deg,
+        var(--theme-bg) calc(50% - 1px),
+        rgb(var(--cyber-neon) / 0.7) calc(50% - 1px) 50%,
+        transparent 50%
+      )
+      bottom right / var(--cyber-chanfro) var(--cyber-chanfro) no-repeat;
+}
+
+/* ::after: colchetes finos (2px) nos cantos superior direito e inferior esquerdo. */
+[data-theme='cyber'] .painel::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--theme-accent), var(--theme-accent)) top right / var(--cyber-chanfro) 2px
+      no-repeat,
+    linear-gradient(var(--theme-accent), var(--theme-accent)) top right / 2px var(--cyber-chanfro)
+      no-repeat,
+    linear-gradient(var(--theme-accent), var(--theme-accent)) bottom left / var(--cyber-chanfro) 2px
+      no-repeat,
+    linear-gradient(var(--theme-accent), var(--theme-accent)) bottom left / 2px var(--cyber-chanfro)
+      no-repeat;
+}
+
+/* Brilho na borda ao passar o mouse; só com hover real, e sem vencer o foco visível. */
+@media (hover: hover) {
+  [data-theme='cyber'] .painel:hover:not(:focus-visible) {
+    box-shadow: var(--cyber-glow), var(--theme-shadow);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='cyber'] .painel {
+    transition: box-shadow 160ms ease-out;
+  }
+}
+
+/*
+ * Títulos de página e de seção: caixa alta e prefixo `//` decorativo (ver o cabeçalho).
+ * Fora: títulos com link ou ícone e o documento do currículo.
+ */
+[data-theme='cyber'] main :is(h1, h2):not(:has(a, svg)):not(.curriculo-impressao *) {
+  text-transform: uppercase;
+}
+
+[data-theme='cyber'] main :is(h1, h2):not(:has(a, svg)):not(.curriculo-impressao *)::before {
+  /* O texto alternativo vazio (depois da barra) esconde o prefixo do leitor de tela. */
+  content: '// ' / '';
+  color: var(--theme-accent);
+  font-weight: 700;
+}
+
+/*
+ * Link ativo da nav: barra de 2px em accent na base, com brilho interno. box-shadow
+ * inset não ocupa espaço (sem deslocar o layout) e o overflow-x da nav não a corta.
+ */
+[data-theme='cyber'] :is(nav, header) a[aria-current='page']:not(:focus-visible) {
+  box-shadow:
+    inset 0 -2px 0 var(--theme-accent),
+    inset 0 -10px 12px -8px rgb(var(--cyber-neon) / 0.55);
+}
+
+/*
+ * Varredura de luz nos botões primários: faixa clara e sutil que atravessa o botão da
+ * esquerda para a direita. Só para quem não pediu menos movimento (nem o gradiente existe
+ * fora disso). A transição repete as propriedades do realce de controles acima.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled) {
+    background-image: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent 38%,
+      rgb(190 245 255 / 0.28) 50%,
+      transparent 62%,
+      transparent 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 250% 100%;
+    background-position: 100% 0;
+    transition:
+      color 120ms ease-out,
+      background-color 120ms ease-out,
+      border-color 120ms ease-out,
+      box-shadow 120ms ease-out,
+      background-position 650ms ease-out;
+  }
+
+  [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled):is(:hover, :focus-visible) {
+    background-position: 0 0;
+  }
+}
+
+/* Modo de alto contraste: sem enfeites sobrepostos às cores do sistema. */
+@media (forced-colors: active) {
+  [data-theme='cyber'] body::after {
+    display: none;
+  }
+
+  /* Sem chanfro nem colchetes; o fundo translúcido volta a cor do sistema. */
+  [data-theme='cyber'] .painel,
+  [data-theme='cyber'] .painel.bg-surface-2 {
+    background-color: Canvas;
+  }
+
+  [data-theme='cyber'] .painel::before,
+  [data-theme='cyber'] .painel::after {
+    content: none;
+  }
+
+  /* Sem prefixo `//`, sem varredura; a barra do link ativo vira sublinhado (preservado). */
+  [data-theme='cyber'] main :is(h1, h2):not(:has(a, svg)):not(.curriculo-impressao *)::before {
+    content: none;
+  }
+
+  [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled) {
+    background-image: none;
+  }
+
+  [data-theme='cyber'] :is(nav, header) a[aria-current='page']:not(:focus-visible) {
+    box-shadow: none;
+    text-decoration: underline 2px;
+    text-underline-offset: 0.35em;
+  }
+}
+
+/* Papel: preto no branco, sem camada decorativa (reforça o print.css). */
+@media print {
+  [data-theme='cyber'] body::after {
+    display: none;
+  }
+
+  /* O print.css (`body *`) não pega pseudo-elementos: chanfro e colchetes saem aqui. */
+  [data-theme='cyber'] .painel::before,
+  [data-theme='cyber'] .painel::after {
+    content: none;
+    display: none;
+  }
+
+  /* Sem prefixo `//`, sem barra do link ativo e sem varredura (caixa alta é aceitável). */
+  [data-theme='cyber'] main :is(h1, h2):not(:has(a, svg)):not(.curriculo-impressao *)::before {
+    content: none;
+  }
+
+  [data-theme='cyber'] :is(nav, header) a[aria-current='page']:not(:focus-visible) {
+    box-shadow: none;
+  }
+
+  [data-theme='cyber'] :is(button, a).bg-accent:not(:disabled) {
+    background-image: none;
+  }
+}

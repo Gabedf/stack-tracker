@@ -154,7 +154,7 @@ export function EvidenceForm({ inicial, rotulo, onSalvar, onCancelar }: Evidence
           onCancelar()
         }
       }}
-      className="flex flex-col gap-4 rounded-theme border border-border bg-surface p-4 shadow-theme"
+      className="flex flex-col gap-4 rounded-theme border border-border bg-surface p-4 shadow-theme painel"
     >
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
