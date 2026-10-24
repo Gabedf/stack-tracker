@@ -31,9 +31,7 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 
 ## Pendências para etapas futuras
 
-- (22) Code splitting por rota com React.lazy: recharts + framer-motion levaram o bundle a ~1.050 kB (aviso do Vite > 500 kB).
 - (22) Tooltip do gráfico de evolução não abre por teclado; os valores ficam na tabela alternativa.
 - (geral) npm audit: tinypool via Vitest 3 (só dev). A correção exige Vitest 4 e Node >= 20.19.
 - (22) Borda do tema funcional (~1.5:1) abaixo de 3:1 nos campos de formulário.
 - (futuro) Estilo visual do RPG é provisório (pergaminho); tudo isolado em src/themes/rpg.css para troca.
-- (22) Colmeia: em telas mais estreitas que um hexágono rola na horizontal e o cartão de detalhes pode deslocar.
