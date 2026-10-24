@@ -2,6 +2,7 @@
 @import './themes/tokens.css';
 @import './themes/efeitos-jogo.css';
 @import './themes/rpg.css';
+@import './themes/cyber.css';
 @import './print.css';
 
 /*
@@ -45,6 +46,7 @@
 
   --font-sans: var(--theme-font-base);
   --font-heading: var(--theme-font-heading);
+  --font-mono: var(--theme-font-mono);
 }
 
 @layer base {

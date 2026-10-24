@@ -10,7 +10,8 @@ describe('themes', () => {
 
   it('proximoTema percorre a lista em ciclo', () => {
     expect(proximoTema('funcional')).toBe('rpg')
-    expect(proximoTema('rpg')).toBe('funcional')
+    expect(proximoTema('rpg')).toBe('cyber')
+    expect(proximoTema('cyber')).toBe('funcional')
   })
 
   it('CONFIG_TEMAS tem uma config com rótulo para cada tema', () => {
@@ -18,9 +19,18 @@ describe('themes', () => {
     for (const tema of TEMAS) expect(CONFIG_TEMAS[tema].rotulo).not.toBe('')
   })
 
+  it('cyber é o tema escuro, com rótulo Cyber', () => {
+    expect(TEMAS).toEqual(['funcional', 'rpg', 'cyber'])
+    expect(CONFIG_TEMAS.cyber.rotulo).toBe('Cyber')
+    expect(CONFIG_TEMAS.cyber.esquema).toBe('dark')
+    expect(CONFIG_TEMAS.funcional.esquema).toBe('light')
+    expect(CONFIG_TEMAS.rpg.esquema).toBe('light')
+  })
+
   it('ehTemaDeJogo segue a config de cada tema', () => {
     expect(ehTemaDeJogo('funcional')).toBe(false)
     expect(ehTemaDeJogo('rpg')).toBe(true)
+    expect(ehTemaDeJogo('cyber')).toBe(true)
     for (const tema of TEMAS) expect(ehTemaDeJogo(tema)).toBe(CONFIG_TEMAS[tema].jogo)
   })
 })

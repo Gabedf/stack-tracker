@@ -1,5 +1,5 @@
 /** Temas disponíveis. O valor é o que vai no atributo data-theme do <html>. */
-export const TEMAS = ['funcional', 'rpg'] as const
+export const TEMAS = ['funcional', 'rpg', 'cyber'] as const
 
 export type Tema = (typeof TEMAS)[number]
 
@@ -27,6 +27,8 @@ export interface ConfigTema {
 export const CONFIG_TEMAS: Record<Tema, ConfigTema> = {
   funcional: { rotulo: 'Funcional', jogo: false, esquema: 'light', levelUp: 'pergaminho' },
   rpg: { rotulo: 'RPG', jogo: true, esquema: 'light', levelUp: 'pergaminho' },
+  // levelUp provisório: a 27.4 troca para 'sistema' quando o cyber tiver a pele dele.
+  cyber: { rotulo: 'Cyber', jogo: true, esquema: 'dark', levelUp: 'pergaminho' },
 }
 
 /** Se o tema é de jogo; use no lugar de comparar com ids como `'rpg'`. */

@@ -31,6 +31,15 @@ describe('ThemeToggle', () => {
     const opcoes = screen.getAllByRole('option')
     expect(opcoes.map((o) => o.getAttribute('value'))).toEqual([...TEMAS])
     expect(opcoes.map((o) => o.textContent)).toEqual(TEMAS.map((t) => CONFIG_TEMAS[t].rotulo))
+    expect(opcoes.map((o) => o.textContent)).toEqual(['Funcional', 'RPG', 'Cyber'])
+  })
+
+  it('escolher Cyber aplica data-theme e persiste', () => {
+    renderToggle()
+    fireEvent.change(seletor(), { target: { value: 'cyber' } })
+    expect(seletor()).toHaveValue('cyber')
+    expect(document.documentElement.getAttribute('data-theme')).toBe('cyber')
+    expect(localStorage.getItem(CHAVE_TEMA_STORAGE)).toBe('cyber')
   })
 
   it('troca o tema ao escolher, atualiza data-theme e persiste', () => {

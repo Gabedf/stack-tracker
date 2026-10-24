@@ -75,15 +75,15 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 
 ### Etapa 25: `feat/25-cyber-tokens` (o tema existe e tudo funciona nele)
 
-- [ ] 25.1 Token `--theme-font-mono` em tokens.css e rpg.css e mapeamento `--font-mono` no `@theme inline`.
-- [ ] 25.2 Criar `src/themes/cyber.css` com a paleta, `color-scheme: dark` e tabela de contraste.
-- [ ] 25.3 Validar as séries de gráfico do cyber contra a surface escura, incluindo daltonismo.
-- [ ] 25.4 Instalar `@fontsource/oxanium`, importar os pesos usados e definir as fontes do tema.
-- [ ] 25.5 Registrar `cyber` em `CONFIG_TEMAS` e no `index.html`; conferir impressão; ajustar testes.
-- [ ] 25.6 Criar `src/themes/contraste.test.ts` verificando os contrastes mínimos dos temas.
-- [ ] 25.R Revisão de código somente leitura da etapa 25.
-- [ ] 25.V Revisão visual da etapa 25 nos três temas (1280px e 375px).
-- [ ] 25.M Merge `merge: etapa 25 - cyber tokens` em `feat/tema-cyber`.
+- [x] 25.1 Token `--theme-font-mono` em tokens.css e rpg.css e mapeamento `--font-mono` no `@theme inline`.
+- [x] 25.2 Criar `src/themes/cyber.css` com a paleta, `color-scheme: dark` e tabela de contraste.
+- [x] 25.3 Validar as séries de gráfico do cyber contra a surface escura, incluindo daltonismo.
+- [x] 25.4 Instalar `@fontsource/oxanium`, importar os pesos usados e definir as fontes do tema.
+- [x] 25.5 Registrar `cyber` em `CONFIG_TEMAS` e no `index.html`; conferir impressão; ajustar testes.
+- [x] 25.6 Criar `src/themes/contraste.test.ts` verificando os contrastes mínimos dos temas.
+- [x] 25.R Revisão de código somente leitura da etapa 25 (uma lacuna corrigida).
+- [x] 25.V Revisão visual da etapa 25 nos três temas (1280px e 375px) (sem regressões; 4 pendências registradas).
+- [x] 25.M Merge `merge: etapa 25 - cyber tokens` em `feat/tema-cyber`.
 
 ### Etapa 26: `feat/26-cyber-hud` (moldura de HUD)
 
@@ -124,5 +124,19 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Anti-flash (24.4): os ids aceitos ficam no array literal `var temas = [...]` do script em `index.html` (aspas simples); ao registrar um tema, acrescente o id ali também; `src/themes/antiFlash.test.ts` compara com `TEMAS` (mesmo conjunto) e confere a chave `CHAVE_TEMA_STORAGE`.
 - Paridade de tokens (24.5): arquivo de tema = `src/themes/*.css` (fora `tokens.css`, a referência) com um bloco cujo seletor é só `[data-theme='<id>'] {` no início da linha; `efeitos-jogo.css` deve usar só seletores descendentes (`[data-theme='rpg'] .x`) e não definir `--theme-*` (há teste para isso); `cyber.css` entra sozinho no `it.each` ao ter o bloco `[data-theme='cyber'] {`.
 - Efeitos de jogo (24.6): `efeitos-jogo.css` (importado entre tokens.css e rpg.css) tem só a estrutura das faíscas, sem escopo de tema e dentro de `prefers-reduced-motion: no-preference`; cor, brilho, `--angulo`, animação e keyframes ficam no CSS de cada tema de jogo (`[data-theme='<id>'] .levelup-particula`), então o cyber precisa trazer a pele e a animação dele.
+- Fonte mono (25.1): `--theme-font-mono` = pilha mono padrão do Tailwind 4 no funcional e no rpg, mapeada em `--font-mono` (classe `font-mono`, hoje só nos textareas de importar/currículo); os números hoje usam a fonte base + `tabular-nums`, então aplicar `font-mono` neles mudaria funcional/rpg: o cyber deve trocar a fonte dos números só sob `[data-theme='cyber']`.
+- Lendário do cyber (25.2): `--theme-level-5: #ff8c42` (laranja; 7.10+ sobre os três fundos, 1.39 contra o warning `#fbbf24`, matiz distinto).
+- Borda de controle do cyber (25.2): `--theme-border-control: #4f87ad` (a `border` da paleta, `#3d7397`, dá só 2.66 sobre o trilho accent/15 `#103142`; a de controle dá 3.51); `--theme-border` segue `#3d7397`.
+- Variáveis só do cyber (25.2): `--cyber-neon: 34 211 238` (canais RGB do accent, uso `rgb(var(--cyber-neon) / a)`), `--cyber-glow` (brilho forte para hover/lendário) e `--cyber-chanfro: 0.75rem` (tamanho do chanfro dos painéis na 26.3).
+- Provisórios do cyber (25.2): séries de gráfico `#22d3ee`, `#f472b6`, `#a3e635`, `#ff8c42` (a 25.3 valida) e fontes de sistema (títulos `Bahnschrift`/`DIN Alternate`; a 25.4 troca pela Oxanium); `cyber.css` já tem foco com `--theme-glow` e transições atrás de `no-preference`, sem pele de level-up (27.4).
+- Séries de gráfico do cyber (25.3): nota `#069ce4`, teoria `#9b48fb`, prática `#879f18`, profundidade `#b64e10` (dataviz, todos os pares: normal 21.4, protan 14.9, deutan 9.3, tritan 11.2; >= 3.19:1 nos três fundos); nota não usa o ciano do accent para o radar não parecer realce.
+- Fontes do cyber (25.4): `@fontsource/oxanium` só `latin-600` e `latin-700` (pesos dos `font-heading`: semibold/bold); `--theme-font-heading` = `'Oxanium'` + sans de sistema; `--theme-font-base` = sans de sistema (`ui-sans-serif, system-ui, ...`); `--theme-font-mono` = pilha mono do Tailwind 4, que é a fonte dos números do cyber (a Oxanium não tem peso 400 importado e fica só nos números que já são títulos, como o nível da ficha).
+- Registro do cyber (25.5): `CONFIG_TEMAS.cyber` = `{ rotulo: 'Cyber', jogo: true, esquema: 'dark', levelUp: 'pergaminho' }` (a 27.4 troca para `'sistema'`); `print.css` já era genérico (`html[data-theme] { color-scheme: light }`, fundo/texto/sombras com `!important` em `body *`) e agora zera `body::before/::after`, então a 26.2 pode usá-los; pseudo-elementos de `.painel` (26.3) precisam de `box-shadow`/fundo neutros no print por conta própria (`body *` não pega `::before/::after`); o cyber já entrou no `contraste.test.ts` e passa, a 25.6 só amplia.
+- Contraste (25.6): `contraste.test.ts` descobre os temas por `import.meta.glob('./*.css')` + bloco `[data-theme='<id>'] {` (como o tokens.test.ts) e exige que batam com `TEMAS`/`CONFIG_TEMAS`; `--theme-border` >= 3 só quando `ehTemaDeJogo` (funcional ~1.5:1 é pendência da etapa 22, não corrigida); par reprovado em tema existente vai para a lista `EXCECOES` (`'<tema>: <token> sobre <fundo>'`, hoje vazia) com registro em Pendências; todos os pares dos três temas passam.
 
 ## Pendências
+
+- /ficha, cyber (e também rpg/funcional): o hexágono "esfriando" da colmeia tem texto escuro sobre azul com opacidade 0,6, contraste estimado ~3,8:1 (< 4,5); origem: `OPACIDADE_ESFRIANDO` em `SkillHoneycomb.tsx` aplica opacidade ao grupo todo; avaliar na 27.2 (restilo da colmeia) sem mudar a aparência dos temas funcional e rpg (revisão 25.V, pré-existente).
+- /, 375px, todos os temas: o rótulo "Kubernetes" aparece cortado ("Kubern") na borda direita do gráfico Teoria × prática (`TheoryPracticeQuadrant`); cosmético, pré-existente (revisão 25.V).
+- /ficha, todos os temas: no radar, os números da escala (8/10) sobrepõem o rótulo do eixo de cima; cosmético, pré-existente; revisitar na 27.3 (radar) (revisão 25.V).
+- Tooltip do hexágono da colmeia não foi verificado na revisão visual 25.V (o hover automático não acertou o hexágono); conferir nas revisões 26.V/27.V.
