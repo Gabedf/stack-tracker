@@ -93,9 +93,9 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 26.2 Fundo do cyber: grade sutil, vinheta e scanlines num `body::after`, com as guardas de a11y.
 - [x] 26.3 Moldura `.painel` no cyber: vidro, chanfro, colchetes de canto e brilho no hover.
 - [x] 26.4 Títulos em caixa alta com prefixo `//`, link ativo com barra brilhante e varredura nos botões.
-- [ ] 26.R Revisão de código somente leitura da etapa 26.
-- [ ] 26.V Revisão visual da etapa 26 nos três temas.
-- [ ] 26.M Merge `merge: etapa 26 - cyber hud` em `feat/tema-cyber`.
+- [x] 26.R Revisão de código somente leitura da etapa 26 (dispensada por decisão do usuário).
+- [x] 26.V Revisão visual da etapa 26 nos três temas (sem problemas bloqueantes; tooltip da colmeia verificado; rpg/funcional sem regressão; 1 pendência pré-existente).
+- [x] 26.M Merge `merge: etapa 26 - cyber hud` em `feat/tema-cyber`.
 
 ### Etapa 27: `feat/27-cyber-sheet` (a sensação de jogo)
 
@@ -104,7 +104,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [ ] 27.3 Radar com grade ciano e polígono com `drop-shadow`; tooltip do hex com `// SKILL DATA`.
 - [ ] 27.4 Level-up "mensagem do sistema" (`levelUp: 'sistema'`) com faixa, glitch único e riscos de luz.
 - [ ] 27.5 (opcional) Painéis materializam em sequência ao trocar de rota nos temas de jogo.
-- [ ] 27.R Revisão de código somente leitura da etapa 27.
+- [x] 27.R Revisão de código somente leitura da etapa 27 (dispensada por decisão do usuário).
 - [ ] 27.V Revisão visual da etapa 27 nos três temas.
 - [ ] 27.M Merge `merge: etapa 27 - cyber sheet` em `feat/tema-cyber`.
 
@@ -137,6 +137,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Fundo do cyber (26.2): `[data-theme='cyber'] body::after` (data-theme fica no `<html>`), `position: fixed; inset: 0; z-index: 1; pointer-events: none`, só gradientes e estático; z-index 1 porque o wrapper do layout tem `bg-bg` opaco (atrás dele, com z-index negativo, ficaria invisível), acima dele só tooltips (z-10), toast e skip link (z-50); `body::before` fica livre. a camada pinta (a ≤ 4%) sobre o conteúdo estático e não posicionado; a 26.3 não precisa de z-index para ficar visível, e quem usar z-index >= 2 fica acima dela sem efeito colateral; `forced-colors` e `print` ocultam com `display: none`.
 - Moldura do painel (26.3): sem variáveis novas (usa `--cyber-chanfro`, `--cyber-neon`, `--cyber-glow`); regras em `[data-theme='cyber'] .painel` (+ `.painel.bg-surface-2` para o aside da prévia); `position: relative` fica em `@layer components` (o cyber.css é sem camada e venceria o `lg:sticky`); `::before` = chanfro TL/BR, `::after` = colchetes TR/BL; vidro é color-mix 85% sem backdrop-filter; quem restilar o painel não pode usar clip-path/overflow/isolation/transform/filter nele.
 - Títulos, nav e botões (26.4): prefixo `content: '// ' / ''` (alt-text vazio, sem fallback) só em `main :is(h1, h2)` sem link/ícone e fora de `.curriculo-impressao` (h3 não leva uppercase nem prefixo; `--theme-heading-tracking` do cyber = 0.08em); a nav é `:is(nav, header) a[aria-current='page']` (barra = box-shadow inset, sem position), o botão primário é `:is(button, a).bg-accent:not(:disabled)` com varredura em `background-position`, tudo dentro de `prefers-reduced-motion: no-preference`; forced-colors troca a barra por sublinhado.
+- O usuário decidiu manter só o necessário: as revisões de código 26.R e 27.R foram dispensadas (o portão de cada tarefa e a revisão final F.2 cobrem). Revisões visuais (26.V, 27.V), merges e F.1/F.2 continuam.
 
 ## Pendências
 
@@ -144,3 +145,4 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - /, 375px, todos os temas: o rótulo "Kubernetes" aparece cortado ("Kubern") na borda direita do gráfico Teoria × prática (`TheoryPracticeQuadrant`); cosmético, pré-existente (revisão 25.V).
 - /ficha, todos os temas: no radar, os números da escala (8/10) sobrepõem o rótulo do eixo de cima; cosmético, pré-existente; revisitar na 27.3 (radar) (revisão 25.V).
 - Tooltip do hexágono da colmeia não foi verificado na revisão visual 25.V (o hover automático não acertou o hexágono); conferir nas revisões 26.V/27.V.
+- /curriculo, 320px, cyber (pré-existente, não é do tema): o link ativo 'Currículo' fica fora da área visível da nav (rolagem horizontal, scrollLeft 0). Provável causa: falta scrollIntoView do link ativo em AppLayout.tsx. Em 375px está visível.
