@@ -15,7 +15,7 @@ export interface StatTileProps {
 }
 
 const CLASSE_BASE =
-  'flex h-full flex-col gap-1 rounded-theme border border-border bg-surface p-4 text-fg shadow-theme'
+  'flex h-full flex-col gap-1 rounded-theme border border-border bg-surface p-4 text-fg shadow-theme painel'
 
 /** Stat tile: rótulo, número em destaque e contexto. Cor só nos tokens de texto. */
 export function StatTile({ rotulo, valor, detalhe, extra, para }: StatTileProps) {

@@ -88,7 +88,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 ### Etapa 26: `feat/26-cyber-hud` (moldura de HUD)
 
 - [x] 26.1a Classe `painel` nos cards de seção de `src/components` e `src/views`.
-- [ ] 26.1b Classe `painel` nos cards de seção de `src/features/dashboard` e `src/features/character`.
+- [x] 26.1b Classe `painel` nos cards de seção de `src/features/dashboard` e `src/features/character`.
 - [ ] 26.1c Classe `painel` nos cards de seção de `src/features/stacks`, `resume` e `data`.
 - [ ] 26.2 Fundo do cyber: grade sutil, vinheta e scanlines num `body::after`, com as guardas de a11y.
 - [ ] 26.3 Moldura `.painel` no cyber: vidro, chanfro, colchetes de canto e brilho no hover.
