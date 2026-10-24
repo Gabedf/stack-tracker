@@ -27,12 +27,31 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 20 | feat/20-resume-ui | concluída | e5b67f2 |
 | 21 | feat/21-import-export | concluída | 942b62e |
 | 22 | feat/22-polish-a11y | concluída | 2b11a3a |
-| 23 | chore/23-docs-final | pendente | |
+| 23 | chore/23-docs-final | concluída | pendente de merge |
 
-## Pendências para etapas futuras
+## Limitações conhecidas e próximos passos
 
 - (geral) npm audit: tinypool via Vitest 3 (só dev). A correção exige Vitest 4 e Node >= 20.19.
 - (futuro) Estilo visual do RPG é provisório (pergaminho); tudo isolado em src/themes/rpg.css para troca.
 - (conhecido) Mobile: ordem de Tab percorre a nav antes de Dados/Tema, diferente da ordem visual.
 - (conhecido) Gráfico de evolução em 320 px: rótulo da última nota encosta no rótulo da faixa de nível.
 - (conhecido) Testes com ?raw falham se rodados pela Git Bash com caminho /c/...; use C:\ (PowerShell/cmd).
+- (próximo) Backend real: ApiAdapter (ex.: Supabase) sobre a interface StorageAdapter, sem mexer na UI.
+- (próximo) Novo estilo visual do RPG, editando só src/themes/rpg.css e src/features/character/classes.ts.
+- (próximo) Vitest 4 ao atualizar o Node para >= 20.19 (resolve o aviso do npm audit).
+
+## Verificação final
+
+Em 2026-10-23, na branch chore/23-docs-final, com Node 20.16.0:
+
+- Automatizada: `npm test` rodado 2x, verde nas duas (54 arquivos, 1031 testes); `npm run build` verde
+  (tsc -b + vite build); `npm run lint` sem erros; `npm run format:check` sem diferenças.
+- Ponta a ponta via API (dev server em porta livre; data/stacks.json com backup antes e restaurado depois,
+  SHA-256 idêntico ao original): sem o arquivo, GET /api/stacks respondeu 200 com 5 stacks e criou
+  data/stacks.json igual ao seed; PUT com JSON malformado e PUT fora do schema (teoria = 42) responderam
+  400, ambos sem alterar o arquivo (hash igual); PUT válido com a primeira stack editada (dimensões
+  alteradas e um snapshot novo no historico, 5 -> 6 registros) respondeu 200, o arquivo mudou e o GET
+  seguinte devolveu exatamente o conteúdo enviado e gravado. `vite preview` também serviu
+  GET /api/stacks com 200.
+- Nenhum bug encontrado; nenhum código de produto alterado nesta etapa. O roteiro manual de UI
+  (README) não foi executado nesta verificação automatizada.
