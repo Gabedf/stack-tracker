@@ -65,7 +65,7 @@ describe('tema RPG', () => {
     expect(document.documentElement).toHaveAttribute('data-theme', 'funcional')
     await screen.findByRole('region', { name: 'Distribuição por nível' })
 
-    fireEvent.click(screen.getByRole('button', { name: /^Tema:/ }))
+    fireEvent.change(screen.getByRole('combobox', { name: 'Tema' }), { target: { value: 'rpg' } })
 
     expect(document.documentElement).toHaveAttribute('data-theme', 'rpg')
     expect(screen.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeInTheDocument()
