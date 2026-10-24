@@ -87,6 +87,9 @@ const TRACEJADO_SEI_POR_SABER = '5 3'
 /** Transição suave só para quem não pediu menos movimento. */
 const TRANSICAO = 'motion-safe:transition-opacity motion-safe:duration-200'
 const COR_FOCO = 'var(--theme-focus)'
+/** Anel de seleção: raio extra sobre o hexágono (fora do anel de foco, que usa +4). */
+const FOLGA_ANEL_SELECAO = 8
+const TRACEJADO_ANEL_SELECAO = '6 5'
 
 /** Teclas que movem o foco entre hexágonos (roving tabindex). */
 const DIRECAO_DA_TECLA: Record<string, DirecaoColmeia> = {
@@ -134,6 +137,7 @@ function Brilho({
   return (
     <g
       aria-hidden="true"
+      data-brilho={hex.item.nivel.id}
       fill="none"
       stroke={COR_BRILHO}
       strokeLinejoin="round"
@@ -164,6 +168,10 @@ interface HexagonoProps {
   descritoPor?: string
   /** Fora da categoria em destaque. */
   esmaecido: boolean
+  /** Hexágono do cartão aberto (hover ou foco): ganha o gancho `data-selecionado`. */
+  selecionado: boolean
+  /** id do degradê do selo "sei por saber" (definido no <defs> da colmeia). */
+  idDegrade: string
   /** Só um hexágono fica na ordem do Tab (0); os demais, -1. */
   tabIndex: 0 | -1
   registrar: (indice: number, elemento: HTMLAnchorElement | null) => void
@@ -177,6 +185,8 @@ function Hexagono({
   raio,
   descritoPor,
   esmaecido,
+  selecionado,
+  idDegrade,
   tabIndex,
   registrar,
   onTecla,
@@ -209,6 +219,7 @@ function Hexagono({
       data-nivel={skill.nivel.id}
       data-sei-por-saber={skill.seiPorSaber || undefined}
       data-esfriando={skill.esfriando || undefined}
+      data-selecionado={selecionado || undefined}
       data-dim={esmaecido || undefined}
       className={`cursor-pointer focus-visible:outline-none ${TRANSICAO}`}
       style={{
@@ -218,8 +229,9 @@ function Hexagono({
       }}
     >
       {/* Base opaca: a tinta dos níveis baixos não deixa ver o que está atrás. */}
-      <polygon points={pontosHexagono(x, y, raio)} fill={COR_SUPERFICIE} />
+      <polygon data-hex-base="" points={pontosHexagono(x, y, raio)} fill={COR_SUPERFICIE} />
       <polygon
+        data-hex-corpo=""
         points={pontosHexagono(x, y, raio - 1)}
         fill={estilo.cor}
         fillOpacity={estilo.preenchimento}
@@ -228,6 +240,32 @@ function Hexagono({
         strokeLinejoin="round"
         strokeDasharray={skill.seiPorSaber ? TRACEJADO_SEI_POR_SABER : undefined}
       />
+      {/* Camada decorativa do selo "sei por saber"; oculta por padrão (só um tema a mostra). */}
+      {skill.seiPorSaber && (
+        <polygon
+          aria-hidden="true"
+          data-selo-holo=""
+          display="none"
+          points={pontosHexagono(x, y, raio - 3)}
+          fill={`url(#${idDegrade})`}
+          pointerEvents="none"
+        />
+      )}
+      {/* Anel de seleção: decorativo, só existe com o hexágono selecionado e oculto por padrão. */}
+      {selecionado && (
+        <polygon
+          aria-hidden="true"
+          data-anel-selecao=""
+          display="none"
+          points={pontosHexagono(x, y, raio + FOLGA_ANEL_SELECAO)}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinejoin="round"
+          strokeDasharray={TRACEJADO_ANEL_SELECAO}
+          pointerEvents="none"
+        />
+      )}
       {selos.map((selo, i) => {
         const props = {
           x: inicioSelos + i * (tamanhoSelo + 2),
@@ -413,6 +451,8 @@ export function SkillHoneycomb({
   const elementos = useRef(new Map<number, HTMLAnchorElement>())
   const navigate = useNavigate()
   const idInstrucoes = useId()
+  // useId traz ":" (válido em id, mas incômodo em url(#...)); o degradê é só visual.
+  const idDegrade = `holo-${useId().replace(/:/g, '')}`
 
   const layout = layoutColmeia(skills, {
     largura,
@@ -488,6 +528,16 @@ export function SkillHoneycomb({
               data-colunas={layout.colunas}
               aria-describedby={idInstrucoes}
             >
+              {skills.some((skill) => skill.seiPorSaber) && (
+                <defs>
+                  {/* Degradê do selo "sei por saber"; as cores vêm do CSS do tema que o usa. */}
+                  <linearGradient id={idDegrade} x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" data-holo-stop="1" />
+                    <stop offset="0.5" data-holo-stop="2" />
+                    <stop offset="1" data-holo-stop="3" />
+                  </linearGradient>
+                </defs>
+              )}
               <g>
                 {layout.hexagonos.map((hex) => (
                   <Brilho
@@ -526,6 +576,8 @@ export function SkillHoneycomb({
                         raio={layout.raio}
                         descritoPor={hex === hexAtivo ? idCartao : undefined}
                         esmaecido={esmaecida(hex.item.categoria)}
+                        selecionado={hex === hexAtivo}
+                        idDegrade={idDegrade}
                         tabIndex={hex.indice === naOrdemDoTab ? 0 : -1}
                         registrar={registrar}
                         onTecla={aoTeclar}

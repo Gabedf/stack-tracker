@@ -88,6 +88,62 @@ describe('SkillHoneycomb', () => {
     expect(Number(jquery.style.opacity)).toBeLessThan(1)
   })
 
+  it('expõe ganchos neutros de estilo: corpo, selo holográfico, degradê e brilho', () => {
+    const { container } = renderColmeia()
+    const [react, jquery, , kubernetes] = hexagonos()
+    for (const hex of hexagonos()) {
+      expect(hex.querySelector('polygon[data-hex-base]')).not.toBeNull()
+      expect(hex.querySelectorAll('polygon[data-hex-corpo]')).toHaveLength(1)
+    }
+    // Camada holográfica só no "sei por saber", oculta por padrão e fora da árvore de acessibilidade.
+    const holo = kubernetes.querySelector('polygon[data-selo-holo]')
+    expect(holo).toHaveAttribute('aria-hidden', 'true')
+    expect(holo).toHaveAttribute('display', 'none')
+    expect(react.querySelector('polygon[data-selo-holo]')).toBeNull()
+    expect(jquery.querySelector('polygon[data-selo-holo]')).toBeNull()
+    // O degradê referenciado existe no <defs>, com as três paradas.
+    const url = holo!.getAttribute('fill')!
+    const id = url.replace('url(#', '').replace(')', '')
+    const degrade = container.querySelector(`linearGradient[id="${id}"]`)
+    expect(degrade?.querySelectorAll('stop[data-holo-stop]')).toHaveLength(3)
+    // O halo do brilho carrega o nível (só os níveis com brilho têm halo).
+    expect(container.querySelector('g[data-brilho="mestre"]')).not.toBeNull()
+    expect(container.querySelector('g[data-brilho="aprendiz"]')).toBeNull()
+  })
+
+  it('sem sei por saber, a colmeia não define degradê', () => {
+    const skills = [skill(1), skill(2)]
+    const { container } = renderColmeia({ skills })
+    expect(container.querySelector('linearGradient')).toBeNull()
+    expect(container.querySelector('[data-selo-holo]')).toBeNull()
+  })
+
+  it('o hexágono selecionado (cartão aberto) ganha data-selecionado e o anel decorativo', () => {
+    const { container } = renderColmeia()
+    const [react, jquery] = hexagonos()
+    for (const hex of hexagonos()) expect(hex).not.toHaveAttribute('data-selecionado')
+    expect(container.querySelector('[data-anel-selecao]')).toBeNull()
+
+    fireEvent.mouseEnter(jquery)
+    expect(jquery).toHaveAttribute('data-selecionado', 'true')
+    expect(react).not.toHaveAttribute('data-selecionado')
+    const anel = jquery.querySelector('polygon[data-anel-selecao]')
+    expect(anel).toHaveAttribute('aria-hidden', 'true')
+    expect(anel).toHaveAttribute('display', 'none')
+    expect(anel).toHaveAttribute('stroke-dasharray')
+    expect(container.querySelectorAll('[data-anel-selecao]')).toHaveLength(1)
+
+    // Esc fecha o cartão e o anel some junto.
+    fireEvent.keyDown(jquery, { key: 'Escape' })
+    expect(jquery).not.toHaveAttribute('data-selecionado')
+    expect(container.querySelector('[data-anel-selecao]')).toBeNull()
+
+    fireEvent.mouseLeave(jquery)
+    fireEvent.mouseEnter(react)
+    expect(react).toHaveAttribute('data-selecionado', 'true')
+    expect(jquery).not.toHaveAttribute('data-selecionado')
+  })
+
   it('mostra o nome curto e a nota dentro do hexágono', () => {
     renderColmeia()
     const postgres = hexagonos()[4]

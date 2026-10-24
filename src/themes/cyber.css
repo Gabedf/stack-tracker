@@ -129,6 +129,25 @@
  *    cores de sistema (preenchimento Highlight, contorno CanvasText). Impressão: o print.css
  *    zera fundos, então o cyber pinta o preenchimento com currentColor (preto) e contorna o
  *    trilho; o valor também sai em texto (XP e "faltam").
+ *
+ * Colmeia (`SkillHoneycomb`, 27.2), ganchos neutros sem regra nos outros temas: no link do hex
+ *    `data-nivel` (iniciante, aprendiz, praticante, senior, mestre = raridade 1..5; os ids, não
+ *    números), `data-selecionado` (hex do cartão aberto, hover ou foco), `data-sei-por-saber`,
+ *    `data-esfriando`; dentro dele `data-hex-base`, `data-hex-corpo`, `data-selo-holo` (camada do
+ *    selo) e `data-anel-selecao` (anel extra, só com selecionado); no SVG `data-brilho` e
+ *    `data-holo-stop` (paradas do degradê). O anel e a camada holo nascem com `display="none"` e só
+ *    este arquivo os mostra.
+ *  - Contorno na cor do nível, preenchimento translúcido (color-mix 14% a 22% por nível) e
+ *    `filter: drop-shadow` por raridade no polígono do corpo (nunca em ancestral HTML do tooltip):
+ *    nível 1 sem halo, 5 forte. Texto sempre --theme-text (>= 11:1 mesmo no lendário a 22%).
+ *  - Pulso lento do lendário (3,6s), giro do anel (12s linear) e varredura do holograma (7s, só
+ *    deslocamento de matiz) ficam em prefers-reduced-motion: no-preference. Em reduced motion o
+ *    anel fica PARADO e visível (tracejado estático) e o holograma fica estático.
+ *  - Esfriando: no cyber o link volta a opacidade 1 (!important sobre o style inline); a cor
+ *    esfria (contorno misturado ao text-muted, tinta 8%, sem halo), então o texto passa de ~3,8:1
+ *    para >= 11:1. Funcional e rpg mantêm a opacidade 0,6.
+ *  - forced-colors: sem filtro, camada nem animação; contorno CanvasText, selecionado Highlight com
+ *    anel parado. Impressão: sem halo, camada nem anel; contorno e texto pretos.
  */
 
 /* Oxanium (títulos): só latin, pesos usados nos headings (semibold e bold).
@@ -432,6 +451,172 @@
   box-shadow: 0 0 5px 0 rgb(var(--cyber-neon) / 0.55);
 }
 
+/*
+ * Colmeia de skills (`SkillHoneycomb`, 27.2). Ganchos neutros no componente: no link de
+ * cada hexágono `[data-nivel]` (iniciante..mestre = raridade 1..5), `[data-selecionado]`,
+ * `[data-sei-por-saber]`, `[data-esfriando]`; dentro dele `[data-hex-base]`, `[data-hex-corpo]`,
+ * `[data-selo-holo]` e `[data-anel-selecao]`; no SVG `[data-brilho]` (halos antigos) e
+ * `[data-holo-stop]` (paradas do degradê). Nenhum desses atributos tem regra fora do cyber.
+ * O CSS vence os atributos de apresentação do SVG (fill, stroke, display); só o `style`
+ * inline do link (cor, opacidade) precisa de !important.
+ */
+[data-theme='cyber'] a[data-nivel] {
+  /* Cor do nível e halo (drop-shadow) de cada raridade: 1 sem brilho, 5 forte. */
+  --cyber-nivel: var(--theme-level-1);
+  --cyber-hex-tinta: 14%;
+  --cyber-hex-brilho: none;
+  /* O texto do componente é escuro (feito para preenchimento cheio); no cyber o
+     preenchimento é translúcido sobre a surface, então o texto usa --theme-text (>= 11:1). */
+  color: var(--theme-text) !important;
+}
+
+[data-theme='cyber'] a[data-nivel='aprendiz'] {
+  --cyber-nivel: var(--theme-level-2);
+  --cyber-hex-tinta: 16%;
+  --cyber-hex-brilho: drop-shadow(0 0 2px color-mix(in srgb, var(--cyber-nivel) 40%, transparent));
+}
+
+[data-theme='cyber'] a[data-nivel='praticante'] {
+  --cyber-nivel: var(--theme-level-3);
+  --cyber-hex-tinta: 18%;
+  --cyber-hex-brilho: drop-shadow(0 0 3px color-mix(in srgb, var(--cyber-nivel) 55%, transparent));
+}
+
+[data-theme='cyber'] a[data-nivel='senior'] {
+  --cyber-nivel: var(--theme-level-4);
+  --cyber-hex-tinta: 20%;
+  --cyber-hex-brilho: drop-shadow(0 0 4px color-mix(in srgb, var(--cyber-nivel) 70%, transparent))
+    drop-shadow(0 0 9px color-mix(in srgb, var(--cyber-nivel) 35%, transparent));
+}
+
+[data-theme='cyber'] a[data-nivel='mestre'] {
+  --cyber-nivel: var(--theme-level-5);
+  --cyber-hex-tinta: 22%;
+  --cyber-hex-brilho: drop-shadow(0 0 5px color-mix(in srgb, var(--cyber-nivel) 85%, transparent))
+    drop-shadow(0 0 12px color-mix(in srgb, var(--cyber-nivel) 50%, transparent));
+}
+
+/* Os halos ciano do componente (atrás dos níveis altos) dão lugar ao drop-shadow do nível. */
+[data-theme='cyber'] [data-brilho] {
+  display: none;
+}
+
+/* Contorno neon na cor do nível, preenchimento translúcido e halo por raridade. O filtro
+   fica no polígono (não no link nem em ancestral HTML): o texto segue nítido e o tooltip
+   da colmeia não ganha contexto de empilhamento. */
+[data-theme='cyber'] a[data-nivel] [data-hex-corpo] {
+  fill: color-mix(in srgb, var(--cyber-nivel) var(--cyber-hex-tinta), transparent);
+  stroke: var(--cyber-nivel);
+  filter: var(--cyber-hex-brilho);
+}
+
+[data-theme='cyber'] a[data-nivel] text {
+  fill: var(--theme-text);
+}
+
+/* Selecionado (cartão aberto): preenchimento mais aceso e contorno mais grosso, além do anel. */
+[data-theme='cyber'] a[data-nivel][data-selecionado] [data-hex-corpo] {
+  fill: color-mix(in srgb, var(--cyber-nivel) 30%, transparent);
+  stroke-width: 2.5;
+}
+
+/* Anel tracejado girando no selecionado: parado (tracejado estático) por padrão e em
+   reduced motion; só gira em no-preference. */
+[data-theme='cyber'] [data-anel-selecao] {
+  display: inline;
+  stroke: var(--theme-text);
+  filter: drop-shadow(0 0 3px rgb(var(--cyber-neon) / 0.8));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/*
+ * Esfriando: em vez de opacidade 0,6 no grupo todo (texto ~3,8:1), o link volta a opacidade
+ * total (o !important vence o style inline; esmaecido por categoria, data-dim, continua) e
+ * a cor esfria: contorno misturado ao cinza-azulado (>= 3:1), preenchimento fraco e sem
+ * halo. O texto segue --theme-text e o floco continua sendo o selo principal.
+ */
+[data-theme='cyber'] a[data-esfriando]:not([data-dim]) {
+  opacity: 1 !important;
+}
+
+[data-theme='cyber'] a[data-esfriando] [data-hex-corpo] {
+  fill: color-mix(in srgb, var(--cyber-nivel) 8%, transparent);
+  stroke: color-mix(in srgb, var(--cyber-nivel) 55%, var(--theme-text-muted));
+  filter: none;
+}
+
+/*
+ * Selo "sei por saber" holográfico: camada com degradê iridescente suave (ciano, violeta
+ * e magenta dos tokens, alfa <= 0.26 sobre a surface: o texto fica >= 6:1), halo no livro.
+ * Estático por padrão; a varredura (um deslocamento lento de matiz) só em no-preference.
+ */
+[data-theme='cyber'] [data-selo-holo] {
+  display: inline;
+  filter: drop-shadow(0 0 2px rgb(var(--cyber-neon) / 0.45));
+}
+
+[data-theme='cyber'] [data-holo-stop='1'] {
+  stop-color: var(--theme-accent);
+  stop-opacity: 0.26;
+}
+
+[data-theme='cyber'] [data-holo-stop='2'] {
+  stop-color: var(--theme-level-4);
+  stop-opacity: 0.2;
+}
+
+[data-theme='cyber'] [data-holo-stop='3'] {
+  stop-color: var(--theme-focus);
+  stop-opacity: 0.26;
+}
+
+[data-theme='cyber'] a[data-sei-por-saber] .icone {
+  filter: drop-shadow(0 0 2px rgb(var(--cyber-neon) / 0.8));
+}
+
+/* Animações da colmeia: pulso lento no lendário, giro do anel e varredura do holograma. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes cyber-hex-pulso {
+    0%,
+    100% {
+      filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cyber-nivel) 85%, transparent))
+        drop-shadow(0 0 12px color-mix(in srgb, var(--cyber-nivel) 50%, transparent));
+    }
+    50% {
+      filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cyber-nivel) 100%, transparent))
+        drop-shadow(0 0 20px color-mix(in srgb, var(--cyber-nivel) 65%, transparent));
+    }
+  }
+
+  @keyframes cyber-anel-giro {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes cyber-holo-varredura {
+    from {
+      filter: hue-rotate(0deg) drop-shadow(0 0 2px rgb(var(--cyber-neon) / 0.45));
+    }
+    to {
+      filter: hue-rotate(50deg) drop-shadow(0 0 3px rgb(var(--cyber-neon) / 0.6));
+    }
+  }
+
+  [data-theme='cyber'] a[data-nivel='mestre']:not([data-esfriando]) [data-hex-corpo] {
+    animation: cyber-hex-pulso 3.6s ease-in-out infinite;
+  }
+
+  [data-theme='cyber'] [data-anel-selecao] {
+    animation: cyber-anel-giro 12s linear infinite;
+  }
+
+  [data-theme='cyber'] [data-selo-holo] {
+    animation: cyber-holo-varredura 7s ease-in-out infinite alternate;
+  }
+}
+
 /* Modo de alto contraste: sem enfeites sobrepostos às cores do sistema. */
 @media (forced-colors: active) {
   [data-theme='cyber'] body::after {
@@ -486,6 +671,49 @@
   [data-theme='cyber'] [data-xpbar-trilho][data-compacta] [data-xpbar-preenchimento] {
     background-image: repeating-linear-gradient(90deg, transparent 0 6px, Canvas 6px 7.5px);
   }
+  /* Colmeia: sem filtros nem camadas; contorno CanvasText, selecionado em Highlight. */
+  [data-theme='cyber'] [data-brilho],
+  [data-theme='cyber'] [data-selo-holo] {
+    display: none;
+  }
+
+  [data-theme='cyber'] a[data-nivel] {
+    forced-color-adjust: none;
+    color: CanvasText !important;
+  }
+
+  [data-theme='cyber'] a[data-nivel] [data-hex-base] {
+    fill: Canvas;
+  }
+
+  [data-theme='cyber'] a[data-nivel] [data-hex-corpo],
+  [data-theme='cyber'] a[data-nivel][data-esfriando] [data-hex-corpo] {
+    fill: Canvas;
+    stroke: CanvasText;
+    filter: none;
+    animation: none !important;
+  }
+
+  [data-theme='cyber'] a[data-nivel] text {
+    fill: CanvasText;
+  }
+
+  [data-theme='cyber'] a[data-nivel][data-selecionado] [data-hex-corpo] {
+    fill: Canvas;
+    stroke: Highlight;
+    stroke-width: 3;
+  }
+
+  /* O anel fica visível e parado: o selecionado continua distinguível pelo tracejado. */
+  [data-theme='cyber'] [data-anel-selecao] {
+    stroke: Highlight;
+    filter: none;
+    animation: none !important;
+  }
+
+  [data-theme='cyber'] a[data-sei-por-saber] .icone {
+    filter: none;
+  }
 }
 
 /* Papel: preto no branco, sem camada decorativa (reforça o print.css). */
@@ -522,5 +750,34 @@
 
   [data-theme='cyber'] [data-xpbar-preenchimento] {
     background: currentColor !important;
+  }
+  /* Colmeia: sem halos, camadas nem animação; contorno e texto pretos sobre o papel. */
+  [data-theme='cyber'] [data-brilho],
+  [data-theme='cyber'] [data-selo-holo],
+  [data-theme='cyber'] [data-anel-selecao] {
+    display: none;
+  }
+
+  [data-theme='cyber'] a[data-nivel] {
+    color: #000 !important;
+  }
+
+  [data-theme='cyber'] a[data-nivel] [data-hex-base] {
+    fill: none;
+  }
+
+  [data-theme='cyber'] a[data-nivel] [data-hex-corpo] {
+    fill: none;
+    stroke: currentColor;
+    filter: none;
+    animation: none !important;
+  }
+
+  [data-theme='cyber'] a[data-nivel] text {
+    fill: currentColor;
+  }
+
+  [data-theme='cyber'] a[data-sei-por-saber] .icone {
+    filter: none;
   }
 }
