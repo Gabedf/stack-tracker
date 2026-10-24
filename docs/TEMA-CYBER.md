@@ -68,7 +68,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 24.2 Trocar comparações com `'rpg'` por `ehTemaDeJogo`; `movimento()` recebe o estilo `levelUp`.
 - [x] 24.3 `ThemeToggle` vira seletor acessível com todos os temas; ajustar testes do botão "Tema:".
 - [x] 24.4 Teste que falha se a lista de ids do script anti-flash do `index.html` divergir de `TEMAS`.
-- [ ] 24.5 `tokens.test.ts` genérico: todo `src/themes/*.css` define os mesmos `--theme-*` que tokens.css.
+- [x] 24.5 `tokens.test.ts` genérico: todo `src/themes/*.css` define os mesmos `--theme-*` que tokens.css.
 - [ ] 24.6 Mover a estrutura das partículas de level-up de `rpg.css` para `efeitos-jogo.css`.
 - [ ] 24.R Revisão somente leitura do diff da etapa 24 (regressões e comparações com `'rpg'`).
 - [ ] 24.M Merge `merge: etapa 24 - theme registry` em `feat/tema-cyber` e marcar a checklist.
@@ -122,5 +122,6 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - `movimento(estilo: EstiloLevelUp | null, animar)` no LevelUpToast: `null` = sem efeito de jogo (estilo só vem quando `ehTemaDeJogo`); brilho/faíscas valem para todo tema de jogo; o link Ficha usa `temas: TEMAS.filter(ehTemaDeJogo)`; `setTema('rpg')` do botão "Ativar tema RPG" na ficha fica (é valor, não comparação).
 - Seletor de tema (24.3): `<select>` nativo com `<label>` visível "Tema"; nos testes, `getByRole('combobox', { name: 'Tema' })` e `fireEvent.change(..., { target: { value: '<id>' } })` (o projeto não usa userEvent); as opções vêm de `TEMAS` com `CONFIG_TEMAS[t].rotulo`, então o cyber entra sozinho ao ser registrado; `alternar`/`proximoTema` seguem no contexto, mas o seletor não os usa.
 - Anti-flash (24.4): os ids aceitos ficam no array literal `var temas = [...]` do script em `index.html` (aspas simples); ao registrar um tema, acrescente o id ali também; `src/themes/antiFlash.test.ts` compara com `TEMAS` (mesmo conjunto) e confere a chave `CHAVE_TEMA_STORAGE`.
+- Paridade de tokens (24.5): arquivo de tema = `src/themes/*.css` (fora `tokens.css`, a referência) com um bloco cujo seletor é só `[data-theme='<id>'] {` no início da linha; `efeitos-jogo.css` deve usar só seletores descendentes (`[data-theme='rpg'] .x`) e não definir `--theme-*` (há teste para isso); `cyber.css` entra sozinho no `it.each` ao ter o bloco `[data-theme='cyber'] {`.
 
 ## Pendências
