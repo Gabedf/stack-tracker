@@ -81,9 +81,9 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - [x] 25.4 Instalar `@fontsource/oxanium`, importar os pesos usados e definir as fontes do tema.
 - [x] 25.5 Registrar `cyber` em `CONFIG_TEMAS` e no `index.html`; conferir impressão; ajustar testes.
 - [x] 25.6 Criar `src/themes/contraste.test.ts` verificando os contrastes mínimos dos temas.
-- [ ] 25.R Revisão de código somente leitura da etapa 25.
-- [ ] 25.V Revisão visual da etapa 25 nos três temas (1280px e 375px).
-- [ ] 25.M Merge `merge: etapa 25 - cyber tokens` em `feat/tema-cyber`.
+- [x] 25.R Revisão de código somente leitura da etapa 25 (uma lacuna corrigida).
+- [x] 25.V Revisão visual da etapa 25 nos três temas (1280px e 375px) (sem regressões; 4 pendências registradas).
+- [x] 25.M Merge `merge: etapa 25 - cyber tokens` em `feat/tema-cyber`.
 
 ### Etapa 26: `feat/26-cyber-hud` (moldura de HUD)
 
@@ -135,3 +135,8 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Contraste (25.6): `contraste.test.ts` descobre os temas por `import.meta.glob('./*.css')` + bloco `[data-theme='<id>'] {` (como o tokens.test.ts) e exige que batam com `TEMAS`/`CONFIG_TEMAS`; `--theme-border` >= 3 só quando `ehTemaDeJogo` (funcional ~1.5:1 é pendência da etapa 22, não corrigida); par reprovado em tema existente vai para a lista `EXCECOES` (`'<tema>: <token> sobre <fundo>'`, hoje vazia) com registro em Pendências; todos os pares dos três temas passam.
 
 ## Pendências
+
+- /ficha, cyber (e também rpg/funcional): o hexágono "esfriando" da colmeia tem texto escuro sobre azul com opacidade 0,6, contraste estimado ~3,8:1 (< 4,5); origem: `OPACIDADE_ESFRIANDO` em `SkillHoneycomb.tsx` aplica opacidade ao grupo todo; avaliar na 27.2 (restilo da colmeia) sem mudar a aparência dos temas funcional e rpg (revisão 25.V, pré-existente).
+- /, 375px, todos os temas: o rótulo "Kubernetes" aparece cortado ("Kubern") na borda direita do gráfico Teoria × prática (`TheoryPracticeQuadrant`); cosmético, pré-existente (revisão 25.V).
+- /ficha, todos os temas: no radar, os números da escala (8/10) sobrepõem o rótulo do eixo de cima; cosmético, pré-existente; revisitar na 27.3 (radar) (revisão 25.V).
+- Tooltip do hexágono da colmeia não foi verificado na revisão visual 25.V (o hover automático não acertou o hexágono); conferir nas revisões 26.V/27.V.
