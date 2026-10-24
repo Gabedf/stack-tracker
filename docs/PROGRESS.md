@@ -26,10 +26,13 @@ Para retomar: leia este arquivo, confira `git log --oneline -n 15` e continue da
 | 19 | feat/19-resume-logic | concluída | 4f2f377 |
 | 20 | feat/20-resume-ui | concluída | e5b67f2 |
 | 21 | feat/21-import-export | concluída | 942b62e |
-| 22 | feat/22-polish-a11y | pendente | |
+| 22 | feat/22-polish-a11y | concluída | 2b11a3a |
 | 23 | chore/23-docs-final | pendente | |
 
 ## Pendências para etapas futuras
 
 - (geral) npm audit: tinypool via Vitest 3 (só dev). A correção exige Vitest 4 e Node >= 20.19.
 - (futuro) Estilo visual do RPG é provisório (pergaminho); tudo isolado em src/themes/rpg.css para troca.
+- (conhecido) Mobile: ordem de Tab percorre a nav antes de Dados/Tema, diferente da ordem visual.
+- (conhecido) Gráfico de evolução em 320 px: rótulo da última nota encosta no rótulo da faixa de nível.
+- (conhecido) Testes com ?raw falham se rodados pela Git Bash com caminho /c/...; use C:\ (PowerShell/cmd).
