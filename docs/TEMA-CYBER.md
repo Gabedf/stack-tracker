@@ -64,7 +64,7 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 
 ### Etapa 24: `refactor/24-theme-registry` (nenhuma mudança visual)
 
-- [ ] 24.1 Trocar `ROTULOS_TEMA` por `CONFIG_TEMAS` e criar `ehTemaDeJogo` em `src/themes/themes.ts`.
+- [x] 24.1 Trocar `ROTULOS_TEMA` por `CONFIG_TEMAS` e criar `ehTemaDeJogo` em `src/themes/themes.ts`.
 - [ ] 24.2 Trocar comparações com `'rpg'` por `ehTemaDeJogo`; `movimento()` recebe o estilo `levelUp`.
 - [ ] 24.3 `ThemeToggle` vira seletor acessível com todos os temas; ajustar testes do botão "Tema:".
 - [ ] 24.4 Teste que falha se a lista de ids do script anti-flash do `index.html` divergir de `TEMAS`.
@@ -118,5 +118,6 @@ radius 0 (chanfro via pseudo-elemento, nunca clip-path no painel: ele corta a so
 - Trabalho feito num git worktree em C:\Users\gabdo\Desktop\dev\stacks-tema-cyber porque a pasta
   principal tinha alterações não commitadas da etapa 22; assim a etapa 22 não é alterada nem
   misturada ao tema.
+- Tipos exportados por `src/themes` (e pelo index.ts): `ConfigTema`, `EsquemaTema`, `EstiloLevelUp`; o rótulo agora é `CONFIG_TEMAS[tema].rotulo`.
 
 ## Pendências
